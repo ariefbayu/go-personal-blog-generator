@@ -102,7 +102,30 @@ document.addEventListener('DOMContentLoaded', function() {
             status: ['autosave', 'lines', 'words', 'cursor'],
             autofocus: false,
             placeholder: 'Write your blog post content here...',
-            minHeight: '400px'
+            minHeight: '400px',
+            uploadImage: true,
+            imageUploadFunction: function(file, onSuccess, onError) {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                fetch('/api/upload/image', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Upload failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    onSuccess(data.data.filePath);
+                })
+                .catch(error => {
+                    console.error('Upload error:', error);
+                    onError('Upload failed. Please try again.');
+                });
+            }
         });
     } else {
         console.warn('EasyMDE not loaded, using plain textarea');

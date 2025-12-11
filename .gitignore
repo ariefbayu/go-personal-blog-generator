@@ -102,3 +102,4 @@ go.sum
 
 node_modules/
 blog.db
+html-outputs/
