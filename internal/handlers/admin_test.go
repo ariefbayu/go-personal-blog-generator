@@ -11,7 +11,7 @@ import (
 func TestServeDashboard(t *testing.T) {
 	// Change to project root for relative paths
 	oldWd, _ := os.Getwd()
-	os.Chdir("../../../")
+	os.Chdir("../../../personal-blog-generator")
 	defer os.Chdir(oldWd)
 
 	req := httptest.NewRequest("GET", "/admin/dashboard", nil)

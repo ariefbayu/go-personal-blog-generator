@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Admin Dashboard</title>
+    <title>New Post</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap"
         rel="stylesheet" />
     <link
@@ -106,78 +106,64 @@
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
                             <h2 class="text-slate-900 dark:text-white text-3xl font-black leading-tight tracking-tight">
-                                Blog Posts</h2>
-                            <p class="text-slate-500 dark:text-slate-400 mt-1">Manage your blogs here.
+                                Create New Post</h2>
+                            <p class="text-slate-500 dark:text-slate-400 mt-1">Add a new blog post.
                             </p>
                         </div>
                         <div class="flex gap-3">
-                          <a href="/admin/posts/new">
-                            <button
-                                class="flex items-center justify-center gap-2 rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold shadow-md shadow-primary/20 hover:bg-blue-600 transition-colors">
-                                <span class="material-symbols-outlined text-lg">add</span>
-                                <span>Create New Blog</span>
-                            </button>
-                          </a>
                         </div>
                     </div>
 
                 </div>
-                    <!-- Search and Table Container -->
+                    <!-- Form Container -->
                     <div
-                        class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm overflow-hidden flex flex-col">
-                        <!-- Search Bar -->
-                        <div class="p-4 border-b border-border-light dark:border-border-dark">
-                            <div class="relative w-full md:w-96">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                    <span class="material-symbols-outlined text-slate-400">search</span>
-                                </div>
-                                <input
-                                    class="block w-full p-2.5 pl-10 text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-[#111a22] border border-border-light dark:border-border-dark rounded-lg focus:ring-primary focus:border-primary placeholder-slate-400"
-                                    placeholder="Search posts by title or content" type="text" />
+                        class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm p-6">
+                        <form id="post-form" class="space-y-6">
+                            <div>
+                                <label for="title" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Title</label>
+                                <input type="text" id="title" name="title" required
+                                    class="block w-full p-3 text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-[#111a22] border border-border-light dark:border-border-dark rounded-lg focus:ring-primary focus:border-primary">
                             </div>
-                        </div>
-                        <!-- Table -->
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
-                                <thead
-                                    class="text-xs text-slate-700 uppercase bg-slate-50 dark:bg-surface-dark dark:text-slate-300 border-b border-border-light dark:border-border-dark">
-                                    <tr>
-                                        <th class="px-6 py-4 font-semibold" scope="col">Title</th>
-                                        <th class="px-6 py-4 font-semibold" scope="col">Status</th>
-                                        <th class="px-6 py-4 font-semibold text-right" scope="col">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-border-light dark:divide-border-dark" id="post-list-body">
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- Pagination -->
-                        <div
-                            class="flex items-center justify-between p-4 border-t border-border-light dark:border-border-dark bg-slate-50 dark:bg-[#111a22]">
-                            <span class="text-sm text-slate-500 dark:text-slate-400">
-                                Showing <span class="font-semibold text-slate-900 dark:text-white">1-5</span> of <span
-                                    class="font-semibold text-slate-900 dark:text-white">42</span>
-                            </span>
-                            <div class="inline-flex -space-x-px text-sm">
-                                <button
-                                    class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-slate-500 bg-white dark:bg-surface-dark border border-e-0 border-border-light dark:border-border-dark rounded-s-lg hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-400">Previous</button>
-                                <button
-                                    class="flex items-center justify-center px-3 h-8 leading-tight text-white bg-primary border border-primary hover:bg-blue-600 dark:border-primary dark:text-white">1</button>
-                                <button
-                                    class="flex items-center justify-center px-3 h-8 leading-tight text-slate-500 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-400">2</button>
-                                <button
-                                    class="flex items-center justify-center px-3 h-8 leading-tight text-slate-500 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-400">3</button>
-                                <button
-                                    class="flex items-center justify-center px-3 h-8 leading-tight text-slate-500 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-e-lg hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-400">Next</button>
+                            <div>
+                                <label for="slug" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Slug</label>
+                                <input type="text" id="slug" name="slug" required
+                                    class="block w-full p-3 text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-[#111a22] border border-border-light dark:border-border-dark rounded-lg focus:ring-primary focus:border-primary">
                             </div>
-                        </div>
+                            <div>
+                                <label for="tags" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tags</label>
+                                <input type="text" id="tags" name="tags"
+                                    class="block w-full p-3 text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-[#111a22] border border-border-light dark:border-border-dark rounded-lg focus:ring-primary focus:border-primary"
+                                    placeholder="Comma separated tags">
+                            </div>
+                            <div>
+                                <label for="content" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Content</label>
+                                <textarea id="content" name="content" rows="10" required
+                                    class="block w-full p-3 text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-[#111a22] border border-border-light dark:border-border-dark rounded-lg focus:ring-primary focus:border-primary"></textarea>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="published" name="published"
+                                    class="w-4 h-4 text-primary bg-slate-50 dark:bg-[#111a22] border-border-light dark:border-border-dark rounded focus:ring-primary focus:ring-2">
+                                <label for="published" class="ml-2 text-sm font-medium text-slate-700 dark:text-slate-300">Published</label>
+                            </div>
+                            <div class="flex gap-3">
+                                <button type="submit"
+                                    class="flex items-center justify-center gap-2 rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold shadow-md shadow-primary/20 hover:bg-blue-600 transition-colors">
+                                    <span class="material-symbols-outlined text-lg">save</span>
+                                    <span>Save Post</span>
+                                </button>
+                                <a href="/admin/posts"
+                                    class="flex items-center justify-center gap-2 rounded-lg h-10 px-5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+
                     </div>
                 </div>
         </div>
         </main>
     </div>
-    </div>
-    <script src="/admin/js/posts.js"></script>
+    <script src="/admin/js/post_form.js"></script>
 </body>
 
 </html>

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -54,6 +55,74 @@ func TestGetPostsHandler(t *testing.T) {
 	err = json.NewDecoder(w.Body).Decode(&posts)
 	if err != nil {
 		t.Fatalf("Failed to decode JSON: %v", err)
+	}
+
+	if len(posts) != 1 {
+		t.Errorf("Expected 1 post, got %d", len(posts))
+	}
+
+	if posts[0].Title != "Test Post" {
+		t.Errorf("Expected title 'Test Post', got '%s'", posts[0].Title)
+	}
+}
+
+func TestCreatePostHandler(t *testing.T) {
+	// Change to project root for migration paths
+	oldWd, _ := os.Getwd()
+	os.Chdir("../../../personal-blog-generator")
+	defer os.Chdir(oldWd)
+
+	// Setup test database
+	testDB, err := db.Connect(":memory:")
+	if err != nil {
+		t.Fatalf("Failed to connect to test DB: %v", err)
+	}
+	defer testDB.Close()
+
+	err = db.Migrate(testDB)
+	if err != nil {
+		t.Fatalf("Failed to migrate test DB: %v", err)
+	}
+
+	// Setup handler
+	postRepo := repository.NewPostRepository(testDB)
+	apiHandlers := NewAPIHandlers(postRepo)
+
+	// Test data
+	postData := models.Post{
+		Title:     "Test Post",
+		Slug:      "test-post",
+		Content:   "Test content",
+		Tags:      "test,example",
+		Published: true,
+	}
+
+	// Test request
+	body, _ := json.Marshal(postData)
+	req := httptest.NewRequest("POST", "/api/posts", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+
+	apiHandlers.CreatePostHandler(w, req)
+
+	if w.Code != http.StatusCreated {
+		t.Errorf("Expected status 201, got %d", w.Code)
+	}
+
+	var response map[string]int64
+	err = json.NewDecoder(w.Body).Decode(&response)
+	if err != nil {
+		t.Fatalf("Failed to decode response: %v", err)
+	}
+
+	if response["id"] == 0 {
+		t.Errorf("Expected non-zero id, got %d", response["id"])
+	}
+
+	// Verify post was created
+	posts, err := postRepo.GetAllPosts()
+	if err != nil {
+		t.Fatalf("Failed to get posts: %v", err)
 	}
 
 	if len(posts) != 1 {

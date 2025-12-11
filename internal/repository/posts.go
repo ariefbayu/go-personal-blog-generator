@@ -32,3 +32,8 @@ func (r *PostRepository) GetAllPosts() ([]models.Post, error) {
 	}
 	return posts, nil
 }
+
+func (r *PostRepository) CreatePost(post *models.Post) error {
+	err := r.db.QueryRow("INSERT INTO posts (title, slug, content, tags, published) VALUES (?, ?, ?, ?, ?) RETURNING id", post.Title, post.Slug, post.Content, post.Tags, post.Published).Scan(&post.ID)
+	return err
+}

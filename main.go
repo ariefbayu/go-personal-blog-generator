@@ -43,8 +43,10 @@ func main() {
 	r.Use(middleware.Recoverer)
 
 	r.Get("/api/posts", apiHandlers.GetPostsHandler)
+	r.Post("/api/posts", apiHandlers.CreatePostHandler)
 	r.Get("/admin/dashboard", handlers.ServeDashboard)
 	r.Get("/admin/posts", handlers.ServePostsPage)
+	r.Get("/admin/posts/new", handlers.ServeNewPostPage)
 	r.Handle("/admin/*", http.StripPrefix("/admin/", http.FileServer(http.Dir("admin-files/"))))
 
 	port := os.Getenv("APP_PORT")
