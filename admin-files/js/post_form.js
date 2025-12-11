@@ -1,5 +1,18 @@
 document.getElementById('post-form').addEventListener('submit', async function(e) {
+
+// Check if editing
+let postId = null;
+const pathMatch = window.location.pathname.match(/^\/admin\/posts\/(\d+)\/edit$/);
+if (pathMatch) {
+    postId = pathMatch[1];
+}
+
     e.preventDefault();
+
+    // Sync EasyMDE content to textarea if editor is initialized
+    if (easyMDE) {
+        easyMDE.toTextArea();
+    }
 
     const title = document.getElementById('title').value.trim();
     const slug = document.getElementById('slug').value.trim();
@@ -49,33 +62,6 @@ document.getElementById('post-form').addEventListener('submit', async function(e
     }
 });
 
-// Check if editing
-let postId = null;
-const pathMatch = window.location.pathname.match(/^\/admin\/posts\/(\d+)\/edit$/);
-if (pathMatch) {
-    postId = pathMatch[1];
-    // Fetch post data
-    fetch(`/api/posts/${postId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Post not found');
-            }
-            return response.json();
-        })
-        .then(post => {
-            document.getElementById('title').value = post.title || '';
-            document.getElementById('slug').value = post.slug || '';
-            document.getElementById('tags').value = post.tags || '';
-            document.getElementById('content').value = post.content || '';
-            document.getElementById('published').checked = post.published || false;
-            document.getElementById('slug').dataset.original = post.slug || '';
-        })
-        .catch(error => {
-            console.error('Error loading post:', error);
-            alert('Error loading post data.');
-        });
-}
-
 // Auto-slugify title
 document.getElementById('title').addEventListener('input', function() {
     const title = this.value.trim();
@@ -93,3 +79,63 @@ function slugify(text) {
         .replace(/[\s_-]+/g, '-')
         .replace(/^-+|-+$/g, '');
 }
+
+// Initialize EasyMDE editor
+let easyMDE;
+document.addEventListener('DOMContentLoaded', function() {
+    const contentTextarea = document.getElementById('content');
+    if (contentTextarea && typeof EasyMDE !== 'undefined') {
+        easyMDE = new EasyMDE({
+            element: contentTextarea,
+            spellChecker: false,
+            renderingConfig: {
+                singleLineBreaks: false,
+                codeSyntaxHighlighting: true,
+            },
+            toolbar: [
+                'bold', 'italic', 'heading', '|',
+                'code', 'quote', 'unordered-list', 'ordered-list', '|',
+                'link', 'image', '|',
+                'preview', 'side-by-side', 'fullscreen', '|',
+                'guide'
+            ],
+            status: ['autosave', 'lines', 'words', 'cursor'],
+            autofocus: false,
+            placeholder: 'Write your blog post content here...',
+            minHeight: '400px'
+        });
+    } else {
+        console.warn('EasyMDE not loaded, using plain textarea');
+    }
+
+    // Check if editing after editor is initialized
+    const pathMatch = window.location.pathname.match(/^\/admin\/posts\/(\d+)\/edit$/);
+    if (pathMatch) {
+        postId = pathMatch[1];
+        // Fetch post data
+        fetch(`/api/posts/${postId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Post not found');
+                }
+                return response.json();
+            })
+            .then(post => {
+                document.getElementById('title').value = post.title || '';
+                document.getElementById('slug').value = post.slug || '';
+                document.getElementById('tags').value = post.tags || '';
+                // Set content in EasyMDE if available, otherwise textarea
+                if (easyMDE) {
+                    easyMDE.value(post.content || '');
+                } else {
+                    document.getElementById('content').value = post.content || '';
+                }
+                document.getElementById('published').checked = post.published || false;
+                document.getElementById('slug').dataset.original = post.slug || '';
+            })
+            .catch(error => {
+                console.error('Error loading post:', error);
+                alert('Error loading post data.');
+            });
+    }
+});
