@@ -21,9 +21,14 @@ document.getElementById('post-form').addEventListener('submit', async function(e
         published: published
     };
 
+    const isEdit = window.location.pathname.includes('/edit');
+    const url = isEdit ? `/api/posts/${postId}` : '/api/posts';
+    const method = isEdit ? 'PUT' : 'POST';
+    const successMessage = isEdit ? 'Post updated successfully!' : 'Post created successfully!';
+
     try {
-        const response = await fetch('/api/posts', {
-            method: 'POST',
+        const response = await fetch(url, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -31,19 +36,45 @@ document.getElementById('post-form').addEventListener('submit', async function(e
         });
 
         if (response.ok) {
-            const result = await response.json();
-            alert('Post created successfully!');
+            alert(successMessage);
             window.location.href = '/admin/posts';
         } else if (response.status === 409) {
             alert('Error: Slug already exists. Please choose a different slug.');
         } else {
-            alert('Error creating post. Please try again.');
+            alert(`Error ${isEdit ? 'updating' : 'creating'} post. Please try again.`);
         }
     } catch (error) {
         console.error('Error:', error);
         alert('Network error. Please try again.');
     }
 });
+
+// Check if editing
+let postId = null;
+const pathMatch = window.location.pathname.match(/^\/admin\/posts\/(\d+)\/edit$/);
+if (pathMatch) {
+    postId = pathMatch[1];
+    // Fetch post data
+    fetch(`/api/posts/${postId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Post not found');
+            }
+            return response.json();
+        })
+        .then(post => {
+            document.getElementById('title').value = post.title || '';
+            document.getElementById('slug').value = post.slug || '';
+            document.getElementById('tags').value = post.tags || '';
+            document.getElementById('content').value = post.content || '';
+            document.getElementById('published').checked = post.published || false;
+            document.getElementById('slug').dataset.original = post.slug || '';
+        })
+        .catch(error => {
+            console.error('Error loading post:', error);
+            alert('Error loading post data.');
+        });
+}
 
 // Auto-slugify title
 document.getElementById('title').addEventListener('input', function() {

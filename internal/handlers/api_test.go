@@ -133,3 +133,112 @@ func TestCreatePostHandler(t *testing.T) {
 		t.Errorf("Expected title 'Test Post', got '%s'", posts[0].Title)
 	}
 }
+
+func TestGetPostHandler(t *testing.T) {
+	// Change to project root for migration paths
+	oldWd, _ := os.Getwd()
+	os.Chdir("../../../personal-blog-generator")
+	defer os.Chdir(oldWd)
+
+	// Setup test database
+	testDB, err := db.Connect(":memory:")
+	if err != nil {
+		t.Fatalf("Failed to connect to test DB: %v", err)
+	}
+	defer testDB.Close()
+
+	err = db.Migrate(testDB)
+	if err != nil {
+		t.Fatalf("Failed to migrate test DB: %v", err)
+	}
+
+	// Insert test data
+	_, err = testDB.Exec("INSERT INTO posts (title, slug, content, tags, published) VALUES (?, ?, ?, ?, ?)", "Test Post", "test-post", "Test content", "test", true)
+	if err != nil {
+		t.Fatalf("Failed to insert test post: %v", err)
+	}
+
+	// Setup handler
+	postRepo := repository.NewPostRepository(testDB)
+	apiHandlers := NewAPIHandlers(postRepo)
+
+	// Test request
+	req := httptest.NewRequest("GET", "/api/posts/1", nil)
+	w := httptest.NewRecorder()
+
+	apiHandlers.GetPostHandler(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("Expected status 200, got %d", w.Code)
+	}
+
+	var post models.Post
+	err = json.NewDecoder(w.Body).Decode(&post)
+	if err != nil {
+		t.Fatalf("Failed to decode JSON: %v", err)
+	}
+
+	if post.Title != "Test Post" {
+		t.Errorf("Expected title 'Test Post', got '%s'", post.Title)
+	}
+}
+
+func TestUpdatePostHandler(t *testing.T) {
+	// Change to project root for migration paths
+	oldWd, _ := os.Getwd()
+	os.Chdir("../../../personal-blog-generator")
+	defer os.Chdir(oldWd)
+
+	// Setup test database
+	testDB, err := db.Connect(":memory:")
+	if err != nil {
+		t.Fatalf("Failed to connect to test DB: %v", err)
+	}
+	defer testDB.Close()
+
+	err = db.Migrate(testDB)
+	if err != nil {
+		t.Fatalf("Failed to migrate test DB: %v", err)
+	}
+
+	// Insert test data
+	_, err = testDB.Exec("INSERT INTO posts (title, slug, content, tags, published) VALUES (?, ?, ?, ?, ?)", "Test Post", "test-post", "Test content", "test", true)
+	if err != nil {
+		t.Fatalf("Failed to insert test post: %v", err)
+	}
+
+	// Setup handler
+	postRepo := repository.NewPostRepository(testDB)
+	apiHandlers := NewAPIHandlers(postRepo)
+
+	// Test data
+	updateData := models.Post{
+		Title:     "Updated Post",
+		Slug:      "updated-post",
+		Content:   "Updated content",
+		Tags:      "updated",
+		Published: false,
+	}
+
+	// Test request
+	body, _ := json.Marshal(updateData)
+	req := httptest.NewRequest("PUT", "/api/posts/1", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+
+	apiHandlers.UpdatePostHandler(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("Expected status 200, got %d", w.Code)
+	}
+
+	// Verify post was updated
+	post, err := postRepo.GetPostByID(1)
+	if err != nil {
+		t.Fatalf("Failed to get post: %v", err)
+	}
+
+	if post.Title != "Updated Post" {
+		t.Errorf("Expected title 'Updated Post', got '%s'", post.Title)
+	}
+}

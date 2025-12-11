@@ -37,3 +37,17 @@ func (r *PostRepository) CreatePost(post *models.Post) error {
 	err := r.db.QueryRow("INSERT INTO posts (title, slug, content, tags, published) VALUES (?, ?, ?, ?, ?) RETURNING id", post.Title, post.Slug, post.Content, post.Tags, post.Published).Scan(&post.ID)
 	return err
 }
+
+func (r *PostRepository) GetPostByID(id int64) (*models.Post, error) {
+	var post models.Post
+	err := r.db.QueryRow("SELECT id, title, slug, content, tags, published, created_at FROM posts WHERE id = ?", id).Scan(&post.ID, &post.Title, &post.Slug, &post.Content, &post.Tags, &post.Published, &post.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+	return &post, nil
+}
+
+func (r *PostRepository) UpdatePost(post *models.Post) error {
+	_, err := r.db.Exec("UPDATE posts SET title = ?, slug = ?, content = ?, tags = ?, published = ? WHERE id = ?", post.Title, post.Slug, post.Content, post.Tags, post.Published, post.ID)
+	return err
+}
