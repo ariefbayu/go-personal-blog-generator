@@ -242,3 +242,48 @@ func TestUpdatePostHandler(t *testing.T) {
 		t.Errorf("Expected title 'Updated Post', got '%s'", post.Title)
 	}
 }
+
+func TestDeletePostHandler(t *testing.T) {
+	// Change to project root for migration paths
+	oldWd, _ := os.Getwd()
+	os.Chdir("../../../personal-blog-generator")
+	defer os.Chdir(oldWd)
+
+	// Setup test database
+	testDB, err := db.Connect(":memory:")
+	if err != nil {
+		t.Fatalf("Failed to connect to test DB: %v", err)
+	}
+	defer testDB.Close()
+
+	err = db.Migrate(testDB)
+	if err != nil {
+		t.Fatalf("Failed to migrate test DB: %v", err)
+	}
+
+	// Insert test data
+	_, err = testDB.Exec("INSERT INTO posts (title, slug, content, tags, published) VALUES (?, ?, ?, ?, ?)", "Test Post", "test-post", "Test content", "test", true)
+	if err != nil {
+		t.Fatalf("Failed to insert test post: %v", err)
+	}
+
+	// Setup handler
+	postRepo := repository.NewPostRepository(testDB)
+	apiHandlers := NewAPIHandlers(postRepo)
+
+	// Test request
+	req := httptest.NewRequest("DELETE", "/api/posts/1", nil)
+	w := httptest.NewRecorder()
+
+	apiHandlers.DeletePostHandler(w, req)
+
+	if w.Code != http.StatusNoContent {
+		t.Errorf("Expected status 204, got %d", w.Code)
+	}
+
+	// Verify post was deleted
+	_, err = postRepo.GetPostByID(1)
+	if err == nil {
+		t.Errorf("Expected post to be deleted, but it still exists")
+	}
+}

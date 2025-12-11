@@ -51,3 +51,18 @@ func (r *PostRepository) UpdatePost(post *models.Post) error {
 	_, err := r.db.Exec("UPDATE posts SET title = ?, slug = ?, content = ?, tags = ?, published = ? WHERE id = ?", post.Title, post.Slug, post.Content, post.Tags, post.Published, post.ID)
 	return err
 }
+
+func (r *PostRepository) DeletePost(id int64) error {
+	result, err := r.db.Exec("DELETE FROM posts WHERE id = ?", id)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
+	return nil
+}

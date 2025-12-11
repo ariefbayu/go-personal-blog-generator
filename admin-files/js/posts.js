@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
             posts.forEach(post => {
                 const row = document.createElement('tr');
                 row.className = 'bg-surface-light dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-[#1e2a36] transition-colors';
+                row.setAttribute('data-post-id', post.id);
                 row.innerHTML = `
 
                 <td
@@ -54,7 +55,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function deletePost(id) {
     if (confirm('Are you sure you want to delete this post?')) {
-        // Placeholder for delete functionality
-        alert('Delete functionality not implemented yet');
+        fetch(`/api/posts/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                // Remove the row from the table
+                const row = document.querySelector(`[data-post-id="${id}"]`);
+                if (row) {
+                    row.remove();
+                }
+                alert('Post deleted successfully');
+            } else if (response.status === 404) {
+                alert('Post not found');
+            } else {
+                alert('Error deleting post');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Network error. Please try again.');
+        });
     }
 }

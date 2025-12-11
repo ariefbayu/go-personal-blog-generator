@@ -98,3 +98,24 @@ func (h *APIHandlers) UpdatePostHandler(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Post updated successfully"})
 }
+
+func (h *APIHandlers) DeletePostHandler(w http.ResponseWriter, r *http.Request) {
+	idStr := strings.TrimPrefix(r.URL.Path, "/api/posts/")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(w, "Invalid post ID", http.StatusBadRequest)
+		return
+	}
+
+	err = h.postRepo.DeletePost(id)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			http.Error(w, "Post not found", http.StatusNotFound)
+			return
+		}
+		http.Error(w, "Failed to delete post", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
