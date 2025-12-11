@@ -2,9 +2,14 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+
 	"github.com/ariefbayu/personal-blog-generator/internal/db"
+	"github.com/ariefbayu/personal-blog-generator/internal/handlers"
 	"github.com/ariefbayu/personal-blog-generator/internal/utils"
 )
 
@@ -28,4 +33,19 @@ func main() {
 	}
 
 	log.Println("Database connected and migrated successfully")
+
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+
+	r.Get("/admin/dashboard", handlers.ServeDashboard)
+	r.Handle("/admin/*", http.StripPrefix("/admin/", http.FileServer(http.Dir("admin-files/"))))
+
+	port := os.Getenv("APP_PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Println("Starting server on port", port)
+	log.Fatal(http.ListenAndServe(":"+port, r))
 }
