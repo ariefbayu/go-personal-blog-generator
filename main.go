@@ -10,6 +10,7 @@ import (
 
 	"github.com/ariefbayu/personal-blog-generator/internal/db"
 	"github.com/ariefbayu/personal-blog-generator/internal/handlers"
+	"github.com/ariefbayu/personal-blog-generator/internal/repository"
 	"github.com/ariefbayu/personal-blog-generator/internal/utils"
 )
 
@@ -34,11 +35,16 @@ func main() {
 
 	log.Println("Database connected and migrated successfully")
 
+	postRepo := repository.NewPostRepository(database)
+	apiHandlers := handlers.NewAPIHandlers(postRepo)
+
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
+	r.Get("/api/posts", apiHandlers.GetPostsHandler)
 	r.Get("/admin/dashboard", handlers.ServeDashboard)
+	r.Get("/admin/posts", handlers.ServePostsPage)
 	r.Handle("/admin/*", http.StripPrefix("/admin/", http.FileServer(http.Dir("admin-files/"))))
 
 	port := os.Getenv("APP_PORT")

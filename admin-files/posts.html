@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "surface-dark": "#18232e", // A slightly lighter shade for cards in dark mode
+                        "surface-light": "#ffffff", // White for cards in light mode
+                        "border-dark": "#2a3b4c",
+                        "border-light": "#e5e7eb",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-x-hidden transition-colors duration-200">
+    <div class="flex min-h-screen w-full">
+        <!-- Sidebar -->
+        <div
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark flex flex-col justify-between p-4 shadow-lg lg:static lg:flex">
+            <div class="flex flex-col gap-6">
+                <!-- User Profile / Branding -->
+                <div class="flex gap-3 items-center pb-6 border-b border-border-light dark:border-border-dark">
+                    <div class="bg-center bg-no-repeat bg-cover rounded-full h-12 w-12 border-2 border-primary"
+                        data-alt="Profile picture of the admin user"
+                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDS7stXzuX1oFmiWsscJ6UQdJia4HQqQ1S3B16IX81s9nLilZo5vQ9BHxeqlt4NLtH425M6taGrBpy855X1FQs5QZ5zR4b614Pe9OSUye680Mn-KK-3gwBlS5hLP22HQ6eC6KTcc088z_JpDFT57Ea5gYr3cATEVUOQcbT_MnZ5Hpw3pfOj4f1-4dRnnid5Cm68psmooaxIMYwQBDjYdxFvDSZ3iloQdT-DW2iwFnxZnRrdpFz8wzZDsH9O0b5tiSgtFKN7kg8CTlsh");'>
+                    </div>
+                    <div class="flex flex-col">
+                        <h1 class="text-slate-900 dark:text-white text-base font-bold leading-normal">My Personal Blog
+                        </h1>
+                        <p class="text-slate-500 dark:text-slate-400 text-xs font-normal leading-normal">Admin Console
+                        </p>
+                    </div>
+                </div>
+                <!-- Navigation Links -->
+                <nav class="flex flex-col gap-2">
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="/admin/dashboard">
+                        <span class="material-symbols-outlined fill-1">home</span>
+                        <span class="text-sm font-medium leading-normal">Dashboard</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-lg bg-primary/10 text-primary" href="/admin/posts">
+                        <span class="material-symbols-outlined">book_2</span>
+                        <span class="text-sm font-medium leading-normal">Blog Posts</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        href="#">
+                        <span class="material-symbols-outlined">work</span>
+                        <span class="text-sm font-medium leading-normal">Portfolios</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        href="#">
+                        <span class="material-symbols-outlined">code</span>
+                        <span class="text-sm font-medium leading-normal">Pages</span>
+                    </a>
+                </nav>
+            </div>
+            <!-- Logout Section -->
+            <div class="flex flex-col gap-1 border-t border-border-light dark:border-border-dark pt-4">
+            </div>
+        </div>
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden">
+            <!-- Top Bar for Mobile (Hidden on Desktop) -->
+            <header
+                class="flex lg:hidden items-center justify-between p-4 bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark">
+                <h1 class="font-bold text-lg">Blog Posts</h1>
+                <button class="text-slate-500 dark:text-slate-400">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+            </header>
+            <main
+                class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark p-4 md:p-8 lg:px-12 lg:py-10">
+                <div class="max-w-7xl mx-auto flex flex-col gap-8">
+                    <!-- Page Heading & Actions -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-slate-900 dark:text-white text-3xl font-black leading-tight tracking-tight">
+                                Blog Posts</h2>
+                            <p class="text-slate-500 dark:text-slate-400 mt-1">Manage your blogs here.
+                            </p>
+                        </div>
+                        <div class="flex gap-3">
+                          <a href="/admin/posts/new">
+                            <button
+                                class="flex items-center justify-center gap-2 rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold shadow-md shadow-primary/20 hover:bg-blue-600 transition-colors">
+                                <span class="material-symbols-outlined text-lg">add</span>
+                                <span>Create New Blog</span>
+                            </button>
+                          </a>
+                        </div>
+                    </div>
+
+                </div>
+                    <!-- Search and Table Container -->
+                    <div
+                        class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm overflow-hidden flex flex-col">
+                        <!-- Search Bar -->
+                        <div class="p-4 border-b border-border-light dark:border-border-dark">
+                            <div class="relative w-full md:w-96">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <span class="material-symbols-outlined text-slate-400">search</span>
+                                </div>
+                                <input
+                                    class="block w-full p-2.5 pl-10 text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-[#111a22] border border-border-light dark:border-border-dark rounded-lg focus:ring-primary focus:border-primary placeholder-slate-400"
+                                    placeholder="Search posts by title or content" type="text" />
+                            </div>
+                        </div>
+                        <!-- Table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
+                                <thead
+                                    class="text-xs text-slate-700 uppercase bg-slate-50 dark:bg-surface-dark dark:text-slate-300 border-b border-border-light dark:border-border-dark">
+                                    <tr>
+                                        <th class="px-6 py-4 font-semibold" scope="col">Title</th>
+                                        <th class="px-6 py-4 font-semibold" scope="col">Status</th>
+                                        <th class="px-6 py-4 font-semibold text-right" scope="col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-border-light dark:divide-border-dark" id="post-list-body">
+                                    <tr
+                                        class="bg-surface-light dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-[#1e2a36] transition-colors">
+                                        <td
+                                            class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">
+                                            Understanding React Hooks
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                                Published
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <button
+                                                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                                    title="Edit">
+                                                    <span class="material-symbols-outlined text-[20px]">edit</span>
+                                                </button>
+                                                <button
+                                                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-500 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                                    title="Delete">
+                                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr
+                                        class="bg-surface-light dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-[#1e2a36] transition-colors">
+                                        <td
+                                            class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">
+                                            My Vim Config
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-800 dark:bg-slate-700/50 dark:text-slate-300">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                                Draft
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <button
+                                                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                                    title="Edit">
+                                                    <span class="material-symbols-outlined text-[20px]">edit</span>
+                                                </button>
+                                                <button
+                                                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-500 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                                    title="Delete">
+                                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr
+                                        class="bg-surface-light dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-[#1e2a36] transition-colors">
+                                        <td
+                                            class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">
+                                            The Future of CSS
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                                Published
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <button
+                                                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                                    title="Edit">
+                                                    <span class="material-symbols-outlined text-[20px]">edit</span>
+                                                </button>
+                                                <button
+                                                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-500 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                                    title="Delete">
+                                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr
+                                        class="bg-surface-light dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-[#1e2a36] transition-colors">
+                                        <td
+                                            class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">
+                                            Web Accessibility 101
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                                Published
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <button
+                                                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                                    title="Edit">
+                                                    <span class="material-symbols-outlined text-[20px]">edit</span>
+                                                </button>
+                                                <button
+                                                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-500 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                                    title="Delete">
+                                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr
+                                        class="bg-surface-light dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-[#1e2a36] transition-colors">
+                                        <td
+                                            class="px-6 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">
+                                            Tailwind CSS Tips
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                                Published
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <button
+                                                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                                    title="Edit">
+                                                    <span class="material-symbols-outlined text-[20px]">edit</span>
+                                                </button>
+                                                <button
+                                                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-500 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                                    title="Delete">
+                                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Pagination -->
+                        <div
+                            class="flex items-center justify-between p-4 border-t border-border-light dark:border-border-dark bg-slate-50 dark:bg-[#111a22]">
+                            <span class="text-sm text-slate-500 dark:text-slate-400">
+                                Showing <span class="font-semibold text-slate-900 dark:text-white">1-5</span> of <span
+                                    class="font-semibold text-slate-900 dark:text-white">42</span>
+                            </span>
+                            <div class="inline-flex -space-x-px text-sm">
+                                <button
+                                    class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-slate-500 bg-white dark:bg-surface-dark border border-e-0 border-border-light dark:border-border-dark rounded-s-lg hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-400">Previous</button>
+                                <button
+                                    class="flex items-center justify-center px-3 h-8 leading-tight text-white bg-primary border border-primary hover:bg-blue-600 dark:border-primary dark:text-white">1</button>
+                                <button
+                                    class="flex items-center justify-center px-3 h-8 leading-tight text-slate-500 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-400">2</button>
+                                <button
+                                    class="flex items-center justify-center px-3 h-8 leading-tight text-slate-500 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-400">3</button>
+                                <button
+                                    class="flex items-center justify-center px-3 h-8 leading-tight text-slate-500 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-e-lg hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-400">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        </main>
+    </div>
+    </div>
+    <script src="/admin/js/posts.js"></script>
+</body>
+
+</html>

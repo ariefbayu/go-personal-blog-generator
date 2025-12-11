@@ -7,6 +7,11 @@ import (
 )
 
 func TestConnect(t *testing.T) {
+	// Change to project root for migration paths
+	oldWd, _ := os.Getwd()
+	os.Chdir("../../../personal-blog-generator")
+	defer os.Chdir(oldWd)
+
 	tempDir := t.TempDir()
 	dbPath := filepath.Join(tempDir, "test.db")
 	db, err := Connect(dbPath)
