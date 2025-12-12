@@ -36,10 +36,25 @@ type IndexPost struct {
 	CreatedAtFormatted string
 }
 
-// GenerateStaticSite generates static HTML files for all published posts
-func GenerateStaticSite(repo *repository.PostRepository) error {
+// PortfolioItem represents a portfolio item for template rendering
+type PortfolioItem struct {
+	Title            string
+	ShortDescription template.HTML
+	ProjectURL       string
+	GithubURL        string
+	ShowcaseImage    string
+	SortOrder        int
+}
+
+// PortfolioData represents data for the portfolio page template
+type PortfolioData struct {
+	PortfolioItems []PortfolioItem
+}
+
+// GenerateStaticSite generates static HTML files for all published posts and portfolio
+func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repository.PortfolioRepository) error {
 	// Query all published posts
-	posts, err := repo.GetPublishedPosts()
+	posts, err := postRepo.GetPublishedPosts()
 	if err != nil {
 		return fmt.Errorf("failed to query posts: %w", err)
 	}
@@ -103,6 +118,12 @@ func GenerateStaticSite(repo *repository.PostRepository) error {
 		return fmt.Errorf("failed to generate index page: %w", err)
 	}
 
+	// Generate portfolio page
+	err = generatePortfolioPage(portfolioRepo, outputDir)
+	if err != nil {
+		return fmt.Errorf("failed to generate portfolio page: %w", err)
+	}
+
 	return nil
 }
 
@@ -154,6 +175,57 @@ func generateIndexPage(posts []models.Post, outputDir string) error {
 	err = tmpl.Execute(file, indexData)
 	if err != nil {
 		return fmt.Errorf("failed to execute index template: %w", err)
+	}
+
+	return nil
+}
+
+// generatePortfolioPage creates the portfolio.html file with all portfolio items
+func generatePortfolioPage(portfolioRepo *repository.PortfolioRepository, outputDir string) error {
+	// Parse the portfolio template
+	tmpl, err := template.ParseFiles("templates/portfolio.html")
+	if err != nil {
+		return fmt.Errorf("failed to parse portfolio template: %w", err)
+	}
+
+	// Query all portfolio items ordered by sort_order
+	portfolioItems, err := portfolioRepo.GetAllPortfolioItems()
+	if err != nil {
+		return fmt.Errorf("failed to query portfolio items: %w", err)
+	}
+
+	// Prepare portfolio data
+	templateItems := make([]PortfolioItem, len(portfolioItems))
+	for i, item := range portfolioItems {
+		// Convert markdown in short description to HTML if needed
+		shortDescHTML := mdToHTML(item.ShortDescription)
+
+		templateItems[i] = PortfolioItem{
+			Title:            item.Title,
+			ShortDescription: shortDescHTML,
+			ProjectURL:       item.ProjectURL,
+			GithubURL:        item.GithubURL,
+			ShowcaseImage:    item.ShowcaseImage,
+			SortOrder:        item.SortOrder,
+		}
+	}
+
+	portfolioData := PortfolioData{
+		PortfolioItems: templateItems,
+	}
+
+	// Create portfolio.html file
+	portfolioPath := filepath.Join(outputDir, "portfolio.html")
+	file, err := os.Create(portfolioPath)
+	if err != nil {
+		return fmt.Errorf("failed to create portfolio.html: %w", err)
+	}
+	defer file.Close()
+
+	// Execute template
+	err = tmpl.Execute(file, portfolioData)
+	if err != nil {
+		return fmt.Errorf("failed to execute portfolio template: %w", err)
 	}
 
 	return nil

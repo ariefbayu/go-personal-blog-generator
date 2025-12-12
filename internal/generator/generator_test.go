@@ -36,8 +36,26 @@ func TestGenerateStaticSite(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Create repository
-	repo := repository.NewPostRepository(db)
+	_, err = db.Exec(`
+		CREATE TABLE portfolio_items (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			title TEXT NOT NULL,
+			short_description TEXT NOT NULL,
+			project_url TEXT,
+			github_url TEXT,
+			showcase_image TEXT,
+			sort_order INTEGER DEFAULT 0,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		)
+	`)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Create repositories
+	postRepo := repository.NewPostRepository(db)
+	portfolioRepo := repository.NewPortfolioRepository(db)
 
 	// Insert test data
 	testPost := &models.Post{
@@ -48,7 +66,21 @@ func TestGenerateStaticSite(t *testing.T) {
 		Published: true,
 		CreatedAt: time.Now(),
 	}
-	err = repo.CreatePost(testPost)
+	err = postRepo.CreatePost(testPost)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Insert test portfolio data
+	testPortfolioItem := &models.PortfolioItem{
+		Title:            "Test Portfolio Item",
+		ShortDescription: "A **test** portfolio item with markdown.",
+		ProjectURL:       "https://example.com/project",
+		GithubURL:        "https://github.com/test/repo",
+		ShowcaseImage:    "/images/test.jpg",
+		SortOrder:        1,
+	}
+	err = portfolioRepo.CreatePortfolioItem(testPortfolioItem)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -99,8 +131,35 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 		t.Fatal(err)
 	}
 
+	portfolioTemplateContent := `<!DOCTYPE html>
+<html>
+<head><title>My Portfolio</title></head>
+<body>
+<h1>My Portfolio</h1>
+{{if .PortfolioItems}}
+<div class="portfolio-grid">
+{{range .PortfolioItems}}
+<div class="portfolio-item">
+{{if .ShowcaseImage}}<img src="{{.ShowcaseImage}}" alt="{{.Title}}" />{{end}}
+<h3>{{.Title}}</h3>
+<div>{{.ShortDescription}}</div>
+{{if .ProjectURL}}<a href="{{.ProjectURL}}">View Project</a>{{end}}
+{{if .GithubURL}}<a href="{{.GithubURL}}">View on GitHub</a>{{end}}
+</div>
+{{end}}
+</div>
+{{else}}
+<p>No portfolio items</p>
+{{end}}
+</body>
+</html>`
+	err = os.WriteFile(filepath.Join(templateDir, "portfolio.html"), []byte(portfolioTemplateContent), 0644)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	// Generate static site
-	err = GenerateStaticSite(repo)
+	err = GenerateStaticSite(postRepo, portfolioRepo)
 	if err != nil {
 		t.Fatalf("GenerateStaticSite failed: %v", err)
 	}
@@ -146,6 +205,32 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 	}
 	if !contains(indexContentStr, "/test-post.html") {
 		t.Error("Index HTML does not contain link to post")
+	}
+
+	// Check if portfolio.html exists
+	portfolioFile := "html-outputs/portfolio.html"
+	if _, err := os.Stat(portfolioFile); os.IsNotExist(err) {
+		t.Errorf("Portfolio file %s was not created", portfolioFile)
+	}
+
+	// Check portfolio.html content
+	portfolioContent, err := os.ReadFile(portfolioFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	portfolioContentStr := string(portfolioContent)
+	if !contains(portfolioContentStr, "Test Portfolio Item") {
+		t.Error("Portfolio HTML does not contain portfolio item title")
+	}
+	if !contains(portfolioContentStr, "https://example.com/project") {
+		t.Error("Portfolio HTML does not contain project URL")
+	}
+	if !contains(portfolioContentStr, "/images/test.jpg") {
+		t.Error("Portfolio HTML does not contain showcase image")
+	}
+	if !contains(portfolioContentStr, "<strong>test</strong>") {
+		t.Error("Portfolio HTML does not contain converted markdown in description")
 	}
 
 	// Clean up

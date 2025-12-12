@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>My Portfolio</h1>
+        <p>Explore my projects and work.</p>
+    </header>
+
+    <main>
+        <section class="portfolio">
+            {{if .PortfolioItems}}
+            <div class="portfolio-grid">
+                {{range .PortfolioItems}}
+                <div class="portfolio-item">
+                    {{if .ShowcaseImage}}
+                    <div class="portfolio-image">
+                        <img src="{{.ShowcaseImage}}" alt="{{.Title}}" />
+                    </div>
+                    {{end}}
+                    <div class="portfolio-content">
+                        <h3>{{.Title}}</h3>
+                        <div class="portfolio-description">{{.ShortDescription}}</div>
+                        <div class="portfolio-links">
+                            {{if .ProjectURL}}
+                            <a href="{{.ProjectURL}}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">View Project</a>
+                            {{end}}
+                            {{if .GithubURL}}
+                            <a href="{{.GithubURL}}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">View on GitHub</a>
+                            {{end}}
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+            {{else}}
+            <p>No portfolio items available yet.</p>
+            {{end}}
+        </section>
+    </main>
+
+    <footer>
+        <a href="/">← Back to Home</a>
+    </footer>
+</body>
+</html>

@@ -13,11 +13,15 @@ import (
 )
 
 type APIHandlers struct {
-	postRepo *repository.PostRepository
+	postRepo       *repository.PostRepository
+	portfolioRepo  *repository.PortfolioRepository
 }
 
-func NewAPIHandlers(postRepo *repository.PostRepository) *APIHandlers {
-	return &APIHandlers{postRepo: postRepo}
+func NewAPIHandlers(postRepo *repository.PostRepository, portfolioRepo *repository.PortfolioRepository) *APIHandlers {
+	return &APIHandlers{
+		postRepo:      postRepo,
+		portfolioRepo: portfolioRepo,
+	}
 }
 
 func (h *APIHandlers) GetPostsHandler(w http.ResponseWriter, r *http.Request) {
@@ -129,7 +133,7 @@ func (h *APIHandlers) PublishSiteHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Generate the static site
-	err := generator.GenerateStaticSite(h.postRepo)
+	err := generator.GenerateStaticSite(h.postRepo, h.portfolioRepo)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
