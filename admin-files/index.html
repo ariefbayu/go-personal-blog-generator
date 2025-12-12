@@ -112,6 +112,11 @@
                             </p>
                         </div>
                         <div class="flex gap-3">
+                            <button id="publish-site-btn"
+                                class="flex items-center justify-center gap-2 rounded-lg h-10 px-5 bg-green-600 text-white text-sm font-bold shadow-md shadow-green-600/20 hover:bg-green-700 transition-colors">
+                                <span class="material-symbols-outlined text-lg">publish</span>
+                                <span>Publish Site</span>
+                            </button>
                             <button
                                 class="flex items-center justify-center gap-2 rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold shadow-md shadow-primary/20 hover:bg-blue-600 transition-colors">
                                 <span class="material-symbols-outlined text-lg">add</span>
@@ -130,6 +135,39 @@
         </main>
     </div>
     </div>
+    <script>
+        document.getElementById('publish-site-btn').addEventListener('click', async function() {
+            // Show loading state
+            const btn = this;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="material-symbols-outlined text-lg animate-spin">refresh</span><span>Publishing...</span>';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/publish', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(`Site published successfully! Generated ${result.count} post pages.`);
+                } else {
+                    alert(`Publish failed: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Publish error:', error);
+                alert('Network error. Please try again.');
+            } finally {
+                // Restore button state
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -48,6 +48,7 @@ func main() {
 	r.Put("/api/posts/{id}", apiHandlers.UpdatePostHandler)
 	r.Delete("/api/posts/{id}", apiHandlers.DeletePostHandler)
 	r.Post("/api/upload/image", handlers.UploadImageHandler)
+	r.Post("/api/publish", apiHandlers.PublishSiteHandler)
 	r.Handle("/images/*", http.StripPrefix("/images/", http.FileServer(http.Dir("html-outputs/images/"))))
 	r.Get("/admin/dashboard", handlers.ServeDashboard)
 	r.Get("/admin/posts", handlers.ServePostsPage)

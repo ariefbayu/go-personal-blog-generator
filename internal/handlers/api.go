@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 
+	"github.com/ariefbayu/personal-blog-generator/internal/generator"
 	"github.com/ariefbayu/personal-blog-generator/internal/models"
 	"github.com/ariefbayu/personal-blog-generator/internal/repository"
 )
@@ -118,4 +120,42 @@ func (h *APIHandlers) DeletePostHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h *APIHandlers) PublishSiteHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Generate the static site
+	err := generator.GenerateStaticSite(h.postRepo)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": fmt.Sprintf("Generation failed: %s", err.Error())})
+		return
+	}
+
+	// Count published posts for the response
+	posts, err := h.postRepo.GetAllPosts()
+	if err != nil {
+		// If counting fails, just return success without count
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"message": "Site generated successfully"})
+		return
+	}
+
+	publishedCount := 0
+	for _, post := range posts {
+		if post.Published {
+			publishedCount++
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message": "Site generated successfully",
+		"count":   publishedCount,
+	})
 }

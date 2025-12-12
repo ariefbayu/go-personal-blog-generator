@@ -66,3 +66,23 @@ func (r *PostRepository) DeletePost(id int64) error {
 	}
 	return nil
 }
+
+func (r *PostRepository) GetPublishedPosts() ([]models.Post, error) {
+	rows, err := r.db.Query("SELECT id, title, slug, content, tags, published, created_at FROM posts WHERE published = true ORDER BY created_at DESC")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []models.Post
+	for rows.Next() {
+		var post models.Post
+		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Content, &post.Tags, &post.Published, &post.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	return posts, rows.Err()
+}
