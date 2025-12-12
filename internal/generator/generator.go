@@ -121,12 +121,11 @@ func buildNavigationData(pageRepo *repository.PageRepository) ([]NavLink, error)
 		SortOrder: 1,
 	})
 
-	// Hide portfolio link for now
-	// navLinks = append(navLinks, NavLink{
-	// 	Title:     "Portfolio",
-	// 	URL:       "/portfolio.html",
-	// 	SortOrder: 2,
-	// })
+	navLinks = append(navLinks, NavLink{
+		Title:     "Portfolio",
+		URL:       "/portfolio.html",
+		SortOrder: 2,
+	})
 
 	// Add page links
 	for _, page := range pages {
@@ -254,10 +253,10 @@ func mdToHTML(content string) template.HTML {
 
 // generateIndexPage creates the index.html file with recent posts
 func generateIndexPage(posts []models.Post, portfolioRepo *repository.PortfolioRepository, outputDir string, navData NavigationData) error {
-	// Parse the index template
-	tmpl, err := template.ParseFiles("templates/index.html")
+	// Parse the header, index content, and footer templates
+	tmpl, err := template.ParseFiles("templates/header.html", "templates/index.html", "templates/footer.html")
 	if err != nil {
-		return fmt.Errorf("failed to parse index template: %w", err)
+		return fmt.Errorf("failed to parse index templates: %w", err)
 	}
 
 	// Prepare index data (limit to 10 most recent posts)
@@ -312,10 +311,15 @@ func generateIndexPage(posts []models.Post, portfolioRepo *repository.PortfolioR
 	}
 	defer file.Close()
 
-	// Execute template
-	err = tmpl.Execute(file, indexData)
-	if err != nil {
+	// Execute templates in sequence: header, index content, footer
+	if err := tmpl.ExecuteTemplate(file, "header.html", indexData); err != nil {
+		return fmt.Errorf("failed to execute header template: %w", err)
+	}
+	if err := tmpl.ExecuteTemplate(file, "index.html", indexData); err != nil {
 		return fmt.Errorf("failed to execute index template: %w", err)
+	}
+	if err := tmpl.ExecuteTemplate(file, "footer.html", indexData); err != nil {
+		return fmt.Errorf("failed to execute footer template: %w", err)
 	}
 
 	return nil

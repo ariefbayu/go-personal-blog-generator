@@ -176,6 +176,26 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 		t.Fatal(err)
 	}
 
+	// Create header template
+	headerTemplateContent := `<!DOCTYPE html>
+<html>
+<head><title>My Blog</title></head>
+<body>
+<nav><ul>{{range .NavLinks}}<li><a href="{{.URL}}">{{.Title}}</a></li>{{end}}</ul></nav>`
+	err = os.WriteFile(filepath.Join(templateDir, "header.html"), []byte(headerTemplateContent), 0644)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Create footer template
+	footerTemplateContent := `
+</body>
+</html>`
+	err = os.WriteFile(filepath.Join(templateDir, "footer.html"), []byte(footerTemplateContent), 0644)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	portfolioTemplateContent := `<!DOCTYPE html>
 <html>
 <head><title>My Portfolio</title></head>
