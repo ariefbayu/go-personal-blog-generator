@@ -35,15 +35,15 @@
 <div class="flex items-center gap-4">
 <span class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Share this post</span>
 <div class="flex gap-2">
-<a href="" class="size-10 rounded-full flex items-center justify-center bg-slate-100 dark:bg-[#192233] text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all">
+<a href="#" onclick="window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href) + '&text=' + encodeURIComponent('{{.Title}}'), '_blank'); return false;" class="size-10 rounded-full flex items-center justify-center bg-slate-100 dark:bg-[#192233] text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all">
 <span class="sr-only">Twitter</span>
 <span class="material-symbols-outlined text-lg">rss_feed</span>
 </a>
-<a href="" class="size-10 rounded-full flex items-center justify-center bg-slate-100 dark:bg-[#192233] text-slate-600 dark:text-slate-400 hover:bg-[#0077b5] hover:text-white dark:hover:bg-[#0077b5] dark:hover:text-white transition-all">
+<a href="#" onclick="window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(window.location.href), '_blank'); return false;" class="size-10 rounded-full flex items-center justify-center bg-slate-100 dark:bg-[#192233] text-slate-600 dark:text-slate-400 hover:bg-[#0077b5] hover:text-white dark:hover:bg-[#0077b5] dark:hover:text-white transition-all">
 <span class="sr-only">LinkedIn</span>
 <span class="material-symbols-outlined text-lg">group</span>
 </a>
-<a href="" class="size-10 rounded-full flex items-center justify-center bg-slate-100 dark:bg-[#192233] text-slate-600 dark:text-slate-400 hover:bg-gray-600 hover:text-white dark:hover:bg-gray-600 dark:hover:text-white transition-all">
+<a href="#" onclick="navigator.clipboard.writeText(window.location.href); return false;" class="size-10 rounded-full flex items-center justify-center bg-slate-100 dark:bg-[#192233] text-slate-600 dark:text-slate-400 hover:bg-gray-600 hover:text-white dark:hover:bg-gray-600 dark:hover:text-white transition-all">
 <span class="sr-only">Copy Link</span>
 <span class="material-symbols-outlined text-lg">link</span>
 </a>
