@@ -24,20 +24,6 @@ type Post struct {
 	NavigationData
 }
 
-// IndexData represents data for the index page template
-type IndexData struct {
-	Posts []IndexPost
-	NavigationData
-}
-
-// IndexPost represents a simplified post for the index page
-type IndexPost struct {
-	Title              string
-	Slug               string
-	CreatedAt          time.Time
-	CreatedAtFormatted string
-}
-
 // PortfolioItem represents a portfolio item for template rendering
 type PortfolioItem struct {
 	Title            string
@@ -46,6 +32,21 @@ type PortfolioItem struct {
 	GithubURL        string
 	ShowcaseImage    string
 	SortOrder        int
+}
+
+// IndexData represents data for the index page template
+type IndexData struct {
+	Posts []IndexPost
+	NavigationData
+	PortfolioItems []PortfolioItem
+}
+
+// IndexPost represents a simplified post for the index page
+type IndexPost struct {
+	Title              string
+	Slug               string
+	CreatedAt          time.Time
+	CreatedAtFormatted string
 }
 
 // PortfolioData represents data for the portfolio page template
@@ -99,8 +100,8 @@ func buildNavigationData(pageRepo *repository.PageRepository) ([]NavLink, error)
 	})
 
 	navLinks = append(navLinks, NavLink{
-		Title:     "Portfolio",
-		URL:       "/portfolio.html",
+		Title:     "Blog",
+		URL:       "/post.html",
 		SortOrder: 1,
 	})
 
@@ -195,7 +196,7 @@ func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repo
 	}
 
 	// Generate index page
-	err = generateIndexPage(posts, outputDir, navData)
+	err = generateIndexPage(posts, portfolioRepo, outputDir, navData)
 	if err != nil {
 		return fmt.Errorf("failed to generate index page: %w", err)
 	}
@@ -223,7 +224,7 @@ func mdToHTML(content string) template.HTML {
 }
 
 // generateIndexPage creates the index.html file with recent posts
-func generateIndexPage(posts []models.Post, outputDir string, navData NavigationData) error {
+func generateIndexPage(posts []models.Post, portfolioRepo *repository.PortfolioRepository, outputDir string, navData NavigationData) error {
 	// Parse the index template
 	tmpl, err := template.ParseFiles("templates/index.html")
 	if err != nil {
@@ -247,9 +248,31 @@ func generateIndexPage(posts []models.Post, outputDir string, navData Navigation
 		}
 	}
 
+	portfolioItems, err := portfolioRepo.GetAllPortfolioItems()
+	if err != nil {
+		return fmt.Errorf("failed to query portfolio items: %w", err)
+	}
+
+	// Prepare portfolio data
+	templateItems := make([]PortfolioItem, len(portfolioItems))
+	for i, item := range portfolioItems {
+		// Convert markdown in short description to HTML if needed
+		shortDescHTML := mdToHTML(item.ShortDescription)
+
+		templateItems[i] = PortfolioItem{
+			Title:            item.Title,
+			ShortDescription: shortDescHTML,
+			ProjectURL:       item.ProjectURL,
+			GithubURL:        item.GithubURL,
+			ShowcaseImage:    item.ShowcaseImage,
+			SortOrder:        item.SortOrder,
+		}
+	}
+
 	indexData := IndexData{
 		Posts: indexPosts,
 		NavigationData: navData,
+		PortfolioItems: templateItems,
 	}
 
 	// Create index.html file
