@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>New Portfolio Item</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "surface-dark": "#18232e", // A slightly lighter shade for cards in dark mode
+                        "surface-light": "#ffffff", // White for cards in light mode
+                        "border-dark": "#2a3b4c",
+                        "border-light": "#e5e7eb",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-x-hidden transition-colors duration-200">
+    <div class="flex min-h-screen w-full">
+        <!-- Sidebar -->
+        <div
+            class="hidden lg:flex w-64 flex-col fixed inset-y-0 z-50 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark">
+            <!-- Logo -->
+            <div class="flex items-center gap-3 px-6 py-4 border-b border-border-light dark:border-border-dark">
+                <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white text-lg">code</span>
+                </div>
+                <span class="text-lg font-bold text-slate-900 dark:text-white">Admin</span>
+            </div>
+            <!-- Navigation -->
+            <div class="flex-1 overflow-y-auto py-4">
+                <nav class="px-3 space-y-1">
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        href="/admin/dashboard">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <span class="text-sm font-medium leading-normal">Dashboard</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        href="/admin/posts">
+                        <span class="material-symbols-outlined">article</span>
+                        <span class="text-sm font-medium leading-normal">Blog Posts</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-lg bg-primary text-white"
+                        href="/admin/portfolio">
+                        <span class="material-symbols-outlined">work</span>
+                        <span class="text-sm font-medium leading-normal">Portfolio</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        href="#">
+                        <span class="material-symbols-outlined">code</span>
+                        <span class="text-sm font-medium leading-normal">Pages</span>
+                    </a>
+                </nav>
+            </div>
+            <!-- Logout Section -->
+            <div class="flex flex-col gap-1 border-t border-border-light dark:border-border-dark pt-4">
+            </div>
+        </div>
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden lg:ml-64">
+            <!-- Top Bar for Mobile (Hidden on Desktop) -->
+            <header
+                class="flex lg:hidden items-center justify-between p-4 bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark">
+                <h1 class="font-bold text-lg">Portfolio</h1>
+                <button class="text-slate-500 dark:text-slate-400">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+            </header>
+            <main
+                class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark p-4 md:p-8 lg:px-12 lg:py-10">
+                <div class="max-w-7xl mx-auto flex flex-col gap-8">
+                    <!-- Page Heading & Actions -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-slate-900 dark:text-white text-3xl font-black leading-tight tracking-tight">
+                                Create New Portfolio Item</h2>
+                            <p class="text-slate-500 dark:text-slate-400 mt-1">Add a new portfolio item.
+                            </p>
+                        </div>
+                        <div class="flex gap-3">
+                        </div>
+                    </div>
+
+                </div>
+                    <!-- Form Container -->
+                    <div
+                        class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm p-6">
+                        <form id="portfolio-form" class="space-y-6">
+                            <div>
+                                <label for="title" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Title *</label>
+                                <input type="text" id="title" name="title" required
+                                    class="block w-full p-3 text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-[#111a22] border border-border-light dark:border-border-dark rounded-lg focus:ring-primary focus:border-primary">
+                            </div>
+                            <div>
+                                <label for="shortDescription" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Short Description *</label>
+                                <textarea id="shortDescription" name="shortDescription" rows="3" required
+                                    class="block w-full p-3 text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-[#111a22] border border-border-light dark:border-border-dark rounded-lg focus:ring-primary focus:border-primary"></textarea>
+                            </div>
+                            <div>
+                                <label for="projectURL" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Project URL</label>
+                                <input type="url" id="projectURL" name="projectURL"
+                                    class="block w-full p-3 text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-[#111a22] border border-border-light dark:border-border-dark rounded-lg focus:ring-primary focus:border-primary"
+                                    placeholder="https://example.com">
+                            </div>
+                            <div>
+                                <label for="githubURL" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">GitHub URL</label>
+                                <input type="url" id="githubURL" name="githubURL"
+                                    class="block w-full p-3 text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-[#111a22] border border-border-light dark:border-border-dark rounded-lg focus:ring-primary focus:border-primary"
+                                    placeholder="https://github.com/username/repo">
+                            </div>
+                            <div>
+                                <label for="sortOrder" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Sort Order</label>
+                                <input type="number" id="sortOrder" name="sortOrder" min="0" value="0"
+                                    class="block w-full p-3 text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-[#111a22] border border-border-light dark:border-border-dark rounded-lg focus:ring-primary focus:border-primary">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Showcase Image</label>
+                                <input type="file" id="showcaseImageUpload" accept="image/*"
+                                    class="block w-full p-3 text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-[#111a22] border border-border-light dark:border-border-dark rounded-lg focus:ring-primary focus:border-primary">
+                                <input type="hidden" id="showcaseImageURL" name="showcaseImage">
+                                <div id="imagePreview" class="mt-2 hidden">
+                                    <img id="previewImg" src="" alt="Preview" class="max-w-xs max-h-32 object-cover rounded border">
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Upload an image to showcase this portfolio item</p>
+                            </div>
+                            <div class="flex gap-3">
+                                <button type="submit"
+                                    class="flex items-center justify-center gap-2 rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold shadow-md shadow-primary/20 hover:bg-blue-600 transition-colors">
+                                    <span class="material-symbols-outlined text-lg">save</span>
+                                    <span>Save Portfolio Item</span>
+                                </button>
+                                <a href="/admin/portfolio"
+                                    class="flex items-center justify-center gap-2 rounded-lg h-10 px-5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+        </div>
+        </main>
+    </div>
+    </div>
+    <script src="/admin/js/portfolio_form.js"></script>
+</body>
+
+</html>

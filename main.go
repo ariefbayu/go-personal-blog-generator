@@ -36,7 +36,9 @@ func main() {
 	log.Println("Database connected and migrated successfully")
 
 	postRepo := repository.NewPostRepository(database)
+	portfolioRepo := repository.NewPortfolioRepository(database)
 	apiHandlers := handlers.NewAPIHandlers(postRepo)
+	portfolioHandlers := handlers.NewPortfolioHandlers(portfolioRepo)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -47,6 +49,11 @@ func main() {
 	r.Get("/api/posts/{id}", apiHandlers.GetPostHandler)
 	r.Put("/api/posts/{id}", apiHandlers.UpdatePostHandler)
 	r.Delete("/api/posts/{id}", apiHandlers.DeletePostHandler)
+	r.Get("/api/portfolio", portfolioHandlers.GetPortfolioItemsHandler)
+	r.Post("/api/portfolio", portfolioHandlers.CreatePortfolioItemHandler)
+	r.Get("/api/portfolio/{id}", portfolioHandlers.GetPortfolioItemHandler)
+	r.Put("/api/portfolio/{id}", portfolioHandlers.UpdatePortfolioItemHandler)
+	r.Delete("/api/portfolio/{id}", portfolioHandlers.DeletePortfolioItemHandler)
 	r.Post("/api/upload/image", handlers.UploadImageHandler)
 	r.Post("/api/publish", apiHandlers.PublishSiteHandler)
 	r.Handle("/images/*", http.StripPrefix("/images/", http.FileServer(http.Dir("html-outputs/images/"))))
@@ -54,6 +61,9 @@ func main() {
 	r.Get("/admin/posts", handlers.ServePostsPage)
 	r.Get("/admin/posts/new", handlers.ServeNewPostPage)
 	r.Get("/admin/posts/{id}/edit", handlers.ServeEditPostPage)
+	r.Get("/admin/portfolio", handlers.ServePortfolioPage)
+	r.Get("/admin/portfolio/new", handlers.ServeNewPortfolioPage)
+	r.Get("/admin/portfolio/{id}/edit", handlers.ServeEditPortfolioPage)
 	r.Handle("/admin/*", http.StripPrefix("/admin/", http.FileServer(http.Dir("admin-files/"))))
 
 	port := os.Getenv("APP_PORT")

@@ -61,3 +61,45 @@ func ServeEditPostPage(w http.ResponseWriter, r *http.Request) {
 	}
 	http.ServeFile(w, r, filePath)
 }
+
+func ServePortfolioPage(w http.ResponseWriter, r *http.Request) {
+	wd, err := os.Getwd()
+	if err != nil {
+		http.Error(w, "Unable to get working directory", http.StatusInternalServerError)
+		return
+	}
+	filePath := filepath.Join(wd, "admin-files", "portfolio_list.html")
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		http.Error(w, "Portfolio page template not found", http.StatusInternalServerError)
+		return
+	}
+	http.ServeFile(w, r, filePath)
+}
+
+func ServeNewPortfolioPage(w http.ResponseWriter, r *http.Request) {
+	wd, err := os.Getwd()
+	if err != nil {
+		http.Error(w, "Unable to get working directory", http.StatusInternalServerError)
+		return
+	}
+	filePath := filepath.Join(wd, "admin-files", "portfolio_form.html")
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		http.Error(w, "New portfolio form template not found", http.StatusInternalServerError)
+		return
+	}
+	http.ServeFile(w, r, filePath)
+}
+
+func ServeEditPortfolioPage(w http.ResponseWriter, r *http.Request) {
+	wd, err := os.Getwd()
+	if err != nil {
+		http.Error(w, "Unable to get working directory", http.StatusInternalServerError)
+		return
+	}
+	filePath := filepath.Join(wd, "admin-files", "portfolio_form.html")
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		http.Error(w, "Edit portfolio form template not found", http.StatusInternalServerError)
+		return
+	}
+	http.ServeFile(w, r, filePath)
+}
