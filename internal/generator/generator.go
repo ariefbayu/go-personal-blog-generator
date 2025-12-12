@@ -336,10 +336,10 @@ func generatePostsPage(posts []models.Post, outputDir string, navData Navigation
 		}
 	}
 
-	// Parse the posts template
-	tmpl, err := template.ParseFiles("templates/posts.html")
+	// Parse the header, posts content, and footer templates
+	tmpl, err := template.ParseFiles("templates/header.html", "templates/posts.html", "templates/footer.html")
 	if err != nil {
-		return fmt.Errorf("failed to parse posts template: %w", err)
+		return fmt.Errorf("failed to parse posts templates: %w", err)
 	}
 
 	// Prepare posts data
@@ -384,10 +384,15 @@ func generatePostsPage(posts []models.Post, outputDir string, navData Navigation
 	}
 	defer file.Close()
 
-	// Execute template
-	err = tmpl.Execute(file, postsData)
-	if err != nil {
+	// Execute templates in sequence: header, posts content, footer
+	if err := tmpl.ExecuteTemplate(file, "header.html", postsData); err != nil {
+		return fmt.Errorf("failed to execute header template: %w", err)
+	}
+	if err := tmpl.ExecuteTemplate(file, "posts.html", postsData); err != nil {
 		return fmt.Errorf("failed to execute posts template: %w", err)
+	}
+	if err := tmpl.ExecuteTemplate(file, "footer.html", postsData); err != nil {
+		return fmt.Errorf("failed to execute footer template: %w", err)
 	}
 
 	return nil

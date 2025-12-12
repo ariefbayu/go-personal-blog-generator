@@ -238,12 +238,7 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 		t.Fatal(err)
 	}
 
-	postsTemplateContent := `<!DOCTYPE html>
-<html>
-<head><title>All Posts - My Blog</title></head>
-<body>
-<nav><ul>{{range .NavLinks}}<li><a href="{{.URL}}">{{.Title}}</a></li>{{end}}</ul></nav>
-<h1>All Posts</h1>
+	postsTemplateContent := `<h1>All Posts</h1>
 {{if .Posts}}
 <div class="posts-list">
 {{range .Posts}}
@@ -257,9 +252,7 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 </div>
 {{else}}
 <p>No posts</p>
-{{end}}
-</body>
-</html>`
+{{end}}`
 	err = os.WriteFile(filepath.Join(templateDir, "posts.html"), []byte(postsTemplateContent), 0644)
 	if err != nil {
 		t.Fatal(err)
