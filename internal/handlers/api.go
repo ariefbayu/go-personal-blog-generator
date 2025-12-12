@@ -27,14 +27,45 @@ func NewAPIHandlers(postRepo *repository.PostRepository, portfolioRepo *reposito
 }
 
 func (h *APIHandlers) GetPostsHandler(w http.ResponseWriter, r *http.Request) {
-	posts, err := h.postRepo.GetAllPosts()
+	// Parse query parameters
+	pageStr := r.URL.Query().Get("page")
+	limitStr := r.URL.Query().Get("limit")
+
+	page := 1
+	limit := 10
+
+	if pageStr != "" {
+		if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+			page = p
+		}
+	}
+
+	if limitStr != "" {
+		if l, err := strconv.Atoi(limitStr); err == nil && l > 0 && l <= 100 {
+			limit = l
+		}
+	}
+
+	offset := (page - 1) * limit
+
+	posts, total, err := h.postRepo.GetPostsPaginated(limit, offset)
 	if err != nil {
 		http.Error(w, "Failed to fetch posts", http.StatusInternalServerError)
 		return
 	}
 
+	totalPages := (total + limit - 1) / limit
+
+	response := map[string]interface{}{
+		"posts":       posts,
+		"total":       total,
+		"page":        page,
+		"limit":       limit,
+		"total_pages": totalPages,
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(posts)
+	json.NewEncoder(w).Encode(response)
 }
 
 func (h *APIHandlers) CreatePostHandler(w http.ResponseWriter, r *http.Request) {

@@ -86,3 +86,30 @@ func (r *PostRepository) GetPublishedPosts() ([]models.Post, error) {
 
 	return posts, rows.Err()
 }
+
+func (r *PostRepository) GetPostsPaginated(limit, offset int) ([]models.Post, int, error) {
+	// Get total count
+	var total int
+	err := r.db.QueryRow("SELECT COUNT(*) FROM posts").Scan(&total)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Get paginated posts
+	rows, err := r.db.Query("SELECT id, title, slug, published, created_at FROM posts ORDER BY created_at DESC LIMIT ? OFFSET ?", limit, offset)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	var posts []models.Post
+	for rows.Next() {
+		var post models.Post
+		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Published, &post.CreatedAt)
+		if err != nil {
+			return nil, 0, err
+		}
+		posts = append(posts, post)
+	}
+	return posts, total, rows.Err()
+}

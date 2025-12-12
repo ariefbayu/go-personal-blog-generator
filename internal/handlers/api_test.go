@@ -53,10 +53,26 @@ func TestGetPostsHandler(t *testing.T) {
 		t.Errorf("Expected status 200, got %d", w.Code)
 	}
 
-	var posts []models.Post
-	err = json.NewDecoder(w.Body).Decode(&posts)
+	var response map[string]interface{}
+	err = json.NewDecoder(w.Body).Decode(&response)
 	if err != nil {
 		t.Fatalf("Failed to decode JSON: %v", err)
+	}
+
+	postsInterface, ok := response["posts"]
+	if !ok {
+		t.Fatal("Response missing 'posts' field")
+	}
+
+	postsData, err := json.Marshal(postsInterface)
+	if err != nil {
+		t.Fatalf("Failed to marshal posts: %v", err)
+	}
+
+	var posts []models.Post
+	err = json.Unmarshal(postsData, &posts)
+	if err != nil {
+		t.Fatalf("Failed to unmarshal posts: %v", err)
 	}
 
 	if len(posts) != 1 {
@@ -65,6 +81,23 @@ func TestGetPostsHandler(t *testing.T) {
 
 	if posts[0].Title != "Test Post" {
 		t.Errorf("Expected title 'Test Post', got '%s'", posts[0].Title)
+	}
+
+	// Check pagination metadata
+	if response["total"].(float64) != 1 {
+		t.Errorf("Expected total 1, got %v", response["total"])
+	}
+
+	if response["page"].(float64) != 1 {
+		t.Errorf("Expected page 1, got %v", response["page"])
+	}
+
+	if response["limit"].(float64) != 10 {
+		t.Errorf("Expected limit 10, got %v", response["limit"])
+	}
+
+	if response["total_pages"].(float64) != 1 {
+		t.Errorf("Expected total_pages 1, got %v", response["total_pages"])
 	}
 }
 
