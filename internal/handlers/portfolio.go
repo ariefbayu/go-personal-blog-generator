@@ -20,14 +20,45 @@ func NewPortfolioHandlers(portfolioRepo *repository.PortfolioRepository) *Portfo
 }
 
 func (h *PortfolioHandlers) GetPortfolioItemsHandler(w http.ResponseWriter, r *http.Request) {
-	items, err := h.portfolioRepo.GetAllPortfolioItems()
+	// Parse query parameters
+	pageStr := r.URL.Query().Get("page")
+	limitStr := r.URL.Query().Get("limit")
+
+	page := 1
+	limit := 10
+
+	if pageStr != "" {
+		if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+			page = p
+		}
+	}
+
+	if limitStr != "" {
+		if l, err := strconv.Atoi(limitStr); err == nil && l > 0 && l <= 100 {
+			limit = l
+		}
+	}
+
+	offset := (page - 1) * limit
+
+	items, total, err := h.portfolioRepo.GetPortfolioItemsPaginated(limit, offset)
 	if err != nil {
 		http.Error(w, "Failed to fetch portfolio items", http.StatusInternalServerError)
 		return
 	}
 
+	totalPages := (total + limit - 1) / limit
+
+	response := map[string]interface{}{
+		"items":       items,
+		"total":       total,
+		"page":        page,
+		"limit":       limit,
+		"total_pages": totalPages,
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(items)
+	json.NewEncoder(w).Encode(response)
 }
 
 func (h *PortfolioHandlers) GetPortfolioItemHandler(w http.ResponseWriter, r *http.Request) {

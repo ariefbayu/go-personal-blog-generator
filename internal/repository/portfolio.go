@@ -33,6 +33,33 @@ func (r *PortfolioRepository) GetAllPortfolioItems() ([]models.PortfolioItem, er
 	return items, nil
 }
 
+func (r *PortfolioRepository) GetPortfolioItemsPaginated(limit, offset int) ([]models.PortfolioItem, int, error) {
+	// Get total count
+	var total int
+	err := r.db.QueryRow("SELECT COUNT(*) FROM portfolio_items").Scan(&total)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Get paginated items
+	rows, err := r.db.Query("SELECT id, title, short_description, project_url, github_url, showcase_image, sort_order, created_at, updated_at FROM portfolio_items ORDER BY sort_order ASC, created_at DESC LIMIT ? OFFSET ?", limit, offset)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	var items []models.PortfolioItem
+	for rows.Next() {
+		var item models.PortfolioItem
+		err := rows.Scan(&item.ID, &item.Title, &item.ShortDescription, &item.ProjectURL, &item.GithubURL, &item.ShowcaseImage, &item.SortOrder, &item.CreatedAt, &item.UpdatedAt)
+		if err != nil {
+			return nil, 0, err
+		}
+		items = append(items, item)
+	}
+	return items, total, rows.Err()
+}
+
 func (r *PortfolioRepository) GetPortfolioItemByID(id int64) (*models.PortfolioItem, error) {
 	var item models.PortfolioItem
 	err := r.db.QueryRow("SELECT id, title, short_description, project_url, github_url, showcase_image, sort_order, created_at, updated_at FROM portfolio_items WHERE id = ?", id).Scan(&item.ID, &item.Title, &item.ShortDescription, &item.ProjectURL, &item.GithubURL, &item.ShowcaseImage, &item.SortOrder, &item.CreatedAt, &item.UpdatedAt)

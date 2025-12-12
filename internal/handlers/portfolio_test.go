@@ -84,13 +84,50 @@ func TestPortfolioHandlers(t *testing.T) {
 			t.Errorf("Expected status 200, got %d", w.Code)
 		}
 
+		var response map[string]interface{}
+		err := json.Unmarshal(w.Body.Bytes(), &response)
+		if err != nil {
+			t.Fatalf("Failed to decode JSON: %v", err)
+		}
+
+		itemsInterface, ok := response["items"]
+		if !ok {
+			t.Fatal("Response missing 'items' field")
+		}
+
+		itemsData, err := json.Marshal(itemsInterface)
+		if err != nil {
+			t.Fatalf("Failed to marshal items: %v", err)
+		}
+
 		var items []models.PortfolioItem
-		json.Unmarshal(w.Body.Bytes(), &items)
+		err = json.Unmarshal(itemsData, &items)
+		if err != nil {
+			t.Fatalf("Failed to unmarshal items: %v", err)
+		}
+
 		if len(items) != 1 {
 			t.Errorf("Expected 1 item, got %d", len(items))
 		}
 		if items[0].Title != testItem.Title {
 			t.Errorf("Expected title %s, got %s", testItem.Title, items[0].Title)
+		}
+
+		// Check pagination metadata
+		if response["total"].(float64) != 1 {
+			t.Errorf("Expected total 1, got %v", response["total"])
+		}
+
+		if response["page"].(float64) != 1 {
+			t.Errorf("Expected page 1, got %v", response["page"])
+		}
+
+		if response["limit"].(float64) != 10 {
+			t.Errorf("Expected limit 10, got %v", response["limit"])
+		}
+
+		if response["total_pages"].(float64) != 1 {
+			t.Errorf("Expected total_pages 1, got %v", response["total_pages"])
 		}
 	})
 
