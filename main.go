@@ -37,8 +37,10 @@ func main() {
 
 	postRepo := repository.NewPostRepository(database)
 	portfolioRepo := repository.NewPortfolioRepository(database)
+	pageRepo := repository.NewPageRepository(database)
 	apiHandlers := handlers.NewAPIHandlers(postRepo)
 	portfolioHandlers := handlers.NewPortfolioHandlers(portfolioRepo)
+	pageHandlers := handlers.NewPageHandlers(pageRepo)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -54,6 +56,11 @@ func main() {
 	r.Get("/api/portfolio/{id}", portfolioHandlers.GetPortfolioItemHandler)
 	r.Put("/api/portfolio/{id}", portfolioHandlers.UpdatePortfolioItemHandler)
 	r.Delete("/api/portfolio/{id}", portfolioHandlers.DeletePortfolioItemHandler)
+	r.Get("/api/pages", pageHandlers.GetPagesHandler)
+	r.Post("/api/pages", pageHandlers.CreatePageHandler)
+	r.Get("/api/pages/{id}", pageHandlers.GetPageHandler)
+	r.Put("/api/pages/{id}", pageHandlers.UpdatePageHandler)
+	r.Delete("/api/pages/{id}", pageHandlers.DeletePageHandler)
 	r.Post("/api/upload/image", handlers.UploadImageHandler)
 	r.Post("/api/publish", apiHandlers.PublishSiteHandler)
 	r.Handle("/images/*", http.StripPrefix("/images/", http.FileServer(http.Dir("html-outputs/images/"))))
@@ -64,6 +71,9 @@ func main() {
 	r.Get("/admin/portfolio", handlers.ServePortfolioPage)
 	r.Get("/admin/portfolio/new", handlers.ServeNewPortfolioPage)
 	r.Get("/admin/portfolio/{id}/edit", handlers.ServeEditPortfolioPage)
+	r.Get("/admin/pages", handlers.ServePagesPage)
+	r.Get("/admin/pages/new", handlers.ServeNewPagePage)
+	r.Get("/admin/pages/{id}/edit", handlers.ServeEditPagePage)
 	r.Handle("/admin/*", http.StripPrefix("/admin/", http.FileServer(http.Dir("admin-files/"))))
 
 	port := os.Getenv("APP_PORT")
