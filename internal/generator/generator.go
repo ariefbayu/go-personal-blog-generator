@@ -121,11 +121,12 @@ func buildNavigationData(pageRepo *repository.PageRepository) ([]NavLink, error)
 		SortOrder: 1,
 	})
 
-	navLinks = append(navLinks, NavLink{
-		Title:     "Portfolio",
-		URL:       "/portfolio.html",
-		SortOrder: 2,
-	})
+	// hide portfolio link for now
+	// navLinks = append(navLinks, NavLink{
+	// 	Title:     "Portfolio",
+	// 	URL:       "/portfolio.html",
+	// 	SortOrder: 2,
+	// })
 
 	// Add page links
 	for _, page := range pages {
