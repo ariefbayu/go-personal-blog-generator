@@ -20,14 +20,45 @@ func NewPageHandlers(pageRepo *repository.PageRepository) *PageHandlers {
 }
 
 func (h *PageHandlers) GetPagesHandler(w http.ResponseWriter, r *http.Request) {
-	pages, err := h.pageRepo.GetAllPages()
+	// Parse query parameters
+	pageStr := r.URL.Query().Get("page")
+	limitStr := r.URL.Query().Get("limit")
+
+	page := 1
+	limit := 10
+
+	if pageStr != "" {
+		if p, err := strconv.Atoi(pageStr); err == nil && p > 0 {
+			page = p
+		}
+	}
+
+	if limitStr != "" {
+		if l, err := strconv.Atoi(limitStr); err == nil && l > 0 && l <= 100 {
+			limit = l
+		}
+	}
+
+	offset := (page - 1) * limit
+
+	pages, total, err := h.pageRepo.GetPagesPaginated(limit, offset)
 	if err != nil {
 		http.Error(w, "Failed to fetch pages", http.StatusInternalServerError)
 		return
 	}
 
+	totalPages := (total + limit - 1) / limit
+
+	response := map[string]interface{}{
+		"pages":       pages,
+		"total":       total,
+		"page":        page,
+		"limit":       limit,
+		"total_pages": totalPages,
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(pages)
+	json.NewEncoder(w).Encode(response)
 }
 
 func (h *PageHandlers) GetPageHandler(w http.ResponseWriter, r *http.Request) {

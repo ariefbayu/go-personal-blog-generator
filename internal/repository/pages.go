@@ -33,6 +33,33 @@ func (r *PageRepository) GetAllPages() ([]models.Page, error) {
 	return pages, nil
 }
 
+func (r *PageRepository) GetPagesPaginated(limit, offset int) ([]models.Page, int, error) {
+	// Get total count
+	var total int
+	err := r.db.QueryRow("SELECT COUNT(*) FROM pages").Scan(&total)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// Get paginated pages
+	rows, err := r.db.Query("SELECT id, title, slug, content, show_in_nav, sort_order, created_at, updated_at FROM pages ORDER BY sort_order ASC, created_at DESC LIMIT ? OFFSET ?", limit, offset)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	var pages []models.Page
+	for rows.Next() {
+		var page models.Page
+		err := rows.Scan(&page.ID, &page.Title, &page.Slug, &page.Content, &page.ShowInNav, &page.SortOrder, &page.CreatedAt, &page.UpdatedAt)
+		if err != nil {
+			return nil, 0, err
+		}
+		pages = append(pages, page)
+	}
+	return pages, total, rows.Err()
+}
+
 func (r *PageRepository) GetPageByID(id int64) (*models.Page, error) {
 	var page models.Page
 	err := r.db.QueryRow("SELECT id, title, slug, content, show_in_nav, sort_order, created_at, updated_at FROM pages WHERE id = ?", id).Scan(&page.ID, &page.Title, &page.Slug, &page.Content, &page.ShowInNav, &page.SortOrder, &page.CreatedAt, &page.UpdatedAt)
