@@ -1,39 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{.Title}}</title>
-    <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
-    <header>
-        <nav>
-            <ul class="nav-list">
-                {{range .NavLinks}}
-                <li class="nav-item"><a href="{{.URL}}">{{.Title}}</a></li>
-                {{end}}
-            </ul>
-        </nav>
-        <h1>{{.Title}}</h1>
-        <time datetime="{{.CreatedAt}}">{{.CreatedAtFormatted}}</time>
-        {{if .Tags}}
-        <div class="tags">
-            {{range .Tags}}
-            <span class="tag">{{.}}</span>
-            {{end}}
-        </div>
-        {{end}}
-    </header>
+<main class="flex-grow pt-10 pb-20">
+<article class="max-w-[800px] mx-auto px-4 sm:px-6 relative">
+<div class="mb-10">
+<a class="inline-flex items-center text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors group" href="/posts.html">
+<span class="material-symbols-outlined mr-1 text-lg group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                Back to Articles
+            </a>
+</div>
+<header class="mb-12 border-b border-gray-200 dark:border-[#232f48] pb-10">
+{{if .Tags}}
+<div class="flex flex-wrap gap-2 mb-6">
 
-    <main>
-        <article>
-            {{.Content}}
-        </article>
-    </main>
-
-    <footer>
-        <a href="/">← Back to Home</a>
-    </footer>
-</body>
-</html>
+{{range .Tags}}
+<a class="inline-flex items-center rounded-full bg-slate-100 dark:bg-[#192233] border border-gray-200 dark:border-[#324467] px-3 py-1 text-xs font-bold text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-500 transition-colors" href="#">
+{{.}}
+</a>
+{{end}}
+</div>
+{{end}}
+<h1 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white mb-6 leading-[1.15]">
+                {{.Title}}
+            </h1>
+<div class="flex flex-wrap items-center gap-y-2 gap-x-6 text-sm text-slate-500 dark:text-slate-400 font-medium">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[1.125rem]">calendar_today</span>
+<time datetime="{{.CreatedAt}}">{{.CreatedAtFormatted}}</time>
+</div>
+</div>
+</header>
+<div class="prose prose-lg prose-slate dark:prose-invert max-w-none prose-headings:font-bold prose-a:text-primary hover:prose-a:text-blue-500 prose-img:rounded-xl">
+{{.Content}}
+</div>
+<div class="mt-16 pt-8 border-t border-gray-200 dark:border-[#232f48]">
+<div class="flex flex-col sm:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-4">
+<span class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Share this post</span>
+<div class="flex gap-2">
+<a href="" class="size-10 rounded-full flex items-center justify-center bg-slate-100 dark:bg-[#192233] text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all">
+<span class="sr-only">Twitter</span>
+<span class="material-symbols-outlined text-lg">rss_feed</span>
+</a>
+<a href="" class="size-10 rounded-full flex items-center justify-center bg-slate-100 dark:bg-[#192233] text-slate-600 dark:text-slate-400 hover:bg-[#0077b5] hover:text-white dark:hover:bg-[#0077b5] dark:hover:text-white transition-all">
+<span class="sr-only">LinkedIn</span>
+<span class="material-symbols-outlined text-lg">group</span>
+</a>
+<a href="" class="size-10 rounded-full flex items-center justify-center bg-slate-100 dark:bg-[#192233] text-slate-600 dark:text-slate-400 hover:bg-gray-600 hover:text-white dark:hover:bg-gray-600 dark:hover:text-white transition-all">
+<span class="sr-only">Copy Link</span>
+<span class="material-symbols-outlined text-lg">link</span>
+</a>
+</div>
+</div>
+<!-- <div class="flex gap-4">
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 dark:border-[#324467] text-slate-600 dark:text-slate-300 hover:border-primary hover:text-primary dark:hover:border-primary dark:hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-xl">thumb_up</span>
+<span class="text-sm font-bold">Helpful</span>
+</button>
+</div> -->
+</div>
+</div>
+</article>
+</main>

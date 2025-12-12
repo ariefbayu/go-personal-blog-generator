@@ -136,19 +136,12 @@ func TestGenerateStaticSite(t *testing.T) {
 	}
 	defer os.RemoveAll(templateDir)
 
-	templateContent := `<!DOCTYPE html>
-<html>
-<head><title>{{.Title}}</title></head>
-<body>
-<nav><ul>{{range .NavLinks}}<li><a href="{{.URL}}">{{.Title}}</a></li>{{end}}</ul></nav>
-<h1>{{.Title}}</h1>
+	templateContent := `<h1>{{.Title}}</h1>
 <div>{{.Content}}</div>
 <p>Published: {{.CreatedAtFormatted}}</p>
 {{if .Tags}}
 Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
-{{end}}
-</body>
-</html>`
+{{end}}`
 	err = os.WriteFile(filepath.Join(templateDir, "post.html"), []byte(templateContent), 0644)
 	if err != nil {
 		t.Fatal(err)

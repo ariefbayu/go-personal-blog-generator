@@ -163,10 +163,10 @@ func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repo
 	}
 	navData := NavigationData{NavLinks: navLinks}
 
-	// Parse the template
-	tmpl, err := template.ParseFiles("templates/post.html")
+	// Parse the header, post content, and footer templates
+	tmpl, err := template.ParseFiles("templates/header.html", "templates/post.html", "templates/footer.html")
 	if err != nil {
-		return fmt.Errorf("failed to parse template: %w", err)
+		return fmt.Errorf("failed to parse post templates: %w", err)
 	}
 
 	// Ensure output directory exists
@@ -207,11 +207,15 @@ func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repo
 			return fmt.Errorf("failed to create file %s: %w", filename, err)
 		}
 
-		// Execute template
-		err = tmpl.Execute(file, templatePost)
-		file.Close() // Close regardless of error
-		if err != nil {
-			return fmt.Errorf("failed to execute template for post %s: %w", post.Slug, err)
+		// Execute templates in sequence: header, post content, footer
+		if err := tmpl.ExecuteTemplate(file, "header.html", templatePost); err != nil {
+			return fmt.Errorf("failed to execute header template for post %s: %w", post.Slug, err)
+		}
+		if err := tmpl.ExecuteTemplate(file, "post.html", templatePost); err != nil {
+			return fmt.Errorf("failed to execute post template for post %s: %w", post.Slug, err)
+		}
+		if err := tmpl.ExecuteTemplate(file, "footer.html", templatePost); err != nil {
+			return fmt.Errorf("failed to execute footer template for post %s: %w", post.Slug, err)
 		}
 
 		postCount++
