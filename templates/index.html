@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Personal Blog</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>My Personal Blog</h1>
+        <p>Welcome to my blog where I share thoughts and experiences.</p>
+    </header>
+
+    <main>
+        <section class="posts">
+            <h2>Recent Posts</h2>
+            {{if .Posts}}
+            <ul class="post-list">
+                {{range .Posts}}
+                <li class="post-item">
+                    <h3><a href="/{{.Slug}}.html">{{.Title}}</a></h3>
+                    <time datetime="{{.CreatedAt}}">{{.CreatedAtFormatted}}</time>
+                </li>
+                {{end}}
+            </ul>
+            {{else}}
+            <p>No posts published yet.</p>
+            {{end}}
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 My Personal Blog</p>
+    </footer>
+</body>
+</html>

@@ -78,6 +78,27 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 		t.Fatal(err)
 	}
 
+	indexTemplateContent := `<!DOCTYPE html>
+<html>
+<head><title>My Blog</title></head>
+<body>
+<h1>My Blog</h1>
+{{if .Posts}}
+<ul>
+{{range .Posts}}
+<li><a href="/{{.Slug}}.html">{{.Title}}</a> - {{.CreatedAtFormatted}}</li>
+{{end}}
+</ul>
+{{else}}
+<p>No posts</p>
+{{end}}
+</body>
+</html>`
+	err = os.WriteFile(filepath.Join(templateDir, "index.html"), []byte(indexTemplateContent), 0644)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	// Generate static site
 	err = GenerateStaticSite(repo)
 	if err != nil {
@@ -105,6 +126,26 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 	}
 	if !contains(contentStr, "<strong>test</strong>") {
 		t.Error("Generated HTML does not contain bold formatting")
+	}
+
+	// Check if index.html exists
+	indexFile := "html-outputs/index.html"
+	if _, err := os.Stat(indexFile); os.IsNotExist(err) {
+		t.Errorf("Index file %s was not created", indexFile)
+	}
+
+	// Check index.html content
+	indexContent, err := os.ReadFile(indexFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	indexContentStr := string(indexContent)
+	if !contains(indexContentStr, "Test Post") {
+		t.Error("Index HTML does not contain post title")
+	}
+	if !contains(indexContentStr, "/test-post.html") {
+		t.Error("Index HTML does not contain link to post")
 	}
 
 	// Clean up

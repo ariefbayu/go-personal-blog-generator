@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ariefbayu/personal-blog-generator/internal/models"
 	"github.com/ariefbayu/personal-blog-generator/internal/repository"
 	"github.com/gomarkdown/markdown"
 )
@@ -18,6 +19,19 @@ type Post struct {
 	Slug               string
 	Content            template.HTML
 	Tags               []string
+	CreatedAt          time.Time
+	CreatedAtFormatted string
+}
+
+// IndexData represents data for the index page template
+type IndexData struct {
+	Posts []IndexPost
+}
+
+// IndexPost represents a simplified post for the index page
+type IndexPost struct {
+	Title              string
+	Slug               string
 	CreatedAt          time.Time
 	CreatedAtFormatted string
 }
@@ -83,6 +97,12 @@ func GenerateStaticSite(repo *repository.PostRepository) error {
 		postCount++
 	}
 
+	// Generate index page
+	err = generateIndexPage(posts, outputDir)
+	if err != nil {
+		return fmt.Errorf("failed to generate index page: %w", err)
+	}
+
 	return nil
 }
 
@@ -91,4 +111,50 @@ func mdToHTML(content string) template.HTML {
 	// Convert markdown to HTML
 	htmlBytes := markdown.ToHTML([]byte(content), nil, nil)
 	return template.HTML(htmlBytes)
+}
+
+// generateIndexPage creates the index.html file with recent posts
+func generateIndexPage(posts []models.Post, outputDir string) error {
+	// Parse the index template
+	tmpl, err := template.ParseFiles("templates/index.html")
+	if err != nil {
+		return fmt.Errorf("failed to parse index template: %w", err)
+	}
+
+	// Prepare index data (limit to 10 most recent posts)
+	limit := 10
+	if len(posts) < limit {
+		limit = len(posts)
+	}
+
+	indexPosts := make([]IndexPost, limit)
+	for i := 0; i < limit; i++ {
+		post := posts[i]
+		indexPosts[i] = IndexPost{
+			Title:              post.Title,
+			Slug:               post.Slug,
+			CreatedAt:          post.CreatedAt,
+			CreatedAtFormatted: post.CreatedAt.Format("January 2, 2006"),
+		}
+	}
+
+	indexData := IndexData{
+		Posts: indexPosts,
+	}
+
+	// Create index.html file
+	indexPath := filepath.Join(outputDir, "index.html")
+	file, err := os.Create(indexPath)
+	if err != nil {
+		return fmt.Errorf("failed to create index.html: %w", err)
+	}
+	defer file.Close()
+
+	// Execute template
+	err = tmpl.Execute(file, indexData)
+	if err != nil {
+		return fmt.Errorf("failed to execute index template: %w", err)
+	}
+
+	return nil
 }
