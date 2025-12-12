@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Halaman Beranda Portofolio - Blog</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b6cee",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.375rem", "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #101622;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #324467;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2b6cee;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen flex flex-col font-display selection:bg-primary/30 selection:text-primary">
+    <header
+        class="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-[#232f48] bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+        <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="size-8 text-primary flex items-center justify-center">
+                        <span class="material-symbols-outlined !text-3xl">terminal</span>
+                    </div>
+                    <h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">John Doe</h1>
+                </div>
+                <nav class="hidden md:flex items-center gap-8">
+                  {{range .NavLinks}}
+                    <a class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary transition-colors"
+                        href="{{.URL}}">{{.Title}}</a>
+                {{end}}
+                </nav>
+                <div class="flex items-center gap-4">
+                    <button
+                        class="bg-primary hover:bg-blue-600 text-white text-sm font-bold h-9 px-4 rounded transition-colors flex items-center gap-2">
+                        <span class="material-symbols-outlined !text-sm">download</span>
+                        <span>Resume</span>
+                    </button>
+                    <button class="md:hidden text-slate-600 dark:text-slate-300">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="flex-grow">
+        <section class="py-20">
+            <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                    <div>
+                        <h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Latest Blog Posts
+                        </h2>
+                        <p class="mt-2 text-slate-600 dark:text-slate-400">Insights on engineering, architecture, and
+                            technology.</p>
+                    </div>
+                    <!-- <a class="group flex items-center gap-1 text-primary font-bold text-sm hover:underline" href="#">
+                        Read All Posts
+                        <span
+                            class="material-symbols-outlined text-sm transition-transform group-hover:translate-x-1">arrow_forward</span>
+                    </a> -->
+                </div>
+{{if .Posts}}
+                <div class="flex flex-col gap-4">
+{{range .Posts}}
+                  <a class="group relative flex flex-col sm:flex-row gap-6 p-6 bg-white dark:bg-[#192233] border border-gray-200 dark:border-[#324467] rounded-xl hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-lg dark:hover:shadow-primary/5"
+                        href="#">
+                        <!-- <div
+                            class="shrink-0 hidden sm:flex items-center justify-center w-24 h-24 rounded-lg bg-slate-100 dark:bg-[#0f1521] text-slate-300 dark:text-[#232f48] group-hover:text-primary/70 transition-colors">
+                            <span class="material-symbols-outlined !text-4xl">architecture</span>
+                        </div> -->
+                        <div class="flex flex-col flex-grow justify-center">
+                            <div class="flex items-center flex-wrap gap-3 mb-2">
+                                <!-- <span
+                                    class="inline-flex items-center rounded bg-indigo-100 dark:bg-indigo-900/30 px-2.5 py-0.5 text-xs font-bold text-indigo-700 dark:text-indigo-300 ring-1 ring-inset ring-indigo-700/10 dark:ring-indigo-700/30">Architecture</span> -->
+{{if .Tags}}
+                                <div class="flex gap-2">
+{{range .Tags}}
+                                    <span class="text-xs font-mono text-slate-500">{{.}}</span>
+{{end}}
+                                </div>
+{{end}}
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors">
+                                {{.Title}}</h3>
+                            <p class="text-sm text-slate-600 dark:text-[#92a4c9] line-clamp-2">{{.Excerpt}}</p>
+                        </div>
+                        <!-- <div
+                            class="hidden sm:flex flex-col justify-center items-end shrink-0 pl-4 border-l border-gray-100 dark:border-[#232f48]">
+                            <span
+                                class="material-symbols-outlined text-slate-300 dark:text-slate-600 group-hover:text-primary transition-colors">arrow_forward_ios</span>
+                        </div> -->
+                    </a>
+{{end}}
+                </div>
+{{end}}
+              </div>
+        </section>
+    </main>
+    <footer class="bg-white dark:bg-[#0d121c] border-t border-gray-200 dark:border-[#232f48] py-12">
+        <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex flex-col gap-2 text-center md:text-left">
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">John Doe</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Building the web of tomorrow, one commit at a
+                        time.</p>
+                </div>
+                <div class="flex gap-6">
+                    <a class="text-slate-400 hover:text-primary transition-colors" href="#">
+                        <span class="sr-only">GitHub</span>
+                        <span class="material-symbols-outlined">code</span>
+                    </a>
+                    <a class="text-slate-400 hover:text-primary transition-colors" href="#">
+                        <span class="sr-only">Twitter</span>
+                        <span class="material-symbols-outlined">rss_feed</span>
+                    </a>
+                    <a class="text-slate-400 hover:text-primary transition-colors" href="#">
+                        <span class="sr-only">LinkedIn</span>
+                        <span class="material-symbols-outlined">group</span>
+                    </a>
+                    <a class="text-slate-400 hover:text-primary transition-colors" href="#">
+                        <span class="sr-only">Email</span>
+                        <span class="material-symbols-outlined">mail</span>
+                    </a>
+                </div>
+            </div>
+            <div
+                class="mt-8 pt-8 border-t border-gray-100 dark:border-[#1a2333] text-center text-sm text-slate-400 dark:text-slate-600">
+                © 2023 John Doe. All rights reserved. Designed with precision.
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>

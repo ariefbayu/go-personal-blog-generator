@@ -41,6 +41,22 @@ type IndexData struct {
 	PortfolioItems []PortfolioItem
 }
 
+// PostsData represents data for the posts listing page template
+type PostsData struct {
+	Posts []PostItem
+	NavigationData
+}
+
+// PostItem represents a post item for the posts listing page
+type PostItem struct {
+	Title              string
+	Slug               string
+	CreatedAt          time.Time
+	CreatedAtFormatted string
+	Tags               []string
+	Excerpt            string
+}
+
 // IndexPost represents a simplified post for the index page
 type IndexPost struct {
 	Title              string
@@ -101,9 +117,16 @@ func buildNavigationData(pageRepo *repository.PageRepository) ([]NavLink, error)
 
 	navLinks = append(navLinks, NavLink{
 		Title:     "Blog",
-		URL:       "/post.html",
+		URL:       "/posts.html",
 		SortOrder: 1,
 	})
+
+	// Hide portfolio link for now
+	// navLinks = append(navLinks, NavLink{
+	// 	Title:     "Portfolio",
+	// 	URL:       "/portfolio.html",
+	// 	SortOrder: 2,
+	// })
 
 	// Add page links
 	for _, page := range pages {
@@ -201,6 +224,12 @@ func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repo
 		return fmt.Errorf("failed to generate index page: %w", err)
 	}
 
+	// Generate posts listing page
+	err = generatePostsPage(posts, outputDir, navData)
+	if err != nil {
+		return fmt.Errorf("failed to generate posts page: %w", err)
+	}
+
 	// Generate portfolio page
 	err = generatePortfolioPage(portfolioRepo, outputDir, navData)
 	if err != nil {
@@ -287,6 +316,74 @@ func generateIndexPage(posts []models.Post, portfolioRepo *repository.PortfolioR
 	err = tmpl.Execute(file, indexData)
 	if err != nil {
 		return fmt.Errorf("failed to execute index template: %w", err)
+	}
+
+	return nil
+}
+
+// generatePostsPage creates the posts.html file with all posts
+func generatePostsPage(posts []models.Post, outputDir string, navData NavigationData) error {
+	// Sort posts by created date descending (newest first)
+	for i := 0; i < len(posts)-1; i++ {
+		for j := i + 1; j < len(posts); j++ {
+			if posts[i].CreatedAt.Before(posts[j].CreatedAt) {
+				posts[i], posts[j] = posts[j], posts[i]
+			}
+		}
+	}
+
+	// Parse the posts template
+	tmpl, err := template.ParseFiles("templates/posts.html")
+	if err != nil {
+		return fmt.Errorf("failed to parse posts template: %w", err)
+	}
+
+	// Prepare posts data
+	postItems := make([]PostItem, len(posts))
+	for i, post := range posts {
+		// Parse tags
+		var tags []string
+		if post.Tags != "" {
+			tags = strings.Split(post.Tags, ",")
+			for j, tag := range tags {
+				tags[j] = strings.TrimSpace(tag)
+			}
+		}
+
+		// Create excerpt from content (first 200 characters)
+		content := strings.ReplaceAll(post.Content, "\n", " ")
+		excerpt := content
+		if len(content) > 200 {
+			excerpt = content[:200] + "..."
+		}
+
+		postItems[i] = PostItem{
+			Title:              post.Title,
+			Slug:               post.Slug,
+			CreatedAt:          post.CreatedAt,
+			CreatedAtFormatted: post.CreatedAt.Format("2006-01-02"),
+			Tags:               tags,
+			Excerpt:            excerpt,
+		}
+	}
+
+	postsData := PostsData{
+		Posts:          postItems,
+		NavigationData: navData,
+	}
+
+	// Create posts.html file
+	postsPath := filepath.Join(outputDir, "posts.html")
+	file, err := os.Create(postsPath)
+	if err != nil {
+		return fmt.Errorf("failed to create posts.html: %w", err)
+	}
+	defer file.Close()
+
+	// Execute template
+	err = tmpl.Execute(file, postsData)
+	if err != nil {
+		return fmt.Errorf("failed to execute posts template: %w", err)
 	}
 
 	return nil

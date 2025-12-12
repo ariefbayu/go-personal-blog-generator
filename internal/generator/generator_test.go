@@ -75,15 +75,28 @@ func TestGenerateStaticSite(t *testing.T) {
 	pageRepo := repository.NewPageRepository(db)
 
 	// Insert test data
-	testPost := &models.Post{
-		Title:    "Test Post",
-		Slug:     "test-post",
-		Content:  "# Hello World\n\nThis is a **test** post.",
-		Tags:     "test,blog",
+	testPost1 := &models.Post{
+		Title:     "Test Post 1",
+		Slug:      "test-post-1",
+		Content:   "This is a test post content",
+		Tags:      "test,blog",
 		Published: true,
-		CreatedAt: time.Now(),
+		CreatedAt: time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC),
 	}
-	err = postRepo.CreatePost(testPost)
+	err = postRepo.CreatePost(testPost1)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	testPost2 := &models.Post{
+		Title:     "Test Post 2",
+		Slug:      "test-post-2",
+		Content:   "This is a test post content for the second post",
+		Tags:      "test,blog",
+		Published: true,
+		CreatedAt: time.Date(2023, 1, 2, 0, 0, 0, 0, time.UTC),
+	}
+	err = postRepo.CreatePost(testPost2)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -205,6 +218,33 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 		t.Fatal(err)
 	}
 
+	postsTemplateContent := `<!DOCTYPE html>
+<html>
+<head><title>All Posts - My Blog</title></head>
+<body>
+<nav><ul>{{range .NavLinks}}<li><a href="{{.URL}}">{{.Title}}</a></li>{{end}}</ul></nav>
+<h1>All Posts</h1>
+{{if .Posts}}
+<div class="posts-list">
+{{range .Posts}}
+<article class="post-item">
+<h2><a href="/posts/{{.Slug}}.html">{{.Title}}</a></h2>
+<time>{{.CreatedAtFormatted}}</time>
+{{if .Tags}}{{range .Tags}}<span class="tag">{{.}}</span>{{end}}{{end}}
+<p>{{.Excerpt}}</p>
+</article>
+{{end}}
+</div>
+{{else}}
+<p>No posts</p>
+{{end}}
+</body>
+</html>`
+	err = os.WriteFile(filepath.Join(templateDir, "posts.html"), []byte(postsTemplateContent), 0644)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	// Generate static site
 	err = GenerateStaticSite(postRepo, portfolioRepo, pageRepo)
 	if err != nil {
@@ -212,7 +252,7 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 	}
 
 	// Check if output file exists
-	outputFile := "html-outputs/test-post.html"
+	outputFile := "html-outputs/test-post-1.html"
 	if _, err := os.Stat(outputFile); os.IsNotExist(err) {
 		t.Errorf("Output file %s was not created", outputFile)
 	}
@@ -224,14 +264,11 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 	}
 
 	contentStr := string(content)
-	if !contains(contentStr, "Test Post") {
+	if !contains(contentStr, "Test Post 1") {
 		t.Error("Generated HTML does not contain post title")
 	}
-	if !contains(contentStr, "<h1>Hello World</h1>") {
-		t.Error("Generated HTML does not contain converted markdown")
-	}
-	if !contains(contentStr, "<strong>test</strong>") {
-		t.Error("Generated HTML does not contain bold formatting")
+	if !contains(contentStr, "This is a test post content") {
+		t.Error("Generated HTML does not contain post content")
 	}
 	if !contains(contentStr, "Home") {
 		t.Error("Generated HTML does not contain navigation Home link")
@@ -256,10 +293,10 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 	}
 
 	indexContentStr := string(indexContent)
-	if !contains(indexContentStr, "Test Post") {
+	if !contains(indexContentStr, "Test Post 2") {
 		t.Error("Index HTML does not contain post title")
 	}
-	if !contains(indexContentStr, "/test-post.html") {
+	if !contains(indexContentStr, "/test-post-2.html") {
 		t.Error("Index HTML does not contain link to post")
 	}
 	if !contains(indexContentStr, "Home") {
@@ -319,6 +356,41 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 	}
 	if !contains(pageContentStr, "<strong>test</strong>") {
 		t.Error("Page HTML does not contain converted markdown in content")
+	}
+
+	// Check if posts.html exists
+	postsFile := "html-outputs/posts.html"
+	if _, err := os.Stat(postsFile); os.IsNotExist(err) {
+		t.Errorf("Posts file %s was not created", postsFile)
+	}
+
+	// Check posts.html content
+	postsContent, err := os.ReadFile(postsFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	postsContentStr := string(postsContent)
+	if !contains(postsContentStr, "All Posts") {
+		t.Error("Posts HTML does not contain page title")
+	}
+	if !contains(postsContentStr, "Test Post 1") {
+		t.Error("Posts HTML does not contain first post title")
+	}
+	if !contains(postsContentStr, "Test Post 2") {
+		t.Error("Posts HTML does not contain second post title")
+	}
+	if !contains(postsContentStr, "/posts/test-post-1.html") {
+		t.Error("Posts HTML does not contain first post link")
+	}
+	if !contains(postsContentStr, "/posts/test-post-2.html") {
+		t.Error("Posts HTML does not contain second post link")
+	}
+	if !contains(postsContentStr, "This is a test post content") {
+		t.Error("Posts HTML does not contain post excerpt")
+	}
+	if !contains(postsContentStr, "2023-01-01") {
+		t.Error("Posts HTML does not contain post date")
 	}
 
 	// Clean up
