@@ -51,6 +51,25 @@ func (r *PageRepository) GetPageBySlug(slug string) (*models.Page, error) {
 	return &page, nil
 }
 
+func (r *PageRepository) GetPagesForNavigation() ([]models.Page, error) {
+	rows, err := r.db.Query("SELECT id, title, slug, content, show_in_nav, sort_order, created_at, updated_at FROM pages WHERE show_in_nav = true ORDER BY sort_order ASC, created_at DESC")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var pages []models.Page
+	for rows.Next() {
+		var page models.Page
+		err := rows.Scan(&page.ID, &page.Title, &page.Slug, &page.Content, &page.ShowInNav, &page.SortOrder, &page.CreatedAt, &page.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+		pages = append(pages, page)
+	}
+	return pages, nil
+}
+
 func (r *PageRepository) CreatePage(page *models.Page) error {
 	err := r.db.QueryRow("INSERT INTO pages (title, slug, content, show_in_nav, sort_order) VALUES (?, ?, ?, ?, ?) RETURNING id", page.Title, page.Slug, page.Content, page.ShowInNav, page.SortOrder).Scan(&page.ID)
 	return err

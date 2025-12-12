@@ -8,6 +8,13 @@
 </head>
 <body>
     <header>
+        <nav>
+            <ul class="nav-list">
+                {{range .NavLinks}}
+                <li class="nav-item"><a href="{{.URL}}">{{.Title}}</a></li>
+                {{end}}
+            </ul>
+        </nav>
         <h1>My Portfolio</h1>
         <p>Explore my projects and work.</p>
     </header>

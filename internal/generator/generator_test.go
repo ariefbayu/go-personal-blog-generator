@@ -127,6 +127,7 @@ func TestGenerateStaticSite(t *testing.T) {
 <html>
 <head><title>{{.Title}}</title></head>
 <body>
+<nav><ul>{{range .NavLinks}}<li><a href="{{.URL}}">{{.Title}}</a></li>{{end}}</ul></nav>
 <h1>{{.Title}}</h1>
 <div>{{.Content}}</div>
 <p>Published: {{.CreatedAtFormatted}}</p>
@@ -144,6 +145,7 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 <html>
 <head><title>My Blog</title></head>
 <body>
+<nav><ul>{{range .NavLinks}}<li><a href="{{.URL}}">{{.Title}}</a></li>{{end}}</ul></nav>
 <h1>My Blog</h1>
 {{if .Posts}}
 <ul>
@@ -165,6 +167,7 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 <html>
 <head><title>My Portfolio</title></head>
 <body>
+<nav><ul>{{range .NavLinks}}<li><a href="{{.URL}}">{{.Title}}</a></li>{{end}}</ul></nav>
 <h1>My Portfolio</h1>
 {{if .PortfolioItems}}
 <div class="portfolio-grid">
@@ -192,6 +195,7 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 <html>
 <head><title>{{.Title}}</title></head>
 <body>
+<nav><ul>{{range .NavLinks}}<li><a href="{{.URL}}">{{.Title}}</a></li>{{end}}</ul></nav>
 <h1>{{.Title}}</h1>
 <div>{{.Content}}</div>
 </body>
@@ -229,6 +233,15 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 	if !contains(contentStr, "<strong>test</strong>") {
 		t.Error("Generated HTML does not contain bold formatting")
 	}
+	if !contains(contentStr, "Home") {
+		t.Error("Generated HTML does not contain navigation Home link")
+	}
+	if !contains(contentStr, "Portfolio") {
+		t.Error("Generated HTML does not contain navigation Portfolio link")
+	}
+	if !contains(contentStr, "About Us") {
+		t.Error("Generated HTML does not contain navigation About Us link")
+	}
 
 	// Check if index.html exists
 	indexFile := "html-outputs/index.html"
@@ -248,6 +261,15 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 	}
 	if !contains(indexContentStr, "/test-post.html") {
 		t.Error("Index HTML does not contain link to post")
+	}
+	if !contains(indexContentStr, "Home") {
+		t.Error("Index HTML does not contain navigation Home link")
+	}
+	if !contains(indexContentStr, "Portfolio") {
+		t.Error("Index HTML does not contain navigation Portfolio link")
+	}
+	if !contains(indexContentStr, "About Us") {
+		t.Error("Index HTML does not contain navigation About Us link")
 	}
 
 	// Check if portfolio.html exists
