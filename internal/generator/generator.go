@@ -51,8 +51,22 @@ type PortfolioData struct {
 	PortfolioItems []PortfolioItem
 }
 
-// GenerateStaticSite generates static HTML files for all published posts and portfolio
-func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repository.PortfolioRepository) error {
+// Page represents a static page for template rendering
+type Page struct {
+	Title   string
+	Slug    string
+	Content template.HTML
+}
+
+// PageData represents data for the page template
+type PageData struct {
+	Title   string
+	Slug    string
+	Content template.HTML
+}
+
+// GenerateStaticSite generates static HTML files for all published posts, portfolio, and pages
+func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repository.PortfolioRepository, pageRepo *repository.PageRepository) error {
 	// Query all published posts
 	posts, err := postRepo.GetPublishedPosts()
 	if err != nil {
@@ -122,6 +136,12 @@ func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repo
 	err = generatePortfolioPage(portfolioRepo, outputDir)
 	if err != nil {
 		return fmt.Errorf("failed to generate portfolio page: %w", err)
+	}
+
+	// Generate static pages
+	err = generatePages(pageRepo, outputDir)
+	if err != nil {
+		return fmt.Errorf("failed to generate pages: %w", err)
 	}
 
 	return nil
@@ -226,6 +246,50 @@ func generatePortfolioPage(portfolioRepo *repository.PortfolioRepository, output
 	err = tmpl.Execute(file, portfolioData)
 	if err != nil {
 		return fmt.Errorf("failed to execute portfolio template: %w", err)
+	}
+
+	return nil
+}
+
+// generatePages creates HTML files for all static pages
+func generatePages(pageRepo *repository.PageRepository, outputDir string) error {
+	// Parse the page template
+	tmpl, err := template.ParseFiles("templates/page.html")
+	if err != nil {
+		return fmt.Errorf("failed to parse page template: %w", err)
+	}
+
+	// Query all pages
+	pages, err := pageRepo.GetAllPages()
+	if err != nil {
+		return fmt.Errorf("failed to query pages: %w", err)
+	}
+
+	// Generate HTML for each page
+	for _, page := range pages {
+		// Convert markdown content to HTML
+		contentHTML := mdToHTML(page.Content)
+
+		// Create page data for template
+		pageData := PageData{
+			Title:   page.Title,
+			Slug:    page.Slug,
+			Content: contentHTML,
+		}
+
+		// Create output file
+		filename := filepath.Join(outputDir, page.Slug+".html")
+		file, err := os.Create(filename)
+		if err != nil {
+			return fmt.Errorf("failed to create file %s: %w", filename, err)
+		}
+
+		// Execute template
+		err = tmpl.Execute(file, pageData)
+		file.Close() // Close regardless of error
+		if err != nil {
+			return fmt.Errorf("failed to execute page template for %s: %w", page.Slug, err)
+		}
 	}
 
 	return nil

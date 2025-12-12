@@ -53,9 +53,26 @@ func TestGenerateStaticSite(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	_, err = db.Exec(`
+		CREATE TABLE pages (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			title TEXT NOT NULL,
+			slug TEXT UNIQUE NOT NULL,
+			content TEXT NOT NULL,
+			show_in_nav BOOLEAN DEFAULT TRUE,
+			sort_order INTEGER DEFAULT 0,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		)
+	`)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	// Create repositories
 	postRepo := repository.NewPostRepository(db)
 	portfolioRepo := repository.NewPortfolioRepository(db)
+	pageRepo := repository.NewPageRepository(db)
 
 	// Insert test data
 	testPost := &models.Post{
@@ -81,6 +98,19 @@ func TestGenerateStaticSite(t *testing.T) {
 		SortOrder:        1,
 	}
 	err = portfolioRepo.CreatePortfolioItem(testPortfolioItem)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Insert test page data
+	testPage := &models.Page{
+		Title:      "About Us",
+		Slug:       "about",
+		Content:    "# About Us\n\nThis is a **test** page with markdown content.",
+		ShowInNav:  true,
+		SortOrder:  1,
+	}
+	err = pageRepo.CreatePage(testPage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -158,8 +188,21 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 		t.Fatal(err)
 	}
 
+	pageTemplateContent := `<!DOCTYPE html>
+<html>
+<head><title>{{.Title}}</title></head>
+<body>
+<h1>{{.Title}}</h1>
+<div>{{.Content}}</div>
+</body>
+</html>`
+	err = os.WriteFile(filepath.Join(templateDir, "page.html"), []byte(pageTemplateContent), 0644)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	// Generate static site
-	err = GenerateStaticSite(postRepo, portfolioRepo)
+	err = GenerateStaticSite(postRepo, portfolioRepo, pageRepo)
 	if err != nil {
 		t.Fatalf("GenerateStaticSite failed: %v", err)
 	}
@@ -231,6 +274,29 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 	}
 	if !contains(portfolioContentStr, "<strong>test</strong>") {
 		t.Error("Portfolio HTML does not contain converted markdown in description")
+	}
+
+	// Check if about.html exists
+	pageFile := "html-outputs/about.html"
+	if _, err := os.Stat(pageFile); os.IsNotExist(err) {
+		t.Errorf("Page file %s was not created", pageFile)
+	}
+
+	// Check about.html content
+	pageContent, err := os.ReadFile(pageFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	pageContentStr := string(pageContent)
+	if !contains(pageContentStr, "About Us") {
+		t.Error("Page HTML does not contain page title")
+	}
+	if !contains(pageContentStr, "<h1>About Us</h1>") {
+		t.Error("Page HTML does not contain converted markdown heading")
+	}
+	if !contains(pageContentStr, "<strong>test</strong>") {
+		t.Error("Page HTML does not contain converted markdown in content")
 	}
 
 	// Clean up

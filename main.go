@@ -38,7 +38,7 @@ func main() {
 	postRepo := repository.NewPostRepository(database)
 	portfolioRepo := repository.NewPortfolioRepository(database)
 	pageRepo := repository.NewPageRepository(database)
-	apiHandlers := handlers.NewAPIHandlers(postRepo, portfolioRepo)
+	apiHandlers := handlers.NewAPIHandlers(postRepo, portfolioRepo, pageRepo)
 	portfolioHandlers := handlers.NewPortfolioHandlers(portfolioRepo)
 	pageHandlers := handlers.NewPageHandlers(pageRepo)
 
