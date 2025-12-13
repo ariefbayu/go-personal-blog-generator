@@ -3,10 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"os"
-	"path/filepath"
 	"sort"
-	"strings"
 )
 
 func Migrate(db *sql.DB) error {
@@ -19,28 +16,14 @@ func Migrate(db *sql.DB) error {
 		return fmt.Errorf("failed to create schema_migrations table: %w", err)
 	}
 
-	// Get migration files
-	wd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("failed to get working directory: %w", err)
+	// Get migration IDs from embedded migrations
+	var migrationIDs []string
+	for id := range Migrations {
+		migrationIDs = append(migrationIDs, id)
 	}
-	migrationDir := filepath.Join(wd, "internal", "db", "migrations")
-	files, err := os.ReadDir(migrationDir)
-	if err != nil {
-		return fmt.Errorf("failed to read migrations directory: %w", err)
-	}
+	sort.Strings(migrationIDs)
 
-	var migrationFiles []string
-	for _, file := range files {
-		if strings.HasSuffix(file.Name(), ".sql") {
-			migrationFiles = append(migrationFiles, file.Name())
-		}
-	}
-	sort.Strings(migrationFiles)
-
-	for _, fileName := range migrationFiles {
-		id := strings.TrimSuffix(fileName, ".sql")
-
+	for _, id := range migrationIDs {
 		// Check if already applied
 		var count int
 		err := db.QueryRow("SELECT COUNT(*) FROM schema_migrations WHERE id = ?", id).Scan(&count)
@@ -51,13 +34,11 @@ func Migrate(db *sql.DB) error {
 			continue
 		}
 
-		// Read SQL
-		sqlPath := filepath.Join(migrationDir, fileName)
-		sqlBytes, err := os.ReadFile(sqlPath)
-		if err != nil {
-			return fmt.Errorf("failed to read migration file %s: %w", fileName, err)
+		// Get SQL from embedded
+		sql, exists := Migrations[id]
+		if !exists {
+			return fmt.Errorf("migration %s not found in embedded migrations", id)
 		}
-		sql := string(sqlBytes)
 
 		// Apply in transaction
 		tx, err := db.Begin()
