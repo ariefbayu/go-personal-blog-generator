@@ -1,0 +1,32 @@
+[Unit]
+Description=Personal Blog Generator
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=blog
+Group=blog
+WorkingDirectory=/var/www/blog
+ExecStart=/var/www/blog/main
+Restart=always
+RestartSec=5
+Environment=PATH=/usr/local/go/bin:/usr/bin:/bin
+EnvironmentFile=-/var/www/blog/.env
+
+# Security settings
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ReadWritePaths=/var/www/blog
+ProtectHome=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+
+# Resource limits
+LimitNOFILE=65536
+MemoryLimit=512M
+
+[Install]
+WantedBy=multi-user.target
