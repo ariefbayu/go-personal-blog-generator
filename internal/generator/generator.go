@@ -142,6 +142,10 @@ func buildNavigationData(pageRepo *repository.PageRepository, settings *reposito
 				continue
 			}
 			navLinks = append(navLinks, link)
+		} else if item == "pages" {
+			for _, page := range pages {
+				navLinks = append(navLinks, availableLinks["page:"+page.Slug])
+			}
 		}
 	}
 
