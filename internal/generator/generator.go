@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"os"
@@ -96,61 +97,75 @@ type NavLink struct {
 // NavigationData represents navigation data for templates
 type NavigationData struct {
 	NavLinks []NavLink
+	SiteName string
 }
 
 // buildNavigationData builds navigation links from pages and standard links
-func buildNavigationData(pageRepo *repository.PageRepository) ([]NavLink, error) {
+func buildNavigationData(pageRepo *repository.PageRepository, settings *repository.Settings) ([]NavLink, error) {
 	// Query pages that should show in navigation
 	pages, err := pageRepo.GetPagesForNavigation()
 	if err != nil {
 		return nil, fmt.Errorf("failed to query navigation pages: %w", err)
 	}
 
-	var navLinks []NavLink
-
-	// Add standard links
-	navLinks = append(navLinks, NavLink{
-		Title:     "Home",
-		URL:       "/index.html",
-		SortOrder: 0,
-	})
-
-	navLinks = append(navLinks, NavLink{
-		Title:     "Blog",
-		URL:       "/posts.html",
-		SortOrder: 1,
-	})
-
-	// hide portfolio link for now
-	// navLinks = append(navLinks, NavLink{
-	// 	Title:     "Portfolio",
-	// 	URL:       "/portfolio.html",
-	// 	SortOrder: 2,
-	// })
-
-	// Add page links
-	for _, page := range pages {
-		navLinks = append(navLinks, NavLink{
-			Title:     page.Title,
-			URL:       "/" + page.Slug + ".html",
-			SortOrder: page.SortOrder + 10, // Offset to put after standard links
-		})
+	// Parse menu order
+	var menuOrder []string
+	if err := json.Unmarshal([]byte(settings.MenuOrder), &menuOrder); err != nil {
+		// fallback to default
+		menuOrder = []string{"posts", "portfolio"}
 	}
 
-	// Sort by sort order
-	for i := 0; i < len(navLinks)-1; i++ {
-		for j := i + 1; j < len(navLinks); j++ {
-			if navLinks[i].SortOrder > navLinks[j].SortOrder {
-				navLinks[i], navLinks[j] = navLinks[j], navLinks[i]
-			}
+	// Create available links
+	availableLinks := map[string]NavLink{
+		"home":      {Title: "Home", URL: "/index.html", SortOrder: 0},
+		"posts":     {Title: "Blog", URL: "/posts.html", SortOrder: 1},
+		"portfolio": {Title: "Portfolio", URL: "/portfolio.html", SortOrder: 2},
+	}
+
+	for _, page := range pages {
+		availableLinks["page:"+page.Slug] = NavLink{
+			Title:     page.Title,
+			URL:       "/" + page.Slug + ".html",
+			SortOrder: page.SortOrder + 10,
 		}
+	}
+
+	var navLinks []NavLink
+	for _, item := range menuOrder {
+		if link, exists := availableLinks[item]; exists {
+			if item == "portfolio" && !settings.ShowPortfolioMenu {
+				continue
+			}
+			if item == "posts" && !settings.ShowPostsMenu {
+				continue
+			}
+			navLinks = append(navLinks, link)
+		}
+	}
+
+	// Ensure home is included if not in menu_order
+	hasHome := false
+	for _, link := range navLinks {
+		if link.URL == "/index.html" {
+			hasHome = true
+			break
+		}
+	}
+	if !hasHome {
+		navLinks = append([]NavLink{availableLinks["home"]}, navLinks...)
 	}
 
 	return navLinks, nil
 }
 
 // GenerateStaticSite generates static HTML files for all published posts, portfolio, and pages
-func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repository.PortfolioRepository, pageRepo *repository.PageRepository, templatePath, outputPath string) error {
+func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repository.PortfolioRepository, pageRepo *repository.PageRepository, settingsRepo *repository.SettingsRepository, templatePath, outputPath string) error {
+	// Get settings
+	settings, err := settingsRepo.GetSettings()
+	if err != nil {
+		return fmt.Errorf("failed to get settings: %w", err)
+	}
+
 	// Query all published posts
 	posts, err := postRepo.GetPublishedPosts()
 	if err != nil {
@@ -158,11 +173,11 @@ func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repo
 	}
 
 	// Build navigation data
-	navLinks, err := buildNavigationData(pageRepo)
+	navLinks, err := buildNavigationData(pageRepo, settings)
 	if err != nil {
 		return fmt.Errorf("failed to build navigation data: %w", err)
 	}
-	navData := NavigationData{NavLinks: navLinks}
+	navData := NavigationData{NavLinks: navLinks, SiteName: settings.SiteName}
 
 	// Parse the header, post content, and footer templates
 	tmpl, err := template.ParseFiles(

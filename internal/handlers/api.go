@@ -19,13 +19,15 @@ type APIHandlers struct {
 	postRepo      *repository.PostRepository
 	portfolioRepo *repository.PortfolioRepository
 	pageRepo      *repository.PageRepository
+	settingsRepo  *repository.SettingsRepository
 }
 
-func NewAPIHandlers(postRepo *repository.PostRepository, portfolioRepo *repository.PortfolioRepository, pageRepo *repository.PageRepository) *APIHandlers {
+func NewAPIHandlers(postRepo *repository.PostRepository, portfolioRepo *repository.PortfolioRepository, pageRepo *repository.PageRepository, settingsRepo *repository.SettingsRepository) *APIHandlers {
 	return &APIHandlers{
 		postRepo:      postRepo,
 		portfolioRepo: portfolioRepo,
 		pageRepo:      pageRepo,
+		settingsRepo:  settingsRepo,
 	}
 }
 
@@ -190,7 +192,7 @@ func (h *APIHandlers) PublishSiteHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Generate the static site
-	err := generator.GenerateStaticSite(h.postRepo, h.portfolioRepo, h.pageRepo, templatePath, outputPath)
+	err := generator.GenerateStaticSite(h.postRepo, h.portfolioRepo, h.pageRepo, h.settingsRepo, templatePath, outputPath)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -219,4 +221,32 @@ func (h *APIHandlers) PublishSiteHandler(w http.ResponseWriter, r *http.Request)
 		"message": "Site generated successfully",
 		"count":   publishedCount,
 	})
+}
+
+func (h *APIHandlers) GetSettingsHandler(w http.ResponseWriter, r *http.Request) {
+	settings, err := h.settingsRepo.GetSettings()
+	if err != nil {
+		http.Error(w, "Failed to get settings", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(settings)
+}
+
+func (h *APIHandlers) UpdateSettingsHandler(w http.ResponseWriter, r *http.Request) {
+	var settings repository.Settings
+	if err := json.NewDecoder(r.Body).Decode(&settings); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	err := h.settingsRepo.UpdateSettings(&settings)
+	if err != nil {
+		http.Error(w, "Failed to update settings", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "Settings updated successfully"})
 }

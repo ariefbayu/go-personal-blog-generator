@@ -56,4 +56,15 @@ CREATE TABLE IF NOT EXISTS pages (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );`,
+	"004_create_settings_table": `CREATE TABLE IF NOT EXISTS settings (
+    id INTEGER PRIMARY KEY DEFAULT 1,
+    site_name TEXT DEFAULT 'My Blog',
+    show_portfolio_menu BOOLEAN DEFAULT 1,
+    show_posts_menu BOOLEAN DEFAULT 1,
+    menu_order TEXT DEFAULT '["posts","portfolio"]',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT OR IGNORE INTO settings (id, site_name, show_portfolio_menu, show_posts_menu, menu_order) VALUES (1, 'My Blog', 1, 1, '["posts","portfolio"]');`,
 }

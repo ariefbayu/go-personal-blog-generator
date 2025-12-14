@@ -113,7 +113,16 @@ func ServeNewPagePage(w http.ResponseWriter, r *http.Request) {
 func ServeEditPagePage(w http.ResponseWriter, r *http.Request) {
 	filePath := filepath.Join(AdminFilesPath, "page_form.html")
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		http.Error(w, "Edit page form template not found", http.StatusInternalServerError)
+		http.Error(w, "Page edit template not found", http.StatusInternalServerError)
+		return
+	}
+	http.ServeFile(w, r, filePath)
+}
+
+func ServeSettingsPage(w http.ResponseWriter, r *http.Request) {
+	filePath := filepath.Join(AdminFilesPath, "settings.html")
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		http.Error(w, "Settings template not found", http.StatusInternalServerError)
 		return
 	}
 	http.ServeFile(w, r, filePath)

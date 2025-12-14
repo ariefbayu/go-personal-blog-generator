@@ -44,7 +44,8 @@ func main() {
 	postRepo := repository.NewPostRepository(database)
 	portfolioRepo := repository.NewPortfolioRepository(database)
 	pageRepo := repository.NewPageRepository(database)
-	apiHandlers := handlers.NewAPIHandlers(postRepo, portfolioRepo, pageRepo)
+	settingsRepo := repository.NewSettingsRepository(database)
+	apiHandlers := handlers.NewAPIHandlers(postRepo, portfolioRepo, pageRepo, settingsRepo)
 	portfolioHandlers := handlers.NewPortfolioHandlers(portfolioRepo)
 	pageHandlers := handlers.NewPageHandlers(pageRepo)
 
@@ -67,6 +68,8 @@ func main() {
 	r.Get("/api/pages/{id}", pageHandlers.GetPageHandler)
 	r.Put("/api/pages/{id}", pageHandlers.UpdatePageHandler)
 	r.Delete("/api/pages/{id}", pageHandlers.DeletePageHandler)
+	r.Get("/api/settings", apiHandlers.GetSettingsHandler)
+	r.Post("/api/settings", apiHandlers.UpdateSettingsHandler)
 	r.Post("/api/upload/image", handlers.UploadImageHandler)
 	r.Post("/api/publish", apiHandlers.PublishSiteHandler)
 	r.Handle("/images/*", http.StripPrefix("/images/", http.FileServer(http.Dir("html-outputs/images/"))))
@@ -80,6 +83,7 @@ func main() {
 	r.Get("/admin/pages", handlers.ServePagesPage)
 	r.Get("/admin/pages/new", handlers.ServeNewPagePage)
 	r.Get("/admin/pages/{id}/edit", handlers.ServeEditPagePage)
+	r.Get("/admin/settings", handlers.ServeSettingsPage)
 	r.Handle("/admin/*", http.StripPrefix("/admin/", http.FileServer(http.Dir(handlers.AdminFilesPath))))
 
 	port := os.Getenv("APP_PORT")
