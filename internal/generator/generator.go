@@ -488,8 +488,14 @@ func generatePortfolioPage(portfolioRepo *repository.PortfolioRepository, output
 
 // generatePages creates HTML files for all static pages
 func generatePages(pageRepo *repository.PageRepository, outputPath, templatePath string, navData NavigationData) error {
-	// Parse the page template
-	tmpl, err := template.ParseFiles(filepath.Join(templatePath, "page.html"))
+
+	// Parse the header, page content, and footer templates
+	tmpl, err := template.ParseFiles(
+		filepath.Join(templatePath, "header.html"),
+		filepath.Join(templatePath, "page.html"),
+		filepath.Join(templatePath, "footer.html"),
+	)
+
 	if err != nil {
 		return fmt.Errorf("failed to parse page template: %w", err)
 	}
@@ -520,11 +526,22 @@ func generatePages(pageRepo *repository.PageRepository, outputPath, templatePath
 			return fmt.Errorf("failed to create file %s: %w", filename, err)
 		}
 
-		// Execute template
-		err = tmpl.Execute(file, pageData)
-		file.Close() // Close regardless of error
-		if err != nil {
-			return fmt.Errorf("failed to execute page template for %s: %w", page.Slug, err)
+		// // Execute template
+		// err = tmpl.Execute(file, pageData)
+		// file.Close() // Close regardless of error
+		// if err != nil {
+		// 	return fmt.Errorf("failed to execute page template for %s: %w", page.Slug, err)
+		// }
+
+		// Execute templates in sequence: header, post content, footer
+		if err := tmpl.ExecuteTemplate(file, "header.html", pageData); err != nil {
+			return fmt.Errorf("failed to execute header template for page %s: %w", page.Slug, err)
+		}
+		if err := tmpl.ExecuteTemplate(file, "page.html", pageData); err != nil {
+			return fmt.Errorf("failed to execute page template for page %s: %w", page.Slug, err)
+		}
+		if err := tmpl.ExecuteTemplate(file, "footer.html", pageData); err != nil {
+			return fmt.Errorf("failed to execute footer template for page %s: %w", page.Slug, err)
 		}
 	}
 
