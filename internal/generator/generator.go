@@ -349,7 +349,12 @@ func generatePostsPage(posts []models.Post, outputPath, templatePath string, nav
 	}
 
 	// Parse the header, posts content, and footer templates
-	tmpl, err := template.ParseFiles("templates/header.html", "templates/posts.html", "templates/footer.html")
+	tmpl, err := template.ParseFiles(
+		filepath.Join(templatePath, "header.html"),
+		filepath.Join(templatePath, "posts.html"),
+		filepath.Join(templatePath, "footer.html"),
+	)
+
 	if err != nil {
 		return fmt.Errorf("failed to parse posts templates: %w", err)
 	}

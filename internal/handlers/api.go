@@ -3,8 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -169,11 +171,22 @@ func (h *APIHandlers) PublishSiteHandler(w http.ResponseWriter, r *http.Request)
 	// Get paths from environment variables
 	templatePath := os.Getenv("TEMPLATE_PATH")
 	if templatePath == "" {
-		templatePath = "./templates" // default
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			templatePath = "./templates" // fallback
+		} else {
+			templatePath = filepath.Join(homeDir, ".personal-blog-generator", "templates")
+		}
 	}
+	log.Printf("DEBUG: templatePath = %s", templatePath)
 	outputPath := os.Getenv("OUTPUT_PATH")
 	if outputPath == "" {
-		outputPath = "./html-outputs" // default
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			outputPath = "./html-outputs" // fallback
+		} else {
+			outputPath = filepath.Join(homeDir, "html-outputs")
+		}
 	}
 
 	// Generate the static site

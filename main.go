@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -19,7 +20,12 @@ func main() {
 
 	dbPath := os.Getenv("DB_PATH")
 	if dbPath == "" {
-		dbPath = "./blog.db" // default
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			dbPath = "./blog.db" // fallback
+		} else {
+			dbPath = filepath.Join(homeDir, ".personal-blog-generator", "blog.db")
+		}
 	}
 
 	database, err := db.Connect(dbPath)
