@@ -114,7 +114,7 @@ func buildNavigationData(pageRepo *repository.PageRepository, settings *reposito
 	var menuOrder []string
 	if err := json.Unmarshal([]byte(settings.MenuOrder), &menuOrder); err != nil {
 		// fallback to default
-		menuOrder = []string{"posts", "portfolio"}
+		menuOrder = []string{"posts", "portfolio", "pages"}
 	}
 
 	// Create available links
