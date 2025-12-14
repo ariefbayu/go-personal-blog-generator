@@ -33,11 +33,20 @@ A modern, static site generator for personal blogs built with Go. Features a cle
 
 3. **Environment Setup**
    ```bash
-   # Copy environment template
-   cp .env.example .env
+   # Create configuration directory
+   mkdir -p ~/.personal-blog-generator
 
-   # Edit .env with your settings
-   nano .env
+   # Create .env file with your settings
+   cat > ~/.personal-blog-generator/.env << EOF
+   # Database configuration
+   DB_PATH=~/.personal-blog/-generatorblog.db
+
+   # Server configuration
+   APP_PORT=8080
+   EOF
+
+   # Edit .env if needed
+   nano ~/.personal-blog-generator/.env
    ```
 
 4. **Run Locally**
@@ -90,10 +99,13 @@ Access the admin at `/admin/dashboard` with basic authentication.
 
 1. **Configure Environment**
    ```bash
-   # Update .env with deployment settings
+   # Update ~/.personal-blog-generator/.env with deployment settings
+   cat >> ~/.personal-blog-generator/.env << EOF
    DEPLOY_HOST=your-server.com
    DEPLOY_USER=your-user
    DEPLOY_PATH=/var/www/blog
+   BACKUP_PATH=./backups
+   EOF
    ```
 
 2. **Deploy**
