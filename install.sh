@@ -3,7 +3,7 @@
 set -e
 
 if [ "$1" = "-t" ]; then
-    # Incremental templates mode
+    # Copy templates only
     ENV_FILE=~/.personal-blog-generator/.env
     if [ ! -f "$ENV_FILE" ]; then
         echo "Configuration file not found at $ENV_FILE. Please run the setup script first."
@@ -14,6 +14,19 @@ if [ "$1" = "-t" ]; then
     echo "Copying templates..."
     cp -r templates/* "$TEMPLATE_PATH"/
     echo "Templates copied successfully!"
+    exit 0
+elif [ "$1" = "-a" ]; then
+    # Copy admin-files only
+    ENV_FILE=~/.personal-blog-generator/.env
+    if [ ! -f "$ENV_FILE" ]; then
+        echo "Configuration file not found at $ENV_FILE. Please run the setup script first."
+        exit 1
+    fi
+    source "$ENV_FILE"
+    mkdir -p "$ADMIN_FILES_PATH"
+    echo "Copying admin files..."
+    cp -r admin-files/* "$ADMIN_FILES_PATH"/
+    echo "Admin files copied successfully!"
     exit 0
 fi
 
