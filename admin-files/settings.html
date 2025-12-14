@@ -136,9 +136,11 @@
                                     </div>
                                 </div>
                                 <div class="mb-4">
-                                    <label for="menuOrder" class="block text-sm font-medium text-slate-700 dark:text-slate-300">Menu Order (JSON array)</label>
-                                    <textarea id="menuOrder" name="menuOrder" rows="3" class="mt-1 block w-full rounded-md border-border-light dark:border-border-dark shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white"></textarea>
-                                    <p class="mt-1 text-sm text-slate-500">Example: ["posts", "portfolio", "page:about"]</p>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Menu Order</label>
+                                    <ul id="menuOrderList" class="mt-1 bg-white dark:bg-slate-800 border border-border-light dark:border-border-dark rounded-md p-2 min-h-[100px]">
+                                        <!-- Menu items will be added here -->
+                                    </ul>
+                                    <p class="mt-1 text-sm text-slate-500">Drag and drop to reorder menu items</p>
                                 </div>
                                 <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                                     Save Settings
@@ -167,18 +169,40 @@
                 document.getElementById('siteName').value = settings.site_name;
                 document.getElementById('showPortfolioMenu').checked = settings.show_portfolio_menu;
                 document.getElementById('showPostsMenu').checked = settings.show_posts_menu;
-                document.getElementById('menuOrder').value = settings.menu_order;
+
+                let menuOrder = JSON.parse(settings.menu_order || '[]');
+                if (menuOrder.length === 0) {
+                    menuOrder = ["posts", "portfolio", "pages"];
+                }
+                const list = document.getElementById('menuOrderList');
+                list.innerHTML = '';
+                menuOrder.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'p-2 bg-slate-100 dark:bg-slate-700 rounded mb-1 cursor-move flex items-center';
+                    li.draggable = true;
+                    li.dataset.item = item;
+                    li.innerHTML = `<span class="material-symbols-outlined mr-2">drag_indicator</span>${item}`;
+                    li.addEventListener('dragstart', handleDragStart);
+                    li.addEventListener('dragend', handleDragEnd);
+                    li.addEventListener('dragover', handleDragOver);
+                    li.addEventListener('drop', handleDrop);
+                    list.appendChild(li);
+                });
             } catch (error) {
                 console.error('Error loading settings:', error);
             }
         }
 
         async function saveSettings() {
+            const list = document.getElementById('menuOrderList');
+            const items = Array.from(list.children).map(li => li.dataset.item);
+            const menuOrder = JSON.stringify(items);
+
             const settings = {
                 site_name: document.getElementById('siteName').value,
                 show_portfolio_menu: document.getElementById('showPortfolioMenu').checked,
                 show_posts_menu: document.getElementById('showPostsMenu').checked,
-                menu_order: document.getElementById('menuOrder').value
+                menu_order: menuOrder
             };
 
             try {
@@ -195,6 +219,43 @@
                 console.error('Error saving settings:', error);
                 alert('Error saving settings');
             }
+        }
+
+        let draggedElement = null;
+
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', e.target.outerHTML);
+            e.target.style.opacity = '0.5';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDragEnd(e) {
+            e.target.style.opacity = '1';
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            if (draggedElement !== e.target && e.target.tagName === 'LI') {
+                const list = document.getElementById('menuOrderList');
+                const allItems = Array.from(list.children);
+                const draggedIndex = allItems.indexOf(draggedElement);
+                const targetIndex = allItems.indexOf(e.target);
+
+                if (draggedIndex < targetIndex) {
+                    list.insertBefore(draggedElement, e.target.nextSibling);
+                } else {
+                    list.insertBefore(draggedElement, e.target);
+                }
+            }
+            draggedElement = null;
+            return false;
         }
     </script>
     </body>
