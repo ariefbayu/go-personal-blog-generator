@@ -41,7 +41,8 @@ func TestGetPostsHandler(t *testing.T) {
 	postRepo := repository.NewPostRepository(testDB)
 	portfolioRepo := repository.NewPortfolioRepository(testDB)
 	pageRepo := repository.NewPageRepository(testDB)
-	apiHandlers := NewAPIHandlers(postRepo, portfolioRepo, pageRepo)
+	settingsRepo := repository.NewSettingsRepository(testDB)
+	apiHandlers := NewAPIHandlers(postRepo, portfolioRepo, pageRepo, settingsRepo)
 
 	// Test request
 	req := httptest.NewRequest("GET", "/api/posts", nil)
@@ -123,7 +124,8 @@ func TestCreatePostHandler(t *testing.T) {
 	postRepo := repository.NewPostRepository(testDB)
 	portfolioRepo := repository.NewPortfolioRepository(testDB)
 	pageRepo := repository.NewPageRepository(testDB)
-	apiHandlers := NewAPIHandlers(postRepo, portfolioRepo, pageRepo)
+	settingsRepo := repository.NewSettingsRepository(testDB)
+	apiHandlers := NewAPIHandlers(postRepo, portfolioRepo, pageRepo, settingsRepo)
 
 	// Test data
 	postData := models.Post{
