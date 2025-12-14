@@ -74,7 +74,7 @@ func main() {
 	r.Get("/admin/pages", handlers.ServePagesPage)
 	r.Get("/admin/pages/new", handlers.ServeNewPagePage)
 	r.Get("/admin/pages/{id}/edit", handlers.ServeEditPagePage)
-	r.Handle("/admin/*", http.StripPrefix("/admin/", http.FileServer(http.Dir("admin-files/"))))
+	r.Handle("/admin/*", http.StripPrefix("/admin/", http.FileServer(http.Dir(handlers.AdminFilesPath))))
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {

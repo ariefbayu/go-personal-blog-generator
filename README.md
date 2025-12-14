@@ -70,6 +70,9 @@ A modern, static site generator for personal blogs built with Go. Features a cle
 |----------|-------------|---------|
 | `DB_PATH` | Path to SQLite database | `blog.db` |
 | `APP_PORT` | Port for the application | `8080` |
+| `TEMPLATE_PATH` | Path to HTML templates directory | `./templates` |
+| `OUTPUT_PATH` | Path to generated static site directory | `./html-outputs` |
+| `ADMIN_FILES_PATH` | Path to admin UI files directory | `~/.personal-blog-generator/admin-files` |
 | `DEPLOY_HOST` | SSH host for deployment | - |
 | `DEPLOY_USER` | SSH user for deployment | - |
 | `DEPLOY_PATH` | Remote path for deployment | - |

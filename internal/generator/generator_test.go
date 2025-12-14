@@ -117,11 +117,11 @@ func TestGenerateStaticSite(t *testing.T) {
 
 	// Insert test page data
 	testPage := &models.Page{
-		Title:      "About Us",
-		Slug:       "about",
-		Content:    "# About Us\n\nThis is a **test** page with markdown content.",
-		ShowInNav:  true,
-		SortOrder:  1,
+		Title:     "About Us",
+		Slug:      "about",
+		Content:   "# About Us\n\nThis is a **test** page with markdown content.",
+		ShowInNav: true,
+		SortOrder: 1,
 	}
 	err = pageRepo.CreatePage(testPage)
 	if err != nil {
@@ -252,7 +252,7 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 	}
 
 	// Generate static site
-	err = GenerateStaticSite(postRepo, portfolioRepo, pageRepo)
+	err = GenerateStaticSite(postRepo, portfolioRepo, pageRepo, "./templates", "./html-outputs")
 	if err != nil {
 		t.Fatalf("GenerateStaticSite failed: %v", err)
 	}

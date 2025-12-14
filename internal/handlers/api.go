@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -13,9 +14,9 @@ import (
 )
 
 type APIHandlers struct {
-	postRepo       *repository.PostRepository
-	portfolioRepo  *repository.PortfolioRepository
-	pageRepo       *repository.PageRepository
+	postRepo      *repository.PostRepository
+	portfolioRepo *repository.PortfolioRepository
+	pageRepo      *repository.PageRepository
 }
 
 func NewAPIHandlers(postRepo *repository.PostRepository, portfolioRepo *repository.PortfolioRepository, pageRepo *repository.PageRepository) *APIHandlers {
@@ -165,8 +166,18 @@ func (h *APIHandlers) PublishSiteHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	// Get paths from environment variables
+	templatePath := os.Getenv("TEMPLATE_PATH")
+	if templatePath == "" {
+		templatePath = "./templates" // default
+	}
+	outputPath := os.Getenv("OUTPUT_PATH")
+	if outputPath == "" {
+		outputPath = "./html-outputs" // default
+	}
+
 	// Generate the static site
-	err := generator.GenerateStaticSite(h.postRepo, h.portfolioRepo, h.pageRepo)
+	err := generator.GenerateStaticSite(h.postRepo, h.portfolioRepo, h.pageRepo, templatePath, outputPath)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)

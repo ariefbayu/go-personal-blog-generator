@@ -3,16 +3,13 @@ package handlers
 import (
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"strings"
 	"testing"
 )
 
 func TestServeDashboard(t *testing.T) {
-	// Change to project root for relative paths
-	oldWd, _ := os.Getwd()
-	os.Chdir("../../../personal-blog-generator")
-	defer os.Chdir(oldWd)
+	// Set ADMIN_FILES_PATH to project directory for testing
+	AdminFilesPath = "../../../personal-blog-generator/admin-files"
 
 	req := httptest.NewRequest("GET", "/admin/dashboard", nil)
 	w := httptest.NewRecorder()

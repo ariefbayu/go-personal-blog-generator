@@ -150,7 +150,7 @@ func buildNavigationData(pageRepo *repository.PageRepository) ([]NavLink, error)
 }
 
 // GenerateStaticSite generates static HTML files for all published posts, portfolio, and pages
-func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repository.PortfolioRepository, pageRepo *repository.PageRepository) error {
+func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repository.PortfolioRepository, pageRepo *repository.PageRepository, templatePath, outputPath string) error {
 	// Query all published posts
 	posts, err := postRepo.GetPublishedPosts()
 	if err != nil {
@@ -165,14 +165,17 @@ func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repo
 	navData := NavigationData{NavLinks: navLinks}
 
 	// Parse the header, post content, and footer templates
-	tmpl, err := template.ParseFiles("templates/header.html", "templates/post.html", "templates/footer.html")
+	tmpl, err := template.ParseFiles(
+		filepath.Join(templatePath, "header.html"),
+		filepath.Join(templatePath, "post.html"),
+		filepath.Join(templatePath, "footer.html"),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to parse post templates: %w", err)
 	}
 
 	// Ensure output directory exists
-	outputDir := "html-outputs"
-	if err := os.MkdirAll(outputDir, 0755); err != nil {
+	if err := os.MkdirAll(outputPath, 0755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
 
@@ -202,7 +205,7 @@ func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repo
 		}
 
 		// Create output file
-		filename := filepath.Join(outputDir, post.Slug+".html")
+		filename := filepath.Join(outputPath, post.Slug+".html")
 		file, err := os.Create(filename)
 		if err != nil {
 			return fmt.Errorf("failed to create file %s: %w", filename, err)
@@ -223,25 +226,25 @@ func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repo
 	}
 
 	// Generate index page
-	err = generateIndexPage(posts, portfolioRepo, outputDir, navData)
+	err = generateIndexPage(posts, portfolioRepo, outputPath, templatePath, navData)
 	if err != nil {
 		return fmt.Errorf("failed to generate index page: %w", err)
 	}
 
 	// Generate posts listing page
-	err = generatePostsPage(posts, outputDir, navData)
+	err = generatePostsPage(posts, outputPath, templatePath, navData)
 	if err != nil {
 		return fmt.Errorf("failed to generate posts page: %w", err)
 	}
 
 	// Generate portfolio page
-	err = generatePortfolioPage(portfolioRepo, outputDir, navData)
+	err = generatePortfolioPage(portfolioRepo, outputPath, templatePath, navData)
 	if err != nil {
 		return fmt.Errorf("failed to generate portfolio page: %w", err)
 	}
 
 	// Generate static pages
-	err = generatePages(pageRepo, outputDir, navData)
+	err = generatePages(pageRepo, outputPath, templatePath, navData)
 	if err != nil {
 		return fmt.Errorf("failed to generate pages: %w", err)
 	}
@@ -257,9 +260,13 @@ func mdToHTML(content string) template.HTML {
 }
 
 // generateIndexPage creates the index.html file with recent posts
-func generateIndexPage(posts []models.Post, portfolioRepo *repository.PortfolioRepository, outputDir string, navData NavigationData) error {
+func generateIndexPage(posts []models.Post, portfolioRepo *repository.PortfolioRepository, outputPath, templatePath string, navData NavigationData) error {
 	// Parse the header, index content, and footer templates
-	tmpl, err := template.ParseFiles("templates/header.html", "templates/index.html", "templates/footer.html")
+	tmpl, err := template.ParseFiles(
+		filepath.Join(templatePath, "header.html"),
+		filepath.Join(templatePath, "index.html"),
+		filepath.Join(templatePath, "footer.html"),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to parse index templates: %w", err)
 	}
@@ -303,13 +310,13 @@ func generateIndexPage(posts []models.Post, portfolioRepo *repository.PortfolioR
 	}
 
 	indexData := IndexData{
-		Posts: indexPosts,
+		Posts:          indexPosts,
 		NavigationData: navData,
 		PortfolioItems: templateItems,
 	}
 
 	// Create index.html file
-	indexPath := filepath.Join(outputDir, "index.html")
+	indexPath := filepath.Join(outputPath, "index.html")
 	file, err := os.Create(indexPath)
 	if err != nil {
 		return fmt.Errorf("failed to create index.html: %w", err)
@@ -331,7 +338,7 @@ func generateIndexPage(posts []models.Post, portfolioRepo *repository.PortfolioR
 }
 
 // generatePostsPage creates the posts.html file with all posts
-func generatePostsPage(posts []models.Post, outputDir string, navData NavigationData) error {
+func generatePostsPage(posts []models.Post, outputPath, templatePath string, navData NavigationData) error {
 	// Sort posts by created date descending (newest first)
 	for i := 0; i < len(posts)-1; i++ {
 		for j := i + 1; j < len(posts); j++ {
@@ -382,7 +389,7 @@ func generatePostsPage(posts []models.Post, outputDir string, navData Navigation
 	}
 
 	// Create posts.html file
-	postsPath := filepath.Join(outputDir, "posts.html")
+	postsPath := filepath.Join(outputPath, "posts.html")
 	file, err := os.Create(postsPath)
 	if err != nil {
 		return fmt.Errorf("failed to create posts.html: %w", err)
@@ -404,9 +411,9 @@ func generatePostsPage(posts []models.Post, outputDir string, navData Navigation
 }
 
 // generatePortfolioPage creates the portfolio.html file with all portfolio items
-func generatePortfolioPage(portfolioRepo *repository.PortfolioRepository, outputDir string, navData NavigationData) error {
+func generatePortfolioPage(portfolioRepo *repository.PortfolioRepository, outputPath, templatePath string, navData NavigationData) error {
 	// Parse the portfolio template
-	tmpl, err := template.ParseFiles("templates/portfolio.html")
+	tmpl, err := template.ParseFiles(filepath.Join(templatePath, "portfolio.html"))
 	if err != nil {
 		return fmt.Errorf("failed to parse portfolio template: %w", err)
 	}
@@ -439,7 +446,7 @@ func generatePortfolioPage(portfolioRepo *repository.PortfolioRepository, output
 	}
 
 	// Create portfolio.html file
-	portfolioPath := filepath.Join(outputDir, "portfolio.html")
+	portfolioPath := filepath.Join(outputPath, "portfolio.html")
 	file, err := os.Create(portfolioPath)
 	if err != nil {
 		return fmt.Errorf("failed to create portfolio.html: %w", err)
@@ -456,9 +463,9 @@ func generatePortfolioPage(portfolioRepo *repository.PortfolioRepository, output
 }
 
 // generatePages creates HTML files for all static pages
-func generatePages(pageRepo *repository.PageRepository, outputDir string, navData NavigationData) error {
+func generatePages(pageRepo *repository.PageRepository, outputPath, templatePath string, navData NavigationData) error {
 	// Parse the page template
-	tmpl, err := template.ParseFiles("templates/page.html")
+	tmpl, err := template.ParseFiles(filepath.Join(templatePath, "page.html"))
 	if err != nil {
 		return fmt.Errorf("failed to parse page template: %w", err)
 	}
@@ -476,14 +483,14 @@ func generatePages(pageRepo *repository.PageRepository, outputDir string, navDat
 
 		// Create page data for template
 		pageData := PageData{
-			Title:   page.Title,
-			Slug:    page.Slug,
-			Content: contentHTML,
+			Title:          page.Title,
+			Slug:           page.Slug,
+			Content:        contentHTML,
 			NavigationData: navData,
 		}
 
 		// Create output file
-		filename := filepath.Join(outputDir, page.Slug+".html")
+		filename := filepath.Join(outputPath, page.Slug+".html")
 		file, err := os.Create(filename)
 		if err != nil {
 			return fmt.Errorf("failed to create file %s: %w", filename, err)

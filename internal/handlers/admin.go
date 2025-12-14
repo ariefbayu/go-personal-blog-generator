@@ -4,15 +4,33 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
-func ServeDashboard(w http.ResponseWriter, r *http.Request) {
-	wd, err := os.Getwd()
-	if err != nil {
-		http.Error(w, "Unable to get working directory", http.StatusInternalServerError)
-		return
+var AdminFilesPath string
+
+func init() {
+	AdminFilesPath = os.Getenv("ADMIN_FILES_PATH")
+	if AdminFilesPath == "" {
+		// Default to user directory
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			// Fallback to current directory
+			AdminFilesPath = "./admin-files"
+		} else {
+			AdminFilesPath = filepath.Join(homeDir, ".personal-blog-generator", "admin-files")
+		}
+	} else if strings.HasPrefix(AdminFilesPath, "~") {
+		// Expand ~ to home directory
+		homeDir, err := os.UserHomeDir()
+		if err == nil {
+			AdminFilesPath = strings.Replace(AdminFilesPath, "~", homeDir, 1)
+		}
 	}
-	filePath := filepath.Join(wd, "admin-files", "index.html")
+}
+
+func ServeDashboard(w http.ResponseWriter, r *http.Request) {
+	filePath := filepath.Join(AdminFilesPath, "index.html")
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		http.Error(w, "Admin dashboard template not found", http.StatusInternalServerError)
 		return
@@ -21,12 +39,7 @@ func ServeDashboard(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServePostsPage(w http.ResponseWriter, r *http.Request) {
-	wd, err := os.Getwd()
-	if err != nil {
-		http.Error(w, "Unable to get working directory", http.StatusInternalServerError)
-		return
-	}
-	filePath := filepath.Join(wd, "admin-files", "posts.html")
+	filePath := filepath.Join(AdminFilesPath, "posts.html")
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		http.Error(w, "Posts page template not found", http.StatusInternalServerError)
 		return
@@ -35,12 +48,7 @@ func ServePostsPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServeNewPostPage(w http.ResponseWriter, r *http.Request) {
-	wd, err := os.Getwd()
-	if err != nil {
-		http.Error(w, "Unable to get working directory", http.StatusInternalServerError)
-		return
-	}
-	filePath := filepath.Join(wd, "admin-files", "post_form.html")
+	filePath := filepath.Join(AdminFilesPath, "post_form.html")
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		http.Error(w, "New post form template not found", http.StatusInternalServerError)
 		return
@@ -49,12 +57,7 @@ func ServeNewPostPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServeEditPostPage(w http.ResponseWriter, r *http.Request) {
-	wd, err := os.Getwd()
-	if err != nil {
-		http.Error(w, "Unable to get working directory", http.StatusInternalServerError)
-		return
-	}
-	filePath := filepath.Join(wd, "admin-files", "post_form.html")
+	filePath := filepath.Join(AdminFilesPath, "post_form.html")
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		http.Error(w, "Edit post form template not found", http.StatusInternalServerError)
 		return
@@ -63,12 +66,7 @@ func ServeEditPostPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServePortfolioPage(w http.ResponseWriter, r *http.Request) {
-	wd, err := os.Getwd()
-	if err != nil {
-		http.Error(w, "Unable to get working directory", http.StatusInternalServerError)
-		return
-	}
-	filePath := filepath.Join(wd, "admin-files", "portfolio_list.html")
+	filePath := filepath.Join(AdminFilesPath, "portfolio_list.html")
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		http.Error(w, "Portfolio page template not found", http.StatusInternalServerError)
 		return
@@ -77,12 +75,7 @@ func ServePortfolioPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServeNewPortfolioPage(w http.ResponseWriter, r *http.Request) {
-	wd, err := os.Getwd()
-	if err != nil {
-		http.Error(w, "Unable to get working directory", http.StatusInternalServerError)
-		return
-	}
-	filePath := filepath.Join(wd, "admin-files", "portfolio_form.html")
+	filePath := filepath.Join(AdminFilesPath, "portfolio_form.html")
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		http.Error(w, "New portfolio form template not found", http.StatusInternalServerError)
 		return
@@ -91,12 +84,7 @@ func ServeNewPortfolioPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServeEditPortfolioPage(w http.ResponseWriter, r *http.Request) {
-	wd, err := os.Getwd()
-	if err != nil {
-		http.Error(w, "Unable to get working directory", http.StatusInternalServerError)
-		return
-	}
-	filePath := filepath.Join(wd, "admin-files", "portfolio_form.html")
+	filePath := filepath.Join(AdminFilesPath, "portfolio_form.html")
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		http.Error(w, "Edit portfolio form template not found", http.StatusInternalServerError)
 		return
@@ -105,12 +93,7 @@ func ServeEditPortfolioPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServePagesPage(w http.ResponseWriter, r *http.Request) {
-	wd, err := os.Getwd()
-	if err != nil {
-		http.Error(w, "Unable to get working directory", http.StatusInternalServerError)
-		return
-	}
-	filePath := filepath.Join(wd, "admin-files", "page_list.html")
+	filePath := filepath.Join(AdminFilesPath, "page_list.html")
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		http.Error(w, "Pages page template not found", http.StatusInternalServerError)
 		return
@@ -119,12 +102,7 @@ func ServePagesPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServeNewPagePage(w http.ResponseWriter, r *http.Request) {
-	wd, err := os.Getwd()
-	if err != nil {
-		http.Error(w, "Unable to get working directory", http.StatusInternalServerError)
-		return
-	}
-	filePath := filepath.Join(wd, "admin-files", "page_form.html")
+	filePath := filepath.Join(AdminFilesPath, "page_form.html")
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		http.Error(w, "New page form template not found", http.StatusInternalServerError)
 		return
@@ -133,12 +111,7 @@ func ServeNewPagePage(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServeEditPagePage(w http.ResponseWriter, r *http.Request) {
-	wd, err := os.Getwd()
-	if err != nil {
-		http.Error(w, "Unable to get working directory", http.StatusInternalServerError)
-		return
-	}
-	filePath := filepath.Join(wd, "admin-files", "page_form.html")
+	filePath := filepath.Join(AdminFilesPath, "page_form.html")
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		http.Error(w, "Edit page form template not found", http.StatusInternalServerError)
 		return
