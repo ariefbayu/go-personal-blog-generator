@@ -2,6 +2,21 @@
 
 set -e
 
+if [ "$1" = "-t" ]; then
+    # Incremental templates mode
+    ENV_FILE=~/.personal-blog-generator/.env
+    if [ ! -f "$ENV_FILE" ]; then
+        echo "Configuration file not found at $ENV_FILE. Please run the setup script first."
+        exit 1
+    fi
+    source "$ENV_FILE"
+    mkdir -p "$TEMPLATE_PATH"
+    echo "Copying templates..."
+    cp -r templates/* "$TEMPLATE_PATH"/
+    echo "Templates copied successfully!"
+    exit 0
+fi
+
 echo "Personal Blog Generator Local Setup Script"
 echo "This script will set up the blog generator on your local machine."
 echo
