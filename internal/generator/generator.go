@@ -37,6 +37,7 @@ type PortfolioItem struct {
 
 // IndexData represents data for the index page template
 type IndexData struct {
+	Title string
 	Posts []IndexPost
 	NavigationData
 	PortfolioItems []PortfolioItem
@@ -44,6 +45,7 @@ type IndexData struct {
 
 // PostsData represents data for the posts listing page template
 type PostsData struct {
+	Title string
 	Posts []PostItem
 	NavigationData
 }
@@ -325,6 +327,7 @@ func generateIndexPage(posts []models.Post, portfolioRepo *repository.PortfolioR
 	}
 
 	indexData := IndexData{
+		Title:          "",
 		Posts:          indexPosts,
 		NavigationData: navData,
 		PortfolioItems: templateItems,
@@ -404,6 +407,7 @@ func generatePostsPage(posts []models.Post, outputPath, templatePath string, nav
 	}
 
 	postsData := PostsData{
+		Title:          "",
 		Posts:          postItems,
 		NavigationData: navData,
 	}
