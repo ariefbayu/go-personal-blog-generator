@@ -16,7 +16,7 @@ const (
 )
 
 var (
-	uploadDir = "html-outputs/images"
+	uploadDir = ""
 )
 
 var allowedTypes = map[string]bool{
@@ -40,6 +40,13 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
+	outputPath := os.Getenv("OUTPUT_PATH")
+	if outputPath == "" {
+		http.Error(w, "OUTPUT_PATH not configured", http.StatusInternalServerError)
+		return
+	}
+	uploadDir = filepath.Join(outputPath, "images")
 
 	// Parse multipart form with max memory
 	err := r.ParseMultipartForm(maxUploadSize)
