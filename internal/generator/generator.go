@@ -270,6 +270,12 @@ func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repo
 		return fmt.Errorf("failed to generate pages: %w", err)
 	}
 
+	// Copy static assets (CSS) to output directory
+	err = copyStaticAssets(templatePath, outputPath)
+	if err != nil {
+		return fmt.Errorf("failed to copy static assets: %w", err)
+	}
+
 	return nil
 }
 
@@ -546,6 +552,55 @@ func generatePages(pageRepo *repository.PageRepository, outputPath, templatePath
 		}
 		if err := tmpl.ExecuteTemplate(file, "footer.html", pageData); err != nil {
 			return fmt.Errorf("failed to execute footer template for page %s: %w", page.Slug, err)
+		}
+	}
+
+	return nil
+}
+
+// copyStaticAssets copies static assets (CSS, JS, etc.) to the output directory
+func copyStaticAssets(templatePath, outputPath string) error {
+	// Determine the static source directory (sibling to templates)
+	staticPath := filepath.Join(filepath.Dir(templatePath), "static")
+
+	// Copy CSS files
+	cssSourceDir := filepath.Join(staticPath, "css")
+	cssDestDir := filepath.Join(outputPath, "css")
+
+	// Check if CSS source directory exists
+	if _, err := os.Stat(cssSourceDir); os.IsNotExist(err) {
+		// No CSS directory, skip
+		return nil
+	}
+
+	// Create CSS output directory
+	if err := os.MkdirAll(cssDestDir, 0755); err != nil {
+		return fmt.Errorf("failed to create CSS output directory: %w", err)
+	}
+
+	// Read CSS files from source directory
+	entries, err := os.ReadDir(cssSourceDir)
+	if err != nil {
+		return fmt.Errorf("failed to read CSS source directory: %w", err)
+	}
+
+	for _, entry := range entries {
+		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".css") {
+			continue
+		}
+
+		srcFile := filepath.Join(cssSourceDir, entry.Name())
+		destFile := filepath.Join(cssDestDir, entry.Name())
+
+		// Read source file
+		content, err := os.ReadFile(srcFile)
+		if err != nil {
+			return fmt.Errorf("failed to read CSS file %s: %w", srcFile, err)
+		}
+
+		// Write to destination
+		if err := os.WriteFile(destFile, content, 0644); err != nil {
+			return fmt.Errorf("failed to write CSS file %s: %w", destFile, err)
 		}
 	}
 

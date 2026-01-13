@@ -1,53 +1,35 @@
-    <main class="flex-grow">
-        <section class="py-20">
-            <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
-                    <div>
-                        <h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Latest Blog Posts
-                        </h2>
-                        <p class="mt-2 text-slate-600 dark:text-slate-400">Insights on engineering, architecture, and
-                            technology.</p>
+    <main class="container">
+        <section class="section">
+            <div class="section-header">
+                <div>
+                    <h1 class="heading-2">Latest Blog Posts</h1>
+                    <p class="text-body" style="margin-top: var(--spacing-sm);">Insights on engineering, architecture, and technology.</p>
+                </div>
+            </div>
+            {{if .Posts}}
+            <div class="grid grid-cols-lg-3">
+                {{range .Posts}}
+                <article class="card card-content card-hover">
+                    {{if .Tags}}
+                    <div class="flex flex-wrap gap-2">
+                        {{range .Tags}}
+                        <span class="badge">{{.}}</span>
+                        {{end}}
                     </div>
-                    <!-- <a class="group flex items-center gap-1 text-primary font-bold text-sm hover:underline" href="#">
-                        Read All Posts
-                        <span
-                            class="material-symbols-outlined text-sm transition-transform group-hover:translate-x-1">arrow_forward</span>
-                    </a> -->
-                </div>
-{{if .Posts}}
-                <div class="flex flex-col gap-4">
-{{range .Posts}}
-                  <a class="group relative flex flex-col sm:flex-row gap-6 p-6 bg-white dark:bg-[#192233] border border-gray-200 dark:border-[#324467] rounded-xl hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-lg dark:hover:shadow-primary/5"
-                        href="{{.Slug}}.html">
-                        <!-- <div
-                            class="shrink-0 hidden sm:flex items-center justify-center w-24 h-24 rounded-lg bg-slate-100 dark:bg-[#0f1521] text-slate-300 dark:text-[#232f48] group-hover:text-primary/70 transition-colors">
-                            <span class="material-symbols-outlined !text-4xl">architecture</span>
-                        </div> -->
-                        <div class="flex flex-col flex-grow justify-center">
-                            <div class="flex items-center flex-wrap gap-3 mb-2">
-                                <!-- <span
-                                    class="inline-flex items-center rounded bg-indigo-100 dark:bg-indigo-900/30 px-2.5 py-0.5 text-xs font-bold text-indigo-700 dark:text-indigo-300 ring-1 ring-inset ring-indigo-700/10 dark:ring-indigo-700/30">Architecture</span> -->
-{{if .Tags}}
-                                <div class="flex gap-2">
-{{range .Tags}}
-                                    <span class="text-xs font-mono text-slate-500">{{.}}</span>
-{{end}}
-                                </div>
-{{end}}
-                            </div>
-                            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors">
-                                {{.Title}}</h3>
-                            <p class="text-sm text-slate-600 dark:text-[#92a4c9] line-clamp-2">{{.Excerpt}}</p>
-                        </div>
-                        <!-- <div
-                            class="hidden sm:flex flex-col justify-center items-end shrink-0 pl-4 border-l border-gray-100 dark:border-[#232f48]">
-                            <span
-                                class="material-symbols-outlined text-slate-300 dark:text-slate-600 group-hover:text-primary transition-colors">arrow_forward_ios</span>
-                        </div> -->
-                    </a>
-{{end}}
-                </div>
-{{end}}
-              </div>
+                    {{end}}
+                    <h3 class="heading-3">{{.Title}}</h3>
+                    <p class="text-body line-clamp-2">{{.Excerpt}}</p>
+                    <div class="card-footer">
+                        <span class="text-caption">{{.CreatedAtFormatted}}</span>
+                        <a class="link link-icon text-semibold" href="/{{.Slug}}.html">
+                            Read More <span class="material-symbols-outlined">chevron_right</span>
+                        </a>
+                    </div>
+                </article>
+                {{end}}
+            </div>
+            {{else}}
+            <p class="text-body">No posts available yet.</p>
+            {{end}}
         </section>
     </main>

@@ -437,3 +437,82 @@ func containsAt(s, substr string) bool {
 	}
 	return false
 }
+
+func TestCopyStaticAssets(t *testing.T) {
+	// Create temporary directories for testing
+	tempDir := t.TempDir()
+	templatePath := filepath.Join(tempDir, "templates")
+	staticPath := filepath.Join(tempDir, "static")
+	cssPath := filepath.Join(staticPath, "css")
+	outputPath := filepath.Join(tempDir, "output")
+
+	// Create directories
+	if err := os.MkdirAll(templatePath, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(cssPath, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(outputPath, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a test CSS file
+	testCSSContent := `
+.heading-1 {
+    font-size: 2rem;
+    font-weight: bold;
+}
+.text-body {
+    font-size: 1rem;
+}
+`
+	cssFile := filepath.Join(cssPath, "styles.css")
+	if err := os.WriteFile(cssFile, []byte(testCSSContent), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Run copyStaticAssets
+	err := copyStaticAssets(templatePath, outputPath)
+	if err != nil {
+		t.Fatalf("copyStaticAssets failed: %v", err)
+	}
+
+	// Verify CSS file was copied to output directory
+	outputCSSFile := filepath.Join(outputPath, "css", "styles.css")
+	copiedContent, err := os.ReadFile(outputCSSFile)
+	if err != nil {
+		t.Fatalf("Failed to read copied CSS file: %v", err)
+	}
+
+	if string(copiedContent) != testCSSContent {
+		t.Errorf("Copied CSS content does not match original\nExpected: %s\nGot: %s", testCSSContent, string(copiedContent))
+	}
+}
+
+func TestCopyStaticAssetsNoCSS(t *testing.T) {
+	// Create temporary directories without CSS
+	tempDir := t.TempDir()
+	templatePath := filepath.Join(tempDir, "templates")
+	outputPath := filepath.Join(tempDir, "output")
+
+	// Create directories
+	if err := os.MkdirAll(templatePath, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.MkdirAll(outputPath, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	// Run copyStaticAssets - should succeed even if no CSS directory exists
+	err := copyStaticAssets(templatePath, outputPath)
+	if err != nil {
+		t.Fatalf("copyStaticAssets should succeed when no CSS directory exists: %v", err)
+	}
+
+	// Verify no CSS directory was created in output
+	outputCSSDir := filepath.Join(outputPath, "css")
+	if _, err := os.Stat(outputCSSDir); !os.IsNotExist(err) {
+		t.Error("CSS directory should not be created when source doesn't exist")
+	}
+}

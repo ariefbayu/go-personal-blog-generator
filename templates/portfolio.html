@@ -1,58 +1,104 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Portfolio</title>
-    <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
-    <header>
-        <nav>
-            <ul class="nav-list">
-                {{range .NavLinks}}
-                <li class="nav-item"><a href="{{.URL}}">{{.Title}}</a></li>
-                {{end}}
-            </ul>
-        </nav>
-        <h1>My Portfolio</h1>
-        <p>Explore my projects and work.</p>
-    </header>
+<html class="dark" lang="en">
 
-    <main>
-        <section class="portfolio">
-            {{if .PortfolioItems}}
-            <div class="portfolio-grid">
-                {{range .PortfolioItems}}
-                <div class="portfolio-item">
-                    {{if .ShowcaseImage}}
-                    <div class="portfolio-image">
-                        <img src="{{.ShowcaseImage}}" alt="{{.Title}}" />
-                    </div>
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>{{.SiteName}} - Portfolio</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <!-- New Design System CSS -->
+    <link href="/css/styles.css" rel="stylesheet" />
+</head>
+
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="nav-logo">
+                    <span class="material-symbols-outlined">terminal</span>
+                </div>
+                <h2 class="nav-title">{{.SiteName}}</h2>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-links">
+                    {{range .NavLinks}}
+                    <a class="nav-link" href="{{.URL}}">{{.Title}}</a>
                     {{end}}
-                    <div class="portfolio-content">
-                        <h3>{{.Title}}</h3>
-                        <div class="portfolio-description">{{.ShortDescription}}</div>
-                        <div class="portfolio-links">
-                            {{if .ProjectURL}}
-                            <a href="{{.ProjectURL}}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">View Project</a>
-                            {{end}}
-                            {{if .GithubURL}}
-                            <a href="{{.GithubURL}}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">View on GitHub</a>
-                            {{end}}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="section">
+            <div class="section-header">
+                <div>
+                    <h1 class="heading-2">All Projects</h1>
+                    <p class="text-body" style="margin-top: var(--spacing-sm);">Explore my work and projects.</p>
+                </div>
+            </div>
+            {{if .PortfolioItems}}
+            <div class="grid grid-cols-lg-3">
+                {{range .PortfolioItems}}
+                <div class="card project-card card-hover">
+                    {{if .ShowcaseImage}}
+                    <div class="project-image" style="background-image: url('{{.ShowcaseImage}}');"></div>
+                    {{end}}
+                    <div class="card-content">
+                        <div class="card-header">
+                            <h3 class="heading-3">{{.Title}}</h3>
+                            <div class="flex gap-2">
+                                {{if .GithubURL}}
+                                <a href="{{.GithubURL}}" target="_blank" rel="noopener noreferrer">
+                                    <span class="material-symbols-outlined icon-link">code</span>
+                                </a>
+                                {{end}}
+                                {{if .ProjectURL}}
+                                <a href="{{.ProjectURL}}" target="_blank" rel="noopener noreferrer">
+                                    <span class="material-symbols-outlined icon-link">open_in_new</span>
+                                </a>
+                                {{end}}
+                            </div>
                         </div>
+                        <p class="text-body">{{.ShortDescription}}</p>
                     </div>
                 </div>
                 {{end}}
             </div>
             {{else}}
-            <p>No portfolio items available yet.</p>
+            <p class="text-body">No portfolio items available yet.</p>
             {{end}}
         </section>
     </main>
 
-    <footer>
-        <a href="/">← Back to Home</a>
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="footer-logo-wrapper">
+                    <div class="footer-logo">
+                        <span class="material-symbols-outlined">terminal</span>
+                    </div>
+                    <span class="footer-title">{{.SiteName}}</span>
+                </div>
+                <p class="footer-text">© 2026 All rights reserved.</p>
+            </div>
+            <div class="footer-social">
+                <a class="footer-social-link" href="https://github.com/ariefbayu">
+                    <span class="material-symbols-outlined">code</span>
+                </a>
+                <a class="footer-social-link" href="mailto:ariefbayu@freelancer.web.id">
+                    <span class="material-symbols-outlined">mail</span>
+                </a>
+            </div>
+        </div>
     </footer>
 </body>
 </html>
