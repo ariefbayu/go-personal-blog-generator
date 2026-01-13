@@ -96,8 +96,6 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,osx,windows,go
 
-go.mod
-go.sum
 .env
 
 node_modules/
