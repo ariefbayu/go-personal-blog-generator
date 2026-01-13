@@ -442,7 +442,7 @@ func TestCopyStaticAssets(t *testing.T) {
 	// Create temporary directories for testing
 	tempDir := t.TempDir()
 	templatePath := filepath.Join(tempDir, "templates")
-	staticPath := filepath.Join(tempDir, "static")
+	staticPath := filepath.Join(templatePath, "static")
 	cssPath := filepath.Join(staticPath, "css")
 	outputPath := filepath.Join(tempDir, "output")
 

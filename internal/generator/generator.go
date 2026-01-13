@@ -560,8 +560,8 @@ func generatePages(pageRepo *repository.PageRepository, outputPath, templatePath
 
 // copyStaticAssets copies static assets (CSS, JS, etc.) to the output directory
 func copyStaticAssets(templatePath, outputPath string) error {
-	// Determine the static source directory (sibling to templates)
-	staticPath := filepath.Join(filepath.Dir(templatePath), "static")
+	// Determine the static source directory (inside templates)
+	staticPath := filepath.Join(templatePath, "static")
 
 	// Copy CSS files
 	cssSourceDir := filepath.Join(staticPath, "css")
