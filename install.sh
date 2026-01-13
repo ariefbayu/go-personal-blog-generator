@@ -10,7 +10,9 @@ if [ "$1" = "-t" ]; then
         exit 1
     fi
     source "$ENV_FILE"
-    mkdir -p "$TEMPLATE_PATH"
+    if [ ! -d "$TEMPLATE_PATH" ]; then
+        mkdir -p "$TEMPLATE_PATH"
+    fi
     echo "Copying templates..."
     cp -r templates/* "$TEMPLATE_PATH"/
     echo "Templates copied successfully!"
@@ -23,7 +25,9 @@ elif [ "$1" = "-a" ]; then
         exit 1
     fi
     source "$ENV_FILE"
-    mkdir -p "$ADMIN_FILES_PATH"
+    if [ ! -d "$ADMIN_FILES_PATH" ]; then
+        mkdir -p "$ADMIN_FILES_PATH"
+    fi
     echo "Copying admin files..."
     cp -r admin-files/* "$ADMIN_FILES_PATH"/
     echo "Admin files copied successfully!"
