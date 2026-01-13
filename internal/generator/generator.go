@@ -157,7 +157,9 @@ func buildNavigationData(pageRepo *repository.PageRepository, settings *reposito
 			break
 		}
 	}
-	if !hasHome {
+
+	// Only add home if posts or portfolio menu is shown
+	if !hasHome && (settings.ShowPostsMenu || settings.ShowPortfolioMenu) && len(navLinks) > 0 {
 		navLinks = append([]NavLink{availableLinks["home"]}, navLinks...)
 	}
 
