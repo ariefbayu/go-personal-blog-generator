@@ -19,11 +19,20 @@ function loadPosts(page) {
             tbody.innerHTML = ''; // Clear existing rows
 
             // Handle both old array format and new object format
-            let posts = data;
-            let paginationData = { total: posts.length, page: 1, limit: posts.length, total_pages: 1 };
-            if (data.posts) {
+            let posts = [];
+            let paginationData = { total: 0, page: 1, limit: 10, total_pages: 0 };
+
+            if (data.posts && Array.isArray(data.posts)) {
                 posts = data.posts;
-                paginationData = data;
+                paginationData = {
+                    total: data.total || 0,
+                    page: data.page || 1,
+                    limit: data.limit || 10,
+                    total_pages: data.total_pages || 0
+                };
+            } else if (Array.isArray(data)) {
+                posts = data;
+                paginationData = { total: posts.length, page: 1, limit: posts.length, total_pages: 1 };
             }
 
             console.log('Posts array:', posts); // Debug log
@@ -60,14 +69,40 @@ function loadPosts(page) {
                 tbody.appendChild(row);
             });
 
+            // Update total count
+            const countInfo = document.getElementById('posts-count');
+            if (countInfo) {
+                countInfo.textContent = `Total: ${paginationData.total} posts`;
+            }
+
             updatePagination(paginationData);
         })
-        .catch(error => console.error('Error fetching posts:', error));
+        .catch(error => {
+            console.error('Error fetching posts:', error);
+            // Update count on error
+            const countInfo = document.getElementById('posts-count');
+            if (countInfo) {
+                countInfo.textContent = 'Error loading posts';
+            }
+        });
 }
 
 function updatePagination(data) {
     const paginationContainer = document.querySelector('.pagination-buttons');
     const showingSpan = document.querySelector('.pagination-info');
+    const paginationWrapper = document.querySelector('.table-footer');
+
+    // Hide pagination if only one page or no items
+    if (data.total_pages <= 1) {
+        if (paginationWrapper) {
+            paginationWrapper.style.display = 'none';
+        }
+        return;
+    } else {
+        if (paginationWrapper) {
+            paginationWrapper.style.display = '';
+        }
+    }
 
     // Update showing text
     const start = (data.page - 1) * data.limit + 1;

@@ -14,19 +14,27 @@ function loadPages(page) {
             return response.json();
         })
         .then(data => {
-            console.log('Pages API response:', data); // Debug log
+            console.log('Pages API response:', data);
             const tbody = document.getElementById('page-list-body');
-            tbody.innerHTML = ''; // Clear existing rows
+            tbody.innerHTML = '';
 
             // Handle both old array format and new object format
-            let pages = data;
-            let paginationData = { total: pages.length, page: 1, limit: pages.length, total_pages: 1 };
-            if (data.pages) {
+            let pages = [];
+            let paginationData = { total: 0, page: 1, limit: 10, total_pages: 0 };
+
+            if (data.pages && Array.isArray(data.pages)) {
                 pages = data.pages;
-                paginationData = data;
+                paginationData = {
+                    total: data.total || 0,
+                    page: data.page || 1,
+                    limit: data.limit || 10,
+                    total_pages: data.total_pages || 0
+                };
+            } else if (Array.isArray(data)) {
+                pages = data;
+                paginationData = { total: pages.length, page: 1, limit: pages.length, total_pages: 1 };
             }
 
-            console.log('Pages array:', pages); // Debug log
             pages.forEach(page => {
                 const row = document.createElement('tr');
                 row.className = 'admin-table-row';
@@ -57,14 +65,40 @@ function loadPages(page) {
                 tbody.appendChild(row);
             });
 
+            // Update total count
+            const countInfo = document.getElementById('pages-count');
+            if (countInfo) {
+                countInfo.textContent = `Total: ${paginationData.total} pages`;
+            }
+
             updatePagination(paginationData);
         })
-        .catch(error => console.error('Error fetching pages:', error));
+        .catch(error => {
+            console.error('Error fetching pages:', error);
+            // Update count on error
+            const countInfo = document.getElementById('pages-count');
+            if (countInfo) {
+                countInfo.textContent = 'Error loading pages';
+            }
+        });
 }
 
 function updatePagination(data) {
     const paginationContainer = document.querySelector('.pagination-buttons');
     const showingSpan = document.querySelector('.pagination-info');
+    const paginationWrapper = document.querySelector('.table-footer');
+
+    // Hide pagination if only one page or no items
+    if (data.total_pages <= 1) {
+        if (paginationWrapper) {
+            paginationWrapper.style.display = 'none';
+        }
+        return;
+    } else {
+        if (paginationWrapper) {
+            paginationWrapper.style.display = '';
+        }
+    }
 
     // Update showing text
     const start = (data.page - 1) * data.limit + 1;
@@ -134,8 +168,7 @@ function deletePage(id) {
         })
         .then(response => {
             if (response.ok) {
-                // Reload the current page to update pagination
-                loadPages(currentPage);
+                loadPages();
                 alert('Page deleted successfully');
             } else if (response.status === 404) {
                 alert('Page not found');

@@ -979,3 +979,67 @@ body {
 .bg-center {
     background-position: center;
 }
+
+/* ============================================
+   Dashboard Config Display
+   ============================================ */
+.config-grid {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.config-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md);
+    background-color: var(--bg-color);
+    border-radius: var(--radius-md);
+}
+
+.config-label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.config-value {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: var(--font-size-sm);
+    color: var(--text-color);
+    background-color: var(--surface-color);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    word-break: break-all;
+}
+
+.admin-card-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.admin-card-title .material-symbols-outlined {
+    font-size: 1.25rem;
+    color: var(--color-primary);
+}
+
+/* ============================================
+   Admin Table Footer (no pagination)
+   ============================================ */
+.admin-table-footer {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-color);
+}
+
+.table-count-info {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}

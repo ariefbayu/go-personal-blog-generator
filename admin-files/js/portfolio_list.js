@@ -19,11 +19,20 @@ function loadPortfolioItems(page) {
             tbody.innerHTML = ''; // Clear existing rows
 
             // Handle both old array format and new object format
-            let items = data;
-            let paginationData = { total: items.length, page: 1, limit: items.length, total_pages: 1 };
-            if (data.items) {
+            let items = [];
+            let paginationData = { total: 0, page: 1, limit: 10, total_pages: 0 };
+
+            if (data.items && Array.isArray(data.items)) {
                 items = data.items;
-                paginationData = data;
+                paginationData = {
+                    total: data.total || 0,
+                    page: data.page || 1,
+                    limit: data.limit || 10,
+                    total_pages: data.total_pages || 0
+                };
+            } else if (Array.isArray(data)) {
+                items = data;
+                paginationData = { total: items.length, page: 1, limit: items.length, total_pages: 1 };
             }
 
             console.log('Items array:', items); // Debug log
@@ -56,14 +65,40 @@ function loadPortfolioItems(page) {
                 tbody.appendChild(row);
             });
 
+            // Update total count
+            const countInfo = document.getElementById('portfolio-count');
+            if (countInfo) {
+                countInfo.textContent = `Total: ${paginationData.total} items`;
+            }
+
             updatePagination(paginationData);
         })
-        .catch(error => console.error('Error fetching portfolio items:', error));
+        .catch(error => {
+            console.error('Error fetching portfolio items:', error);
+            // Update count on error
+            const countInfo = document.getElementById('portfolio-count');
+            if (countInfo) {
+                countInfo.textContent = 'Error loading portfolio items';
+            }
+        });
 }
 
 function updatePagination(data) {
     const paginationContainer = document.querySelector('.pagination-buttons');
     const showingSpan = document.querySelector('.pagination-info');
+    const paginationWrapper = document.querySelector('.table-footer');
+
+    // Hide pagination if only one page or no items
+    if (data.total_pages <= 1) {
+        if (paginationWrapper) {
+            paginationWrapper.style.display = 'none';
+        }
+        return;
+    } else {
+        if (paginationWrapper) {
+            paginationWrapper.style.display = '';
+        }
+    }
 
     // Update showing text
     const start = (data.page - 1) * data.limit + 1;

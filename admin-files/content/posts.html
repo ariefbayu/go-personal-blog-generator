@@ -1,0 +1,42 @@
+                    <!-- Page Heading & Actions -->
+                    <div class="admin-page-header">
+                        <div>
+                            <h2 class="admin-page-title">Blog Posts</h2>
+                            <p class="admin-page-subtitle">Manage your blogs here.</p>
+                        </div>
+                        <div class="admin-page-actions">
+                            <a href="/admin/posts/new" class="btn btn-primary">
+                                <span class="material-symbols-outlined">add</span>
+                                <span>Create New Blog</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Search and Table Container -->
+                    <div class="admin-card">
+                        <!-- Search Bar -->
+                        <div class="admin-card-header">
+                            <div class="admin-search">
+                                <span class="admin-search-icon material-symbols-outlined">search</span>
+                                <input class="admin-search-input" placeholder="Search posts by title or content" type="text" />
+                            </div>
+                        </div>
+                        <!-- Table -->
+                        <div class="admin-table-wrapper">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Status</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="post-list-body">
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Total count info -->
+                        <div class="admin-table-footer">
+                            <span class="table-count-info" id="posts-count">Loading...</span>
+                        </div>
+                    </div>
