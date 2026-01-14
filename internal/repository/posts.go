@@ -1,9 +1,9 @@
 package repository
 
 import (
-"database/sql"
+	"database/sql"
 
-"github.com/ariefbayu/personal-blog-generator/internal/models"
+	"github.com/ariefbayu/personal-blog-generator/internal/models"
 )
 
 type PostRepository struct {
@@ -48,7 +48,7 @@ func (r *PostRepository) GetPostByID(id int64) (*models.Post, error) {
 }
 
 func (r *PostRepository) UpdatePost(post *models.Post) error {
-	_, err := r.db.Exec("UPDATE posts SET title = ?, slug = ?, content = ?, tags = ?, published = ? WHERE id = ?", post.Title, post.Slug, post.Content, post.Tags, post.Published, post.ID)
+	_, err := r.db.Exec("UPDATE posts SET title = ?, slug = ?, content = ?, tags = ?, published = ?, updated_at = ? WHERE id = ?", post.Title, post.Slug, post.Content, post.Tags, post.Published, post.UpdatedAt, post.ID)
 	return err
 }
 

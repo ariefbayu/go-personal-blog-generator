@@ -4,21 +4,16 @@ let isUploading = false;
 document.getElementById('page-form').addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    // Sync EasyMDE content to textarea if editor is initialized
-    if (easyMDE) {
-        easyMDE.toTextArea();
-    }
-
-    // Check if editing
-    let pageId = null;
-    const pathMatch = window.location.pathname.match(/^\/admin\/pages\/(\d+)\/edit$/);
-    if (pathMatch) {
-        pageId = pathMatch[1];
-    }
-
     const title = document.getElementById('title').value.trim();
     const slug = document.getElementById('slug').value.trim();
-    const content = document.getElementById('content').value.trim();
+
+    // Get content from EasyMDE if editor is initialized, otherwise from textarea
+    let content;
+    if (easyMDE) {
+        content = easyMDE.value().trim();
+    } else {
+        content = document.getElementById('content').value.trim();
+    }
     const showInNav = document.getElementById('showInNav').checked;
     const sortOrder = parseInt(document.getElementById('sortOrder').value) || 0;
 

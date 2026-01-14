@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/ariefbayu/personal-blog-generator/internal/generator"
 	"github.com/ariefbayu/personal-blog-generator/internal/models"
@@ -80,6 +81,9 @@ func (h *APIHandlers) CreatePostHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	// Set creation time
+	post.CreatedAt = time.Now()
+
 	err := h.postRepo.CreatePost(&post)
 	if err != nil {
 		if strings.Contains(err.Error(), "UNIQUE constraint failed") {
@@ -127,6 +131,9 @@ func (h *APIHandlers) UpdatePostHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	post.ID = id
+
+	// Set update time
+	post.UpdatedAt = time.Now()
 
 	err = h.postRepo.UpdatePost(&post)
 	if err != nil {

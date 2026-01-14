@@ -9,15 +9,17 @@ if (pathMatch) {
 
     e.preventDefault();
 
-    // Sync EasyMDE content to textarea if editor is initialized
-    if (easyMDE) {
-        easyMDE.toTextArea();
-    }
-
     const title = document.getElementById('title').value.trim();
     const slug = document.getElementById('slug').value.trim();
     const tags = document.getElementById('tags').value.trim();
-    const content = document.getElementById('content').value.trim();
+
+    // Get content from EasyMDE if editor is initialized, otherwise from textarea
+    let content;
+    if (easyMDE) {
+        content = easyMDE.value().trim();
+    } else {
+        content = document.getElementById('content').value.trim();
+    }
     const published = document.getElementById('published').checked;
 
     // Basic validation
@@ -33,6 +35,9 @@ if (pathMatch) {
         content: content,
         published: published
     };
+
+    console.log('Sending post data:', postData);
+    console.log('JSON string:', JSON.stringify(postData));
 
     const isEdit = window.location.pathname.includes('/edit');
     const url = isEdit ? `/api/posts/${postId}` : '/api/posts';
@@ -155,6 +160,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 document.getElementById('published').checked = post.published || false;
                 document.getElementById('slug').dataset.original = post.slug || '';
+
+                // Set publish date
+                if (post.created_at) {
+                    const publishDate = new Date(post.created_at).toLocaleString();
+                    document.getElementById('publishDate').value = publishDate;
+                } else {
+                    document.getElementById('publishDate').value = 'Not published yet';
+                }
             })
             .catch(error => {
                 console.error('Error loading post:', error);
