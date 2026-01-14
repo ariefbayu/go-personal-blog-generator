@@ -151,6 +151,11 @@ body {
     justify-content: space-between;
 }
 
+.nav-brand-link {
+    color: white;
+    text-decoration: none;
+}
+
 .nav-brand {
     display: flex;
     align-items: center;
