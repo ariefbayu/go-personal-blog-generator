@@ -78,6 +78,8 @@ A modern, static site generator for personal blogs built with Go. Features a cle
 | `DEPLOY_PATH` | Remote path for deployment | - |
 | `BACKUP_PATH` | Path for database backups | - |
 
+> Deployment is still an idea for the future. This configuration is unused at the moment.
+
 ## Admin Interface
 
 ### Login
@@ -97,6 +99,9 @@ Access the admin at `/admin/dashboard` with basic authentication.
 - SEO-friendly URLs and metadata
 
 ## Deployment
+
+Deployment is still an idea for the future.
+
 
 ### Automated Deployment
 
@@ -209,29 +214,6 @@ personal-blog-generator/
 ├── personal-blog-generator.service  # Systemd service file
 └── README.md           # This file
 ```
-
-## API Reference
-
-### Posts
-- `GET /api/posts?page=1&limit=10` - List posts with pagination
-- `POST /api/posts` - Create post
-- `GET /api/posts/{id}` - Get post by ID
-- `PUT /api/posts/{id}` - Update post
-- `DELETE /api/posts/{id}` - Delete post
-
-### Portfolio
-- `GET /api/portfolio?page=1&limit=10` - List portfolio items
-- `POST /api/portfolio` - Create portfolio item
-- `GET /api/portfolio/{id}` - Get portfolio item
-- `PUT /api/portfolio/{id}` - Update portfolio item
-- `DELETE /api/portfolio/{id}` - Delete portfolio item
-
-### Pages
-- `GET /api/pages?page=1&limit=10` - List pages
-- `POST /api/pages` - Create page
-- `GET /api/pages/{id}` - Get page
-- `PUT /api/pages/{id}` - Update page
-- `DELETE /api/pages/{id}` - Delete page
 
 ## Development
 
