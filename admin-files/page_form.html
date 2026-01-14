@@ -4,156 +4,116 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>New Page</title>
+    <title>New Page - Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap"
         rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#137fec",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#101922",
-                        "surface-dark": "#18232e", // A slightly lighter shade for cards in dark mode
-                        "surface-light": "#ffffff", // White for cards in light mode
-                        "border-dark": "#2a3b4c",
-                        "border-light": "#e5e7eb",
-                    },
-                    fontFamily: {
-                        "display": ["Inter", "sans-serif"]
-                    },
-                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
-                },
-            },
-        }
-    </script>
+    <link rel="stylesheet" href="/admin/css/styles.css" />
     <link rel="stylesheet" href="/admin/vendor/easymde.min.css">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-    </style>
 </head>
 
-<body
-    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-x-hidden transition-colors duration-200">
-    <div class="flex min-h-screen w-full">
+<body>
+    <div class="admin-layout">
         <!-- Sidebar -->
-        <div
-            class="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark">
-            <div class="flex flex-col flex-grow pt-5 pb-4 overflow-y-auto">
-                <div class="flex items-center flex-shrink-0 px-4">
-                    <h1 class="text-xl font-bold text-primary">Admin</h1>
+        <div class="sidebar">
+            <div class="sidebar-inner">
+                <!-- User Profile / Branding -->
+                <div class="sidebar-brand">
+                    <div class="sidebar-avatar"
+                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDS7stXzuX1oFmiWsscJ6UQdJia4HQqQ1S3B16IX81s9nLilZo5vQ9BHxeqlt4NLtH425M6taGrBpy855X1FQs5QZ5zR4b614Pe9OSUye680Mn-KK-3gwBlS5hLP22HQ6eC6KTcc088z_JpDFT57Ea5gYr3cATEVUOQcbT_MnZ5Hpw3pfOj4f1-4dRnnid5Cm68psmooaxIMYwQBDjYdxFvDSZ3iloQdT-DW2iwFnxZnRrdpFz8wzZDsH9O0b5tiSgtFKN7kg8CTlsh");'>
+                    </div>
+                    <div class="sidebar-info">
+                        <h1 class="sidebar-title">My Personal Blog</h1>
+                        <p class="sidebar-subtitle">Admin Console</p>
+                    </div>
                 </div>
-                <nav class="mt-8 flex-1 px-2 space-y-1">
-                    <a class="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
-                        href="/admin/dashboard">
-                        <span class="material-symbols-outlined mr-3">dashboard</span>
-                        Dashboard
+                <!-- Navigation Links -->
+                <nav class="sidebar-nav">
+                    <a class="nav-item" href="/admin/dashboard">
+                        <span class="material-symbols-outlined">home</span>
+                        <span>Dashboard</span>
                     </a>
-                    <a class="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
-                        href="/admin/posts">
-                        <span class="material-symbols-outlined mr-3">article</span>
-                        Posts
+                    <a class="nav-item" href="/admin/posts">
+                        <span class="material-symbols-outlined">book_2</span>
+                        <span>Blog Posts</span>
                     </a>
-                    <a class="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
-                        href="/admin/portfolio">
-                        <span class="material-symbols-outlined mr-3">work</span>
-                        Portfolio
+                    <a class="nav-item" href="/admin/portfolio">
+                        <span class="material-symbols-outlined">work</span>
+                        <span>Portfolios</span>
                     </a>
-                    <a class="group flex items-center px-2 py-2 text-sm font-medium rounded-md bg-primary text-white"
-                        href="/admin/pages">
-                        <span class="material-symbols-outlined mr-3">description</span>
-                        Pages
+                    <a class="nav-item nav-item-active" href="/admin/pages">
+                        <span class="material-symbols-outlined">code</span>
+                        <span>Pages</span>
+                    </a>
+                    <a class="nav-item" href="/admin/settings">
+                        <span class="material-symbols-outlined">settings</span>
+                        <span>Settings</span>
                     </a>
                 </nav>
             </div>
+            <!-- Logout Section -->
+            <div class="sidebar-footer">
+            </div>
         </div>
-
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col h-screen overflow-hidden lg:ml-64">
-            <!-- Top Bar for Mobile (Hidden on Desktop) -->
-            <header
-                class="flex lg:hidden items-center justify-between p-4 bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark">
-                <h1 class="font-bold text-lg">Pages</h1>
-                <button class="text-slate-500 dark:text-slate-400">
+        <div class="admin-main">
+            <!-- Top Bar for Mobile -->
+            <header class="admin-header-mobile">
+                <h1 class="admin-header-title">Pages</h1>
+                <button class="admin-header-menu-btn">
                     <span class="material-symbols-outlined">menu</span>
                 </button>
             </header>
-            <main
-                class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark p-4 md:p-8 lg:px-12 lg:py-10">
-                <div class="max-w-7xl mx-auto flex flex-col gap-8">
+            <main class="admin-content">
+                <div class="admin-container">
                     <!-- Page Heading & Actions -->
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="admin-page-header">
                         <div>
-                            <h2 class="text-slate-900 dark:text-white text-3xl font-black leading-tight tracking-tight">
-                                Create New Page</h2>
-                            <p class="text-slate-500 dark:text-slate-400 mt-1">Add a new static page.
-                            </p>
-                        </div>
-                        <div class="flex gap-3">
+                            <h2 class="admin-page-title">Create New Page</h2>
+                            <p class="admin-page-subtitle">Add a new static page.</p>
                         </div>
                     </div>
 
-                </div>
                     <!-- Form Container -->
-                    <div
-                        class="bg-surface-light dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark shadow-sm p-6">
-                        <form id="page-form" class="space-y-6">
-                            <div>
-                                <label for="title" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Title *</label>
-                                <input type="text" id="title" name="title" required
-                                    class="block w-full p-3 text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-[#111a22] border border-border-light dark:border-border-dark rounded-lg focus:ring-primary focus:border-primary">
-                            </div>
-                            <div>
-                                <label for="slug" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Slug *</label>
-                                <input type="text" id="slug" name="slug" required
-                                    class="block w-full p-3 text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-[#111a22] border border-border-light dark:border-border-dark rounded-lg focus:ring-primary focus:border-primary">
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">URL-friendly identifier (lowercase, alphanumeric, hyphens only)</p>
-                            </div>
-                            <div>
-                                <label for="content" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Content *</label>
-                                <textarea id="content" name="content" rows="15"
-                                    class="block w-full p-3 text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-[#111a22] border border-border-light dark:border-border-dark rounded-lg focus:ring-primary focus:border-primary"></textarea>
-                            </div>
-                            <div class="flex items-center">
-                                <input type="checkbox" id="showInNav" name="showInNav"
-                                    class="w-4 h-4 text-primary bg-slate-50 dark:bg-[#111a22] border-border-light dark:border-border-dark rounded focus:ring-primary focus:ring-2">
-                                <label for="showInNav" class="ml-2 text-sm font-medium text-slate-700 dark:text-slate-300">Show in Navigation</label>
-                            </div>
-                            <div>
-                                <label for="sortOrder" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Sort Order</label>
-                                <input type="number" id="sortOrder" name="sortOrder" min="0" value="0"
-                                    class="block w-full p-3 text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-[#111a22] border border-border-light dark:border-border-dark rounded-lg focus:ring-primary focus:border-primary">
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Lower numbers appear first in navigation</p>
-                            </div>
-                            <div class="flex gap-3">
-                                <button type="submit"
-                                    class="flex items-center justify-center gap-2 rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold shadow-md shadow-primary/20 hover:bg-blue-600 transition-colors">
-                                    <span class="material-symbols-outlined text-lg">save</span>
-                                    <span>Save Page</span>
-                                </button>
-                                <a href="/admin/pages"
-                                    class="flex items-center justify-center gap-2 rounded-lg h-10 px-5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">
-                                    Cancel
-                                </a>
-                            </div>
-                        </form>
-
+                    <div class="admin-card">
+                        <div class="admin-card-body">
+                            <form id="page-form">
+                                <div class="form-group">
+                                    <label for="title" class="form-label">Title *</label>
+                                    <input type="text" id="title" name="title" required class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="slug" class="form-label">Slug *</label>
+                                    <input type="text" id="slug" name="slug" required class="form-input">
+                                    <p class="form-hint">URL-friendly identifier (lowercase, alphanumeric, hyphens only)</p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="content" class="form-label">Content *</label>
+                                    <textarea id="content" name="content" rows="15" class="form-textarea"></textarea>
+                                </div>
+                                <div class="form-checkbox-group">
+                                    <input type="checkbox" id="showInNav" name="showInNav" class="form-checkbox">
+                                    <label for="showInNav" class="form-checkbox-label">Show in Navigation</label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sortOrder" class="form-label">Sort Order</label>
+                                    <input type="number" id="sortOrder" name="sortOrder" min="0" value="0" class="form-input">
+                                    <p class="form-hint">Lower numbers appear first in navigation</p>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <span class="material-symbols-outlined">save</span>
+                                        <span>Save Page</span>
+                                    </button>
+                                    <a href="/admin/pages" class="btn btn-cancel">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
+            </main>
         </div>
-        </main>
-    </div>
     </div>
     <script src="/admin/js/page_form.js"></script>
     <script src="/admin/vendor/easymde.min.js"></script>
