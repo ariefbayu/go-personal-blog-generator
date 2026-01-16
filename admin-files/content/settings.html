@@ -1,0 +1,149 @@
+<!-- Page Heading -->
+                    <div class="admin-page-header">
+                        <div>
+                            <h2 class="admin-page-title">Settings</h2>
+                            <p class="admin-page-subtitle">Configure your site settings.</p>
+                        </div>
+                    </div>
+
+                    <!-- Settings Form Container -->
+                    <div class="admin-card">
+                        <div class="admin-card-body">
+                            <form id="settingsForm">
+                                <div class="form-group">
+                                    <label for="siteName" class="form-label">Site Name</label>
+                                    <input type="text" id="siteName" name="siteName" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Show Menus</label>
+                                    <div class="form-checkbox-group">
+                                        <input type="checkbox" id="showPortfolioMenu" name="showPortfolioMenu" class="form-checkbox">
+                                        <label for="showPortfolioMenu" class="form-checkbox-label">Show Portfolio Menu</label>
+                                    </div>
+                                    <div class="form-checkbox-group">
+                                        <input type="checkbox" id="showPostsMenu" name="showPostsMenu" class="form-checkbox">
+                                        <label for="showPostsMenu" class="form-checkbox-label">Show Posts Menu</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Menu Order</label>
+                                    <ul id="menuOrderList" class="drag-list">
+                                        <!-- Menu items will be added here -->
+                                    </ul>
+                                    <p class="form-hint">Drag and drop to reorder menu items</p>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSettings();
+
+            document.getElementById('settingsForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveSettings();
+            });
+        });
+
+        async function loadSettings() {
+            try {
+                const response = await fetch('/api/settings');
+                const settings = await response.json();
+                document.getElementById('siteName').value = settings.site_name;
+                document.getElementById('showPortfolioMenu').checked = settings.show_portfolio_menu;
+                document.getElementById('showPostsMenu').checked = settings.show_posts_menu;
+
+                let menuOrder = JSON.parse(settings.menu_order || '[]');
+                if (menuOrder.length === 0) {
+                    menuOrder = ["posts", "portfolio", "pages"];
+                }
+                const list = document.getElementById('menuOrderList');
+                list.innerHTML = '';
+                menuOrder.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'drag-item';
+                    li.draggable = true;
+                    li.dataset.item = item;
+                    li.innerHTML = `<span class="material-symbols-outlined">drag_indicator</span>${item}`;
+                    li.addEventListener('dragstart', handleDragStart);
+                    li.addEventListener('dragend', handleDragEnd);
+                    li.addEventListener('dragover', handleDragOver);
+                    li.addEventListener('drop', handleDrop);
+                    list.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+
+        async function saveSettings() {
+            const list = document.getElementById('menuOrderList');
+            const items = Array.from(list.children).map(li => li.dataset.item);
+            const menuOrder = JSON.stringify(items);
+
+            const settings = {
+                site_name: document.getElementById('siteName').value,
+                show_portfolio_menu: document.getElementById('showPortfolioMenu').checked,
+                show_posts_menu: document.getElementById('showPostsMenu').checked,
+                menu_order: menuOrder
+            };
+
+            try {
+                const response = await fetch('/api/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(settings)
+                });
+                const result = await response.json();
+                alert(result.message);
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                alert('Error saving settings');
+            }
+        }
+
+        let draggedElement = null;
+
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', e.target.outerHTML);
+            e.target.style.opacity = '0.5';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDragEnd(e) {
+            e.target.style.opacity = '1';
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            if (draggedElement !== e.target && e.target.tagName === 'LI') {
+                const list = document.getElementById('menuOrderList');
+                const allItems = Array.from(list.children);
+                const draggedIndex = allItems.indexOf(draggedElement);
+                const targetIndex = allItems.indexOf(e.target);
+
+                if (draggedIndex < targetIndex) {
+                    list.insertBefore(draggedElement, e.target.nextSibling);
+                } else {
+                    list.insertBefore(draggedElement, e.target);
+                }
+            }
+            draggedElement = null;
+            return false;
+        }
+    </script>

@@ -1,0 +1,30 @@
+
+    <!-- Page Heading -->
+    <div class="admin-page-header">
+        <div>
+            <h2 class="admin-page-title">Templates</h2>
+            <p class="admin-page-subtitle">Manage your blog templates.</p>
+        </div>
+    </div>
+
+    <!-- Template Management Container -->
+    <div class="admin-card">
+        <div class="template-container">
+            <!-- File Tree -->
+            <div class="template-tree">
+                <h3>File Tree</h3>
+                <div id="file-tree"></div>
+            </div>
+            <!-- Editor -->
+            <div class="template-editor">
+                <h3 id="editor-title">Select a file to edit</h3>
+                <textarea id="file-content" placeholder="File content will appear here..." readonly></textarea>
+                <div class="editor-actions">
+                    <button id="save-btn" class="btn btn-success" disabled>Save</button>
+                    <span id="save-status"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/admin/js/templates.js"></script>

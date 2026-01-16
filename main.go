@@ -70,6 +70,9 @@ func main() {
 	r.Delete("/api/pages/{id}", pageHandlers.DeletePageHandler)
 	r.Get("/api/settings", apiHandlers.GetSettingsHandler)
 	r.Post("/api/settings", apiHandlers.UpdateSettingsHandler)
+	r.Get("/api/settings/templates", apiHandlers.GetTemplatesHandler)
+	r.Get("/api/settings/templates/content", apiHandlers.GetTemplateContentHandler)
+	r.Post("/api/settings/templates/save", apiHandlers.SaveTemplateHandler)
 	r.Post("/api/upload/image", handlers.UploadImageHandler)
 	r.Post("/api/publish", apiHandlers.PublishSiteHandler)
 	r.Handle("/images/*", http.StripPrefix("/images/", http.FileServer(http.Dir("html-outputs/images/"))))
@@ -84,6 +87,7 @@ func main() {
 	r.Get("/admin/pages/new", handlers.ServeNewPagePage)
 	r.Get("/admin/pages/{id}/edit", handlers.ServeEditPagePage)
 	r.Get("/admin/settings", handlers.ServeSettingsPage)
+	r.Get("/admin/templates", handlers.ServeTemplatesPage)
 	r.Handle("/admin/*", http.StripPrefix("/admin/", http.FileServer(http.Dir(handlers.AdminFilesPath))))
 
 	port := os.Getenv("APP_PORT")

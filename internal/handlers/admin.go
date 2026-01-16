@@ -395,3 +395,21 @@ func ServeSettingsPage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to render settings page", http.StatusInternalServerError)
 	}
 }
+
+func ServeTemplatesPage(w http.ResponseWriter, r *http.Request) {
+	content, err := readContentFile("templates.html")
+	if err != nil {
+		http.Error(w, "Templates template not found", http.StatusInternalServerError)
+		return
+	}
+
+	data := AdminPageData{
+		Title:     "Templates",
+		ActiveNav: "templates",
+		Content:   content,
+	}
+
+	if err := renderAdminPage(w, data); err != nil {
+		http.Error(w, "Failed to render templates page", http.StatusInternalServerError)
+	}
+}

@@ -16,6 +16,45 @@ import (
 	"github.com/ariefbayu/personal-blog-generator/internal/repository"
 )
 
+type FileNode struct {
+	Name     string     `json:"name"`
+	Type     string     `json:"type"` // "file" or "dir"
+	Path     string     `json:"path"`
+	Editable bool       `json:"editable,omitempty"`
+	Children []FileNode `json:"children,omitempty"`
+}
+
+func buildFileTree(dir string) ([]FileNode, error) {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return nil, err
+	}
+	var nodes []FileNode
+	for _, entry := range entries {
+		relPath, _ := filepath.Rel(dir, filepath.Join(dir, entry.Name()))
+		node := FileNode{
+			Name: entry.Name(),
+			Path: relPath,
+		}
+		if entry.IsDir() {
+			node.Type = "dir"
+			children, err := buildFileTree(filepath.Join(dir, entry.Name()))
+			if err != nil {
+				return nil, err
+			}
+			node.Children = children
+		} else {
+			node.Type = "file"
+			ext := filepath.Ext(entry.Name())
+			if ext == ".html" || ext == ".css" || ext == ".js" || ext == ".txt" || ext == ".md" {
+				node.Editable = true
+			}
+		}
+		nodes = append(nodes, node)
+	}
+	return nodes, nil
+}
+
 type APIHandlers struct {
 	postRepo      *repository.PostRepository
 	portfolioRepo *repository.PortfolioRepository
@@ -256,4 +295,79 @@ func (h *APIHandlers) UpdateSettingsHandler(w http.ResponseWriter, r *http.Reque
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"message": "Settings updated successfully"})
+}
+
+func (h *APIHandlers) GetTemplatesHandler(w http.ResponseWriter, r *http.Request) {
+	templatePath := os.Getenv("TEMPLATE_PATH")
+	if templatePath == "" {
+		templatePath = "./templates"
+	}
+	tree, err := buildFileTree(templatePath)
+	if err != nil {
+		http.Error(w, "Failed to list templates", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(tree)
+}
+
+func (h *APIHandlers) GetTemplateContentHandler(w http.ResponseWriter, r *http.Request) {
+	pathParam := r.URL.Query().Get("path")
+	if pathParam == "" {
+		http.Error(w, "Missing path parameter", http.StatusBadRequest)
+		return
+	}
+	templatePath := os.Getenv("TEMPLATE_PATH")
+	if templatePath == "" {
+		templatePath = "./templates"
+	}
+	fullPath := filepath.Join(templatePath, pathParam)
+	if !strings.HasPrefix(fullPath, templatePath+string(filepath.Separator)) && fullPath != templatePath {
+		http.Error(w, "Invalid path", http.StatusBadRequest)
+		return
+	}
+	content, err := os.ReadFile(fullPath)
+	if err != nil {
+		http.Error(w, "Failed to read file", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "text/plain")
+	w.Write(content)
+}
+
+func (h *APIHandlers) SaveTemplateHandler(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		Path    string `json:"path"`
+		Content string `json:"content"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+	templatePath := os.Getenv("TEMPLATE_PATH")
+	if templatePath == "" {
+		templatePath = "./templates"
+	}
+	fullPath := filepath.Join(templatePath, req.Path)
+	if !strings.HasPrefix(fullPath, templatePath+string(filepath.Separator)) && fullPath != templatePath {
+		http.Error(w, "Invalid path", http.StatusBadRequest)
+		return
+	}
+	// Create backup
+	bakPath := fullPath + ".bak"
+	if _, err := os.Stat(fullPath); err == nil {
+		err = os.Rename(fullPath, bakPath)
+		if err != nil {
+			http.Error(w, "Failed to create backup", http.StatusInternalServerError)
+			return
+		}
+	}
+	// Write new content
+	err := os.WriteFile(fullPath, []byte(req.Content), 0644)
+	if err != nil {
+		http.Error(w, "Failed to save file", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "File saved successfully"})
 }
