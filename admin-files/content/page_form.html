@@ -1,0 +1,47 @@
+<!-- Page Heading & Actions -->
+                    <div class="admin-page-header">
+                        <div>
+                            <h2 class="admin-page-title">Create New Page</h2>
+                            <p class="admin-page-subtitle">Add a new static page.</p>
+                        </div>
+                    </div>
+
+                    <!-- Form Container -->
+                    <div class="admin-card">
+                        <div class="admin-card-body">
+                            <form id="page-form">
+                                <div class="form-group">
+                                    <label for="title" class="form-label">Title *</label>
+                                    <input type="text" id="title" name="title" required class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label for="slug" class="form-label">Slug *</label>
+                                    <input type="text" id="slug" name="slug" required class="form-input">
+                                    <p class="form-hint">URL-friendly identifier (lowercase, alphanumeric, hyphens only)</p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="content" class="form-label">Content *</label>
+                                    <textarea id="content" name="content" rows="15" class="form-textarea"></textarea>
+                                </div>
+                                <div class="form-checkbox-group">
+                                    <input type="checkbox" id="showInNav" name="showInNav" class="form-checkbox">
+                                    <label for="showInNav" class="form-checkbox-label">Show in Navigation</label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sortOrder" class="form-label">Sort Order</label>
+                                    <input type="number" id="sortOrder" name="sortOrder" min="0" value="0" class="form-input">
+                                    <p class="form-hint">Lower numbers appear first in navigation</p>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <span class="material-symbols-outlined">save</span>
+                                        <span>Save Page</span>
+                                    </button>
+                                    <a href="/admin/pages" class="btn btn-cancel">Cancel</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+    <script src="/admin/js/page_form.js"></script>
+    <script src="/admin/vendor/easymde.min.js"></script>
