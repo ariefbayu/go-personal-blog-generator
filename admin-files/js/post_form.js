@@ -215,9 +215,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('slug').dataset.original = post.slug || '';
 
                 // Set featured image
-                document.getElementById('featuredImageURL').value = post.featured_image || '';
-                if (post.featured_image) {
-                    document.getElementById('previewImg').src = post.featured_image;
+                document.getElementById('featuredImageURL').value = post.featuredImage || '';
+                if (post.featuredImage) {
+                    document.getElementById('previewImg').src = post.featuredImage;
                     document.getElementById('imagePreview').classList.remove('hidden');
                 }
 

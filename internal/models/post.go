@@ -8,7 +8,7 @@ type Post struct {
 	Slug          string    `db:"slug" json:"slug"`
 	Content       string    `db:"content" json:"content"`
 	Tags          string    `db:"tags" json:"tags"`
-	FeaturedImage string    `db:"featured_image" json:"featured_image"`
+	FeaturedImage string    `db:"featured_image" json:"featuredImage"`
 	Published     bool      `db:"published" json:"published"`
 	CreatedAt     time.Time `db:"created_at" json:"created_at"`
 	UpdatedAt     time.Time `db:"updated_at" json:"updated_at"`
