@@ -2,15 +2,15 @@ package handlers
 
 import (
 	"html/template"
+	"io/fs"
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
-var AdminFilesPath string
 var TemplatePath string
 var OutputPath string
+var AdminFS fs.FS
 
 // AdminPageData holds data for admin page templates
 type AdminPageData struct {
@@ -24,24 +24,6 @@ type AdminPageData struct {
 }
 
 func init() {
-	AdminFilesPath = os.Getenv("ADMIN_FILES_PATH")
-	if AdminFilesPath == "" {
-		// Default to user directory
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			// Fallback to current directory
-			AdminFilesPath = "./admin-files"
-		} else {
-			AdminFilesPath = filepath.Join(homeDir, ".personal-blog-generator", "admin-files")
-		}
-	} else if strings.HasPrefix(AdminFilesPath, "~") {
-		// Expand ~ to home directory
-		homeDir, err := os.UserHomeDir()
-		if err == nil {
-			AdminFilesPath = strings.Replace(AdminFilesPath, "~", homeDir, 1)
-		}
-	}
-
 	// Get TEMPLATE_PATH and OUTPUT_PATH for dashboard display
 	TemplatePath = os.Getenv("TEMPLATE_PATH")
 	if TemplatePath == "" {
@@ -58,15 +40,12 @@ func init() {
 
 // renderAdminPage renders an admin page using header.html, content, and footer.html
 func renderAdminPage(w http.ResponseWriter, data AdminPageData) error {
-	headerPath := filepath.Join(AdminFilesPath, "header.html")
-	footerPath := filepath.Join(AdminFilesPath, "footer.html")
-
 	// Read header and footer templates
-	headerBytes, err := os.ReadFile(headerPath)
+	headerBytes, err := fs.ReadFile(AdminFS, "header.html")
 	if err != nil {
 		return err
 	}
-	footerBytes, err := os.ReadFile(footerPath)
+	footerBytes, err := fs.ReadFile(AdminFS, "footer.html")
 	if err != nil {
 		return err
 	}
@@ -85,8 +64,7 @@ func renderAdminPage(w http.ResponseWriter, data AdminPageData) error {
 
 // readContentFile reads the content portion of an admin HTML file (stripping header/footer)
 func readContentFile(filename string) (template.HTML, error) {
-	contentPath := filepath.Join(AdminFilesPath, "content", filename)
-	content, err := os.ReadFile(contentPath)
+	content, err := fs.ReadFile(AdminFS, "content/"+filename)
 	if err != nil {
 		return "", err
 	}
@@ -96,13 +74,7 @@ func readContentFile(filename string) (template.HTML, error) {
 func ServeDashboard(w http.ResponseWriter, r *http.Request) {
 	content, err := readContentFile("dashboard.html")
 	if err != nil {
-		// Fallback to legacy static file
-		filePath := filepath.Join(AdminFilesPath, "index.html")
-		if _, err := os.Stat(filePath); os.IsNotExist(err) {
-			http.Error(w, "Admin dashboard template not found", http.StatusInternalServerError)
-			return
-		}
-		http.ServeFile(w, r, filePath)
+		http.Error(w, "Admin dashboard template not found", http.StatusInternalServerError)
 		return
 	}
 
@@ -153,13 +125,7 @@ func ServeDashboard(w http.ResponseWriter, r *http.Request) {
 func ServePostsPage(w http.ResponseWriter, r *http.Request) {
 	content, err := readContentFile("posts.html")
 	if err != nil {
-		// Fallback to legacy static file
-		filePath := filepath.Join(AdminFilesPath, "posts.html")
-		if _, err := os.Stat(filePath); os.IsNotExist(err) {
-			http.Error(w, "Posts page template not found", http.StatusInternalServerError)
-			return
-		}
-		http.ServeFile(w, r, filePath)
+		http.Error(w, "Posts page template not found", http.StatusInternalServerError)
 		return
 	}
 
@@ -178,12 +144,7 @@ func ServePostsPage(w http.ResponseWriter, r *http.Request) {
 func ServeNewPostPage(w http.ResponseWriter, r *http.Request) {
 	content, err := readContentFile("post_form.html")
 	if err != nil {
-		filePath := filepath.Join(AdminFilesPath, "post_form.html")
-		if _, err := os.Stat(filePath); os.IsNotExist(err) {
-			http.Error(w, "New post form template not found", http.StatusInternalServerError)
-			return
-		}
-		http.ServeFile(w, r, filePath)
+		http.Error(w, "New post form template not found", http.StatusInternalServerError)
 		return
 	}
 
@@ -203,12 +164,7 @@ func ServeNewPostPage(w http.ResponseWriter, r *http.Request) {
 func ServeEditPostPage(w http.ResponseWriter, r *http.Request) {
 	content, err := readContentFile("post_form.html")
 	if err != nil {
-		filePath := filepath.Join(AdminFilesPath, "post_form.html")
-		if _, err := os.Stat(filePath); os.IsNotExist(err) {
-			http.Error(w, "Edit post form template not found", http.StatusInternalServerError)
-			return
-		}
-		http.ServeFile(w, r, filePath)
+		http.Error(w, "Edit post form template not found", http.StatusInternalServerError)
 		return
 	}
 
@@ -228,12 +184,7 @@ func ServeEditPostPage(w http.ResponseWriter, r *http.Request) {
 func ServePortfolioPage(w http.ResponseWriter, r *http.Request) {
 	content, err := readContentFile("portfolio_list.html")
 	if err != nil {
-		filePath := filepath.Join(AdminFilesPath, "portfolio_list.html")
-		if _, err := os.Stat(filePath); os.IsNotExist(err) {
-			http.Error(w, "Portfolio page template not found", http.StatusInternalServerError)
-			return
-		}
-		http.ServeFile(w, r, filePath)
+		http.Error(w, "Portfolio page template not found", http.StatusInternalServerError)
 		return
 	}
 
@@ -252,12 +203,7 @@ func ServePortfolioPage(w http.ResponseWriter, r *http.Request) {
 func ServeNewPortfolioPage(w http.ResponseWriter, r *http.Request) {
 	content, err := readContentFile("portfolio_form.html")
 	if err != nil {
-		filePath := filepath.Join(AdminFilesPath, "portfolio_form.html")
-		if _, err := os.Stat(filePath); os.IsNotExist(err) {
-			http.Error(w, "New portfolio form template not found", http.StatusInternalServerError)
-			return
-		}
-		http.ServeFile(w, r, filePath)
+		http.Error(w, "New portfolio form template not found", http.StatusInternalServerError)
 		return
 	}
 
@@ -277,12 +223,7 @@ func ServeNewPortfolioPage(w http.ResponseWriter, r *http.Request) {
 func ServeEditPortfolioPage(w http.ResponseWriter, r *http.Request) {
 	content, err := readContentFile("portfolio_form.html")
 	if err != nil {
-		filePath := filepath.Join(AdminFilesPath, "portfolio_form.html")
-		if _, err := os.Stat(filePath); os.IsNotExist(err) {
-			http.Error(w, "Edit portfolio form template not found", http.StatusInternalServerError)
-			return
-		}
-		http.ServeFile(w, r, filePath)
+		http.Error(w, "Edit portfolio form template not found", http.StatusInternalServerError)
 		return
 	}
 
@@ -302,12 +243,7 @@ func ServeEditPortfolioPage(w http.ResponseWriter, r *http.Request) {
 func ServePagesPage(w http.ResponseWriter, r *http.Request) {
 	content, err := readContentFile("page_list.html")
 	if err != nil {
-		filePath := filepath.Join(AdminFilesPath, "page_list.html")
-		if _, err := os.Stat(filePath); os.IsNotExist(err) {
-			http.Error(w, "Pages page template not found", http.StatusInternalServerError)
-			return
-		}
-		http.ServeFile(w, r, filePath)
+		http.Error(w, "Pages page template not found", http.StatusInternalServerError)
 		return
 	}
 
@@ -326,12 +262,7 @@ func ServePagesPage(w http.ResponseWriter, r *http.Request) {
 func ServeNewPagePage(w http.ResponseWriter, r *http.Request) {
 	content, err := readContentFile("page_form.html")
 	if err != nil {
-		filePath := filepath.Join(AdminFilesPath, "page_form.html")
-		if _, err := os.Stat(filePath); os.IsNotExist(err) {
-			http.Error(w, "New page form template not found", http.StatusInternalServerError)
-			return
-		}
-		http.ServeFile(w, r, filePath)
+		http.Error(w, "New page form template not found", http.StatusInternalServerError)
 		return
 	}
 
@@ -351,12 +282,7 @@ func ServeNewPagePage(w http.ResponseWriter, r *http.Request) {
 func ServeEditPagePage(w http.ResponseWriter, r *http.Request) {
 	content, err := readContentFile("page_form.html")
 	if err != nil {
-		filePath := filepath.Join(AdminFilesPath, "page_form.html")
-		if _, err := os.Stat(filePath); os.IsNotExist(err) {
-			http.Error(w, "Page edit template not found", http.StatusInternalServerError)
-			return
-		}
-		http.ServeFile(w, r, filePath)
+		http.Error(w, "Page edit template not found", http.StatusInternalServerError)
 		return
 	}
 
@@ -376,12 +302,7 @@ func ServeEditPagePage(w http.ResponseWriter, r *http.Request) {
 func ServeSettingsPage(w http.ResponseWriter, r *http.Request) {
 	content, err := readContentFile("settings.html")
 	if err != nil {
-		filePath := filepath.Join(AdminFilesPath, "settings.html")
-		if _, err := os.Stat(filePath); os.IsNotExist(err) {
-			http.Error(w, "Settings template not found", http.StatusInternalServerError)
-			return
-		}
-		http.ServeFile(w, r, filePath)
+		http.Error(w, "Settings template not found", http.StatusInternalServerError)
 		return
 	}
 

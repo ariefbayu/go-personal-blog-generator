@@ -1,6 +1,8 @@
 package main
 
 import (
+	"embed"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -14,6 +16,9 @@ import (
 	"github.com/ariefbayu/personal-blog-generator/internal/repository"
 	"github.com/ariefbayu/personal-blog-generator/internal/utils"
 )
+
+//go:embed admin-files/**
+var adminFS embed.FS
 
 func main() {
 	utils.LoadEnv()
@@ -49,6 +54,13 @@ func main() {
 	portfolioHandlers := handlers.NewPortfolioHandlers(portfolioRepo)
 	pageHandlers := handlers.NewPageHandlers(pageRepo)
 
+	// Create sub-filesystem to strip admin-files/ prefix
+	adminSubFS, err := fs.Sub(adminFS, "admin-files")
+	if err != nil {
+		log.Fatal(err)
+	}
+	handlers.AdminFS = adminSubFS
+
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
@@ -76,6 +88,16 @@ func main() {
 	r.Post("/api/upload/image", handlers.UploadImageHandler)
 	r.Post("/api/publish", apiHandlers.PublishSiteHandler)
 	r.Handle("/images/*", http.StripPrefix("/images/", http.FileServer(http.Dir("html-outputs/images/"))))
+
+	// Admin root redirects (must come before static assets)
+	r.Get("/admin", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/admin/dashboard", http.StatusFound)
+	})
+	r.Get("/admin/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/admin/dashboard", http.StatusFound)
+	})
+
+	// Admin page routes
 	r.Get("/admin/dashboard", handlers.ServeDashboard)
 	r.Get("/admin/posts", handlers.ServePostsPage)
 	r.Get("/admin/posts/new", handlers.ServeNewPostPage)
@@ -88,7 +110,9 @@ func main() {
 	r.Get("/admin/pages/{id}/edit", handlers.ServeEditPagePage)
 	r.Get("/admin/settings", handlers.ServeSettingsPage)
 	r.Get("/admin/templates", handlers.ServeTemplatesPage)
-	r.Handle("/admin/*", http.StripPrefix("/admin/", http.FileServer(http.Dir(handlers.AdminFilesPath))))
+
+	// Admin static assets (must come after specific routes to avoid catching them)
+	r.Handle("/admin/*", http.StripPrefix("/admin/", http.FileServer(http.FS(handlers.AdminFS))))
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {

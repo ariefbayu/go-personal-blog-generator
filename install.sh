@@ -17,21 +17,6 @@ if [ "$1" = "-t" ]; then
     cp -r templates/* "$TEMPLATE_PATH"/
     echo "Templates copied successfully!"
     exit 0
-elif [ "$1" = "-a" ]; then
-    # Copy admin-files only
-    ENV_FILE=~/.personal-blog-generator/.env
-    if [ ! -f "$ENV_FILE" ]; then
-        echo "Configuration file not found at $ENV_FILE. Please run the setup script first."
-        exit 1
-    fi
-    source "$ENV_FILE"
-    if [ ! -d "$ADMIN_FILES_PATH" ]; then
-        mkdir -p "$ADMIN_FILES_PATH"
-    fi
-    echo "Copying admin files..."
-    cp -r admin-files/* "$ADMIN_FILES_PATH"/
-    echo "Admin files copied successfully!"
-    exit 0
 fi
 
 echo "Personal Blog Generator Local Setup Script"
@@ -49,9 +34,6 @@ APP_PORT=${APP_PORT:-8080}
 read -p "Enter DB_PATH (default ~/.personal-blog-generator/blog.db): " DB_PATH
 DB_PATH=${DB_PATH:-~/.personal-blog-generator/blog.db}
 
-read -p "Enter ADMIN_FILES_PATH (default ~/.personal-blog-generator/admin-files): " ADMIN_FILES_PATH
-ADMIN_FILES_PATH=${ADMIN_FILES_PATH:-~/.personal-blog-generator/admin-files}
-
 read -p "Enter TEMPLATE_PATH (default ~/.personal-blog-generator/templates): " TEMPLATE_PATH
 TEMPLATE_PATH=${TEMPLATE_PATH:-~/.personal-blog-generator/templates}
 
@@ -62,7 +44,6 @@ OUTPUT_PATH=${OUTPUT_PATH:-~/html-outputs}
 DB_PATH="${DB_PATH/#\~/$HOME}"
 TEMPLATE_PATH="${TEMPLATE_PATH/#\~/$HOME}"
 OUTPUT_PATH="${OUTPUT_PATH/#\~/$HOME}"
-ADMIN_FILES_PATH="${ADMIN_FILES_PATH/#\~/$HOME}"
 
 # Create directories
 echo "Creating necessary directories..."
@@ -70,7 +51,6 @@ mkdir -p ~/bin
 mkdir -p ~/.personal-blog-generator
 mkdir -p "$TEMPLATE_PATH"
 mkdir -p "$OUTPUT_PATH"
-mkdir -p "$ADMIN_FILES_PATH"
 mkdir -p "$(dirname "$DB_PATH")"
 echo "Directories created."
 echo
@@ -87,7 +67,6 @@ APP_PORT=$APP_PORT
 # Paths configuration
 TEMPLATE_PATH=$TEMPLATE_PATH
 OUTPUT_PATH=$OUTPUT_PATH
-ADMIN_FILES_PATH=$ADMIN_FILES_PATH
 EOF2
 
 echo "Configuration file created."
@@ -104,12 +83,6 @@ echo
 echo "Copying templates..."
 cp -r templates/* "$TEMPLATE_PATH"/
 echo "Templates copied."
-echo
-
-# Copy admin-files
-echo "Copying admin files..."
-cp -r admin-files/* "$ADMIN_FILES_PATH"/
-echo "Admin files copied."
 echo
 
 echo "Setup complete!"
