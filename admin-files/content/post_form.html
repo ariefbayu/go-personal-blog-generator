@@ -23,6 +23,15 @@
                                     <input type="text" id="tags" name="tags" class="form-input" placeholder="Comma separated tags">
                                 </div>
                                 <div class="form-group">
+                                    <label class="form-label">Featured Image</label>
+                                    <input type="file" id="featuredImageUpload" accept="image/*" class="form-input">
+                                    <input type="hidden" id="featuredImageURL" name="featuredImage">
+                                    <div id="imagePreview" class="image-preview hidden">
+                                        <img id="previewImg" src="" alt="Preview">
+                                    </div>
+                                    <p class="form-hint">Upload an image to feature this post</p>
+                                </div>
+                                <div class="form-group">
                                     <label for="publishDate" class="form-label">Publish Date</label>
                                     <input type="text" id="publishDate" name="publishDate" readonly class="form-input" placeholder="Not published yet">
                                 </div>

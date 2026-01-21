@@ -21,6 +21,12 @@
                     </div>
                 </header>
 
+                {{if .FeaturedImage}}
+                <div class="post-featured-image" style="margin-top: var(--spacing-xl);">
+                    <img src="{{.FeaturedImage}}" alt="{{.Title}}" style="width: 100%; height: auto; border-radius: var(--border-radius);">
+                </div>
+                {{end}}
+
                 <div class="prose" style="margin-top: var(--spacing-2xl);">
                     {{.Content}}
                 </div>

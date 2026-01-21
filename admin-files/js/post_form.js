@@ -33,7 +33,8 @@ if (pathMatch) {
         slug: slug,
         tags: tags,
         content: content,
-        published: published
+        published: published,
+        featuredImage: document.getElementById('featuredImageURL').value
     };
 
     console.log('Sending post data:', postData);
@@ -136,6 +137,58 @@ document.addEventListener('DOMContentLoaded', function() {
         console.warn('EasyMDE not loaded, using plain textarea');
     }
 
+    // Set up image upload handler
+    const imageUpload = document.getElementById('featuredImageUpload');
+    const imageUrlInput = document.getElementById('featuredImageURL');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+
+    imageUpload.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file');
+                return;
+            }
+
+            // Validate file size (5MB limit)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB');
+                return;
+            }
+
+            // Set uploading state
+            imageUpload.disabled = true;
+
+            // Upload the file
+            const formData = new FormData();
+            formData.append('image', file);
+
+            fetch('/api/upload/image', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.data && data.data.filePath) {
+                        imageUrlInput.value = data.data.filePath;
+                        previewImg.src = data.data.filePath;
+                        imagePreview.classList.remove('hidden');
+                    } else {
+                        alert('Upload failed');
+                    }
+                })
+                .catch(error => {
+                    console.error('Upload error:', error);
+                    alert('Upload failed');
+                })
+                .finally(() => {
+                    imageUpload.disabled = false;
+                });
+        }
+    });
+
     // Check if editing after editor is initialized
     const pathMatch = window.location.pathname.match(/^\/admin\/posts\/(\d+)\/edit$/);
     if (pathMatch) {
@@ -160,6 +213,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 document.getElementById('published').checked = post.published || false;
                 document.getElementById('slug').dataset.original = post.slug || '';
+
+                // Set featured image
+                document.getElementById('featuredImageURL').value = post.featured_image || '';
+                if (post.featured_image) {
+                    document.getElementById('previewImg').src = post.featured_image;
+                    document.getElementById('imagePreview').classList.remove('hidden');
+                }
 
                 // Set publish date
                 if (post.created_at) {

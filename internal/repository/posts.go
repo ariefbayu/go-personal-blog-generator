@@ -34,13 +34,13 @@ func (r *PostRepository) GetAllPosts() ([]models.Post, error) {
 }
 
 func (r *PostRepository) CreatePost(post *models.Post) error {
-	err := r.db.QueryRow("INSERT INTO posts (title, slug, content, tags, published, created_at) VALUES (?, ?, ?, ?, ?, ?) RETURNING id", post.Title, post.Slug, post.Content, post.Tags, post.Published, post.CreatedAt).Scan(&post.ID)
+	err := r.db.QueryRow("INSERT INTO posts (title, slug, content, tags, featured_image, published, created_at) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id", post.Title, post.Slug, post.Content, post.Tags, post.FeaturedImage, post.Published, post.CreatedAt).Scan(&post.ID)
 	return err
 }
 
 func (r *PostRepository) GetPostByID(id int64) (*models.Post, error) {
 	var post models.Post
-	err := r.db.QueryRow("SELECT id, title, slug, content, tags, published, created_at FROM posts WHERE id = ?", id).Scan(&post.ID, &post.Title, &post.Slug, &post.Content, &post.Tags, &post.Published, &post.CreatedAt)
+	err := r.db.QueryRow("SELECT id, title, slug, content, tags, featured_image, published, created_at, updated_at FROM posts WHERE id = ?", id).Scan(&post.ID, &post.Title, &post.Slug, &post.Content, &post.Tags, &post.FeaturedImage, &post.Published, &post.CreatedAt, &post.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (r *PostRepository) GetPostByID(id int64) (*models.Post, error) {
 }
 
 func (r *PostRepository) UpdatePost(post *models.Post) error {
-	_, err := r.db.Exec("UPDATE posts SET title = ?, slug = ?, content = ?, tags = ?, published = ?, updated_at = ? WHERE id = ?", post.Title, post.Slug, post.Content, post.Tags, post.Published, post.UpdatedAt, post.ID)
+	_, err := r.db.Exec("UPDATE posts SET title = ?, slug = ?, content = ?, tags = ?, featured_image = ?, published = ?, updated_at = ? WHERE id = ?", post.Title, post.Slug, post.Content, post.Tags, post.FeaturedImage, post.Published, post.UpdatedAt, post.ID)
 	return err
 }
 
@@ -68,7 +68,7 @@ func (r *PostRepository) DeletePost(id int64) error {
 }
 
 func (r *PostRepository) GetPublishedPosts() ([]models.Post, error) {
-	rows, err := r.db.Query("SELECT id, title, slug, content, tags, published, created_at FROM posts WHERE published = true ORDER BY created_at DESC")
+	rows, err := r.db.Query("SELECT id, title, slug, content, tags, featured_image, published, created_at, updated_at FROM posts WHERE published = true ORDER BY created_at DESC")
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (r *PostRepository) GetPublishedPosts() ([]models.Post, error) {
 	var posts []models.Post
 	for rows.Next() {
 		var post models.Post
-		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Content, &post.Tags, &post.Published, &post.CreatedAt)
+		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Content, &post.Tags, &post.FeaturedImage, &post.Published, &post.CreatedAt, &post.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -96,7 +96,7 @@ func (r *PostRepository) GetPostsPaginated(limit, offset int) ([]models.Post, in
 	}
 
 	// Get paginated posts
-	rows, err := r.db.Query("SELECT id, title, slug, published, created_at FROM posts ORDER BY created_at DESC LIMIT ? OFFSET ?", limit, offset)
+	rows, err := r.db.Query("SELECT id, title, slug, featured_image, published, created_at FROM posts ORDER BY created_at DESC LIMIT ? OFFSET ?", limit, offset)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -105,7 +105,7 @@ func (r *PostRepository) GetPostsPaginated(limit, offset int) ([]models.Post, in
 	var posts []models.Post
 	for rows.Next() {
 		var post models.Post
-		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.Published, &post.CreatedAt)
+		err := rows.Scan(&post.ID, &post.Title, &post.Slug, &post.FeaturedImage, &post.Published, &post.CreatedAt)
 		if err != nil {
 			return nil, 0, err
 		}

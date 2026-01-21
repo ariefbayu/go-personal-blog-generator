@@ -10,6 +10,7 @@
             <div class="grid grid-cols-lg-3">
                 {{range .Posts}}
                 <article class="card card-content card-hover">
+                    {{if .FeaturedImage}}<img src="{{.FeaturedImage}}" alt="{{.Title}}" class="post-image">{{end}}
                     {{if .Tags}}
                     <div class="flex flex-wrap gap-2">
                         {{range .Tags}}

@@ -67,4 +67,5 @@ CREATE TABLE IF NOT EXISTS pages (
 );
 
 INSERT OR IGNORE INTO settings (id, site_name, show_portfolio_menu, show_posts_menu, menu_order) VALUES (1, 'My Blog', 1, 1, '["posts","portfolio"]');`,
+	"004_add_featured_image_to_posts": `ALTER TABLE posts ADD COLUMN featured_image TEXT DEFAULT '';`,
 }

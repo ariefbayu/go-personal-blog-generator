@@ -20,6 +20,7 @@ type Post struct {
 	Slug               string
 	Content            template.HTML
 	Tags               []string
+	FeaturedImage      string
 	CreatedAt          time.Time
 	CreatedAtFormatted string
 	NavigationData
@@ -58,6 +59,7 @@ type PostItem struct {
 	CreatedAtFormatted string
 	Tags               []string
 	Excerpt            string
+	FeaturedImage      string
 }
 
 // IndexPost represents a simplified post for the index page
@@ -66,6 +68,7 @@ type IndexPost struct {
 	Slug               string
 	CreatedAt          time.Time
 	CreatedAtFormatted string
+	FeaturedImage      string
 }
 
 // PortfolioData represents data for the portfolio page template
@@ -222,6 +225,7 @@ func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repo
 			Slug:               post.Slug,
 			Content:            contentHTML,
 			Tags:               tags,
+			FeaturedImage:      post.FeaturedImage,
 			CreatedAt:          post.CreatedAt,
 			CreatedAtFormatted: post.CreatedAt.Format("January 2, 2006"),
 			NavigationData:     navData,
@@ -314,6 +318,7 @@ func generateIndexPage(posts []models.Post, portfolioRepo *repository.PortfolioR
 			Slug:               post.Slug,
 			CreatedAt:          post.CreatedAt,
 			CreatedAtFormatted: post.CreatedAt.Format("January 2, 2006"),
+			FeaturedImage:      post.FeaturedImage,
 		}
 	}
 
@@ -415,6 +420,7 @@ func generatePostsPage(posts []models.Post, outputPath, templatePath string, nav
 			CreatedAtFormatted: post.CreatedAt.Format("2006-01-02"),
 			Tags:               tags,
 			Excerpt:            excerpt,
+			FeaturedImage:      post.FeaturedImage,
 		}
 	}
 
