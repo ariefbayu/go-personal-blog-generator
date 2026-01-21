@@ -3,11 +3,13 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"sort"
 )
 
 func Migrate(db *sql.DB) error {
 	// Create schema_migrations table
+	log.Println("Initializing database migrations...")
 	_, err := db.Exec(`CREATE TABLE IF NOT EXISTS schema_migrations (
 		id TEXT PRIMARY KEY,
 		applied_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -22,25 +24,29 @@ func Migrate(db *sql.DB) error {
 		migrationIDs = append(migrationIDs, id)
 	}
 	sort.Strings(migrationIDs)
+	log.Printf("Found %d migrations to apply", len(migrationIDs))
 
 	for _, id := range migrationIDs {
+		log.Printf("Checking migration %s...", id)
 		// Check if already applied
 		var count int
 		err := db.QueryRow("SELECT COUNT(*) FROM schema_migrations WHERE id = ?", id).Scan(&count)
 		if err != nil {
 			return fmt.Errorf("failed to check migration %s: %w", id, err)
 		}
+		log.Printf("Migration %s applied count: %d", id, count)
 		if count > 0 {
 			continue
 		}
 
 		// Get SQL from embedded
 		sql, exists := Migrations[id]
+		log.Printf("Migration %s exists: %v", id, exists)
 		if !exists {
 			return fmt.Errorf("migration %s not found in embedded migrations", id)
 		}
 
-		// Apply in transaction
+		log.Printf("Applying migration %s...", id)
 		tx, err := db.Begin()
 		if err != nil {
 			return fmt.Errorf("failed to begin transaction for migration %s: %w", id, err)
