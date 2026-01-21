@@ -60,6 +60,7 @@ func main() {
 		log.Fatal(err)
 	}
 	handlers.AdminFS = adminSubFS
+	handlers.DBPath = dbPath
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)

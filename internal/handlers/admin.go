@@ -10,6 +10,7 @@ import (
 
 var TemplatePath string
 var OutputPath string
+var DBPath string
 var AdminFS fs.FS
 
 // AdminPageData holds data for admin page templates
@@ -21,6 +22,7 @@ type AdminPageData struct {
 	Content      template.HTML
 	TemplatePath string
 	OutputPath   string
+	DBPath       string
 }
 
 func init() {
@@ -84,6 +86,7 @@ func ServeDashboard(w http.ResponseWriter, r *http.Request) {
 		Content:      content,
 		TemplatePath: TemplatePath,
 		OutputPath:   OutputPath,
+		DBPath:       DBPath,
 		Scripts: template.HTML(`<script>
         document.getElementById('publish-site-btn').addEventListener('click', async function() {
             const btn = this;
