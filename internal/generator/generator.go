@@ -502,10 +502,15 @@ func generatePortfolioPage(portfolioRepo *repository.PortfolioRepository, output
 	}
 	defer file.Close()
 
-	// Execute template
-	err = tmpl.Execute(file, portfolioData)
-	if err != nil {
+	// Execute templates in sequence: header, portfolio content, footer
+	if err := tmpl.ExecuteTemplate(file, "header.html", portfolioData); err != nil {
+		return fmt.Errorf("failed to execute header template: %w", err)
+	}
+	if err := tmpl.ExecuteTemplate(file, "portfolio.html", portfolioData); err != nil {
 		return fmt.Errorf("failed to execute portfolio template: %w", err)
+	}
+	if err := tmpl.ExecuteTemplate(file, "footer.html", portfolioData); err != nil {
+		return fmt.Errorf("failed to execute footer template: %w", err)
 	}
 
 	return nil
