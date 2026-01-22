@@ -73,6 +73,7 @@ type IndexPost struct {
 
 // PortfolioData represents data for the portfolio page template
 type PortfolioData struct {
+	Title          string
 	PortfolioItems []PortfolioItem
 	NavigationData
 }
@@ -455,7 +456,12 @@ func generatePostsPage(posts []models.Post, outputPath, templatePath string, nav
 // generatePortfolioPage creates the portfolio.html file with all portfolio items
 func generatePortfolioPage(portfolioRepo *repository.PortfolioRepository, outputPath, templatePath string, navData NavigationData) error {
 	// Parse the portfolio template
-	tmpl, err := template.ParseFiles(filepath.Join(templatePath, "portfolio.html"))
+	tmpl, err := template.ParseFiles(
+		filepath.Join(templatePath, "header.html"),
+		filepath.Join(templatePath, "portfolio.html"),
+		filepath.Join(templatePath, "footer.html"),
+	)
+
 	if err != nil {
 		return fmt.Errorf("failed to parse portfolio template: %w", err)
 	}
@@ -483,6 +489,7 @@ func generatePortfolioPage(portfolioRepo *repository.PortfolioRepository, output
 	}
 
 	portfolioData := PortfolioData{
+		Title:          "",
 		PortfolioItems: templateItems,
 		NavigationData: navData,
 	}
