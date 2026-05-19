@@ -722,7 +722,7 @@ func Templates(data AdminPageData) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<div class=\"admin-page-header\"><div><h2 class=\"admin-page-title\">Templates</h2><p class=\"admin-page-subtitle\">Edit your blog templates.</p></div></div><div id=\"templates-container\"></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<div class=\"admin-page-header\"><div><h2 class=\"admin-page-title\">Templates</h2><p class=\"admin-page-subtitle\">Edit your blog templates.</p></div></div><div class=\"template-editor-layout\"><!-- File Tree Sidebar --><div class=\"file-tree-container\"><div id=\"file-tree\"><p class=\"text-muted\">Loading templates...</p></div></div><!-- Code Editor Area --><div class=\"editor-main-container\"><div class=\"editor-card\"><div class=\"editor-header\"><div class=\"editor-title\" id=\"editor-title\">Select a file to edit</div><div class=\"flex items-center gap-4\"><span id=\"save-status\" class=\"save-status-msg\"></span> <button id=\"save-btn\" class=\"btn btn-primary btn-sm\" disabled><span class=\"material-symbols-outlined\">save</span> <span>Save Changes</span></button></div></div><div class=\"editor-wrapper\"><textarea id=\"file-content\" class=\"hidden\"></textarea></div></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

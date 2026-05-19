@@ -1646,3 +1646,116 @@ body {
 .hidden {
     display: none;
 }
+
+/* ============================================
+   Template Editor Styles
+   ============================================ */
+.template-editor-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: var(--spacing-lg);
+    height: calc(100vh - 12rem);
+    min-height: 500px;
+}
+
+.file-tree-container {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    overflow-y: auto;
+    padding: var(--spacing-md);
+}
+
+.editor-main-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    height: 100%;
+}
+
+.editor-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+}
+
+.editor-header {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.editor-title {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.editor-wrapper {
+    flex: 1;
+    position: relative;
+}
+
+.CodeMirror {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100% !important;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 14px;
+}
+
+.file-tree-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.file-tree-children {
+    list-style: none;
+    padding-left: var(--spacing-lg);
+}
+
+.file-tree-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+    font-size: var(--font-size-sm);
+}
+
+.file-tree-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.file-tree-name.editable {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.file-tree-toggle {
+    width: 1rem;
+    display: inline-block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.file-tree-icon {
+    font-size: 1.125rem !important;
+    color: var(--color-primary);
+}
+
+.save-status-msg {
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+}

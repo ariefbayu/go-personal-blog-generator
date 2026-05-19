@@ -1,8 +1,23 @@
 let currentFilePath = null;
+let editor = null;
 
 document.addEventListener('DOMContentLoaded', function() {
+    initEditor();
     loadFileTree();
 });
+
+function initEditor() {
+    const textarea = document.getElementById('file-content');
+    editor = CodeMirror.fromTextArea(textarea, {
+        lineNumbers: true,
+        mode: "htmlmixed",
+        theme: "material-ocean",
+        tabSize: 4,
+        indentUnit: 4,
+        lineWrapping: true,
+        viewportMargin: Infinity
+    });
+}
 
 function loadFileTree() {
     fetch('/api/settings/templates')
@@ -19,7 +34,7 @@ function loadFileTree() {
         })
         .catch(error => {
             console.error('Error loading file tree:', error);
-            document.getElementById('file-tree').innerHTML = '<p>Error loading file tree.</p>';
+            document.getElementById('file-tree').innerHTML = '<p class="text-danger">Error loading file tree.</p>';
         });
 }
 
@@ -28,25 +43,34 @@ function buildTree(nodes, container, path) {
     ul.className = 'file-tree-list';
     nodes.forEach(node => {
         const li = document.createElement('li');
-        li.className = 'file-tree-item';
+        li.className = 'file-tree-item-wrapper';
         const fullPath = path ? path + '/' + node.name : node.name;
-        li.innerHTML = `
+        
+        const item = document.createElement('div');
+        item.className = 'file-tree-item';
+        item.innerHTML = `
             <span class="file-tree-toggle">${node.type === 'dir' ? '▶' : ''}</span>
             <span class="file-tree-icon material-symbols-outlined">${node.type === 'dir' ? 'folder' : 'description'}</span>
             <span class="file-tree-name ${node.editable ? 'editable' : ''}" data-path="${fullPath}" data-type="${node.type}">${node.name}</span>
         `;
+        li.appendChild(item);
+
         if (node.type === 'dir') {
-            li.classList.add('file-tree-dir');
             const childUl = document.createElement('ul');
             childUl.className = 'file-tree-children';
             childUl.style.display = 'none';
             buildTree(node.children, childUl, fullPath);
             li.appendChild(childUl);
-            li.querySelector('.file-tree-toggle').addEventListener('click', function() {
-                toggleDir(this, childUl);
+            
+            item.querySelector('.file-tree-toggle').addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleDir(item.querySelector('.file-tree-toggle'), childUl);
+            });
+            item.addEventListener('click', () => {
+                toggleDir(item.querySelector('.file-tree-toggle'), childUl);
             });
         } else {
-            li.querySelector('.file-tree-name').addEventListener('click', function() {
+            item.addEventListener('click', () => {
                 selectFile(fullPath);
             });
         }
@@ -68,9 +92,17 @@ function toggleDir(toggle, childUl) {
 function selectFile(path) {
     currentFilePath = path;
     document.getElementById('editor-title').textContent = `Editing: ${path}`;
-    const textarea = document.getElementById('file-content');
-    textarea.readOnly = false;
     document.getElementById('save-btn').disabled = false;
+
+    // Determine mode based on extension
+    const ext = path.split('.').pop().toLowerCase();
+    let mode = "htmlmixed";
+    if (ext === "css") mode = "css";
+    if (ext === "js") mode = "javascript";
+    if (ext === "json") mode = "application/json";
+    if (ext === "md") mode = "markdown";
+    
+    editor.setOption("mode", mode);
 
     fetch(`/api/settings/templates/content?path=${encodeURIComponent(path)}`)
         .then(response => {
@@ -80,19 +112,24 @@ function selectFile(path) {
             return response.text();
         })
         .then(content => {
-            textarea.value = content;
+            editor.setValue(content);
         })
         .catch(error => {
             console.error('Error loading file content:', error);
-            textarea.value = 'Error loading file content.';
+            editor.setValue('Error loading file content.');
         });
 }
 
 document.getElementById('save-btn').addEventListener('click', function() {
     if (!currentFilePath) return;
 
-    const content = document.getElementById('file-content').value;
+    const content = editor.getValue();
     const status = document.getElementById('save-status');
+    const btn = this;
+    const originalText = btn.innerHTML;
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined">sync</span><span>Saving...</span>';
 
     fetch('/api/settings/templates/save', {
         method: 'POST',
@@ -109,13 +146,17 @@ document.getElementById('save-btn').addEventListener('click', function() {
     })
     .then(data => {
         status.textContent = 'File saved successfully!';
-        status.style.color = 'green';
+        status.className = 'save-status-msg text-success';
         setTimeout(() => { status.textContent = ''; }, 3000);
     })
     .catch(error => {
         console.error('Error saving file:', error);
         status.textContent = 'Error saving file.';
-        status.style.color = 'red';
+        status.className = 'save-status-msg text-danger';
         setTimeout(() => { status.textContent = ''; }, 3000);
+    })
+    .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
     });
 });

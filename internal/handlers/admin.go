@@ -238,6 +238,18 @@ func ServeTemplatesPage(w http.ResponseWriter, r *http.Request) {
 	data := AdminPageData{
 		Title:     "Templates",
 		ActiveNav: "templates",
+		ExtraHead: template.HTML(`
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-ocean.min.css">
+		`),
+		Scripts: template.HTML(`
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+			<script src="/admin/js/templates.js"></script>
+		`),
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
