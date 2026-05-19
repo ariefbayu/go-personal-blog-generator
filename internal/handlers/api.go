@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/go-chi/chi/v5"
 	"log"
 	"net/http"
 	"os"
@@ -139,25 +140,24 @@ func (h *APIHandlers) CreatePostHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *APIHandlers) GetPostHandler(w http.ResponseWriter, r *http.Request) {
-	idStr := strings.TrimPrefix(r.URL.Path, "/api/posts/")
-	id, err := strconv.ParseInt(idStr, 10, 64)
-	if err != nil {
-		http.Error(w, "Invalid post ID", http.StatusBadRequest)
-		return
-	}
+        idStr := chi.URLParam(r, "id")
+        id, err := strconv.ParseInt(idStr, 10, 64)
+        if err != nil {
+                http.Error(w, "Invalid post ID", http.StatusBadRequest)
+                return
+        }
 
-	post, err := h.postRepo.GetPostByID(id)
-	if err != nil {
-		http.Error(w, "Post not found", http.StatusNotFound)
-		return
-	}
+        post, err := h.postRepo.GetPostByID(id)
+        if err != nil {
+                http.Error(w, "Post not found", http.StatusNotFound)
+                return
+        }
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(post)
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(post)
 }
-
 func (h *APIHandlers) UpdatePostHandler(w http.ResponseWriter, r *http.Request) {
-	idStr := strings.TrimPrefix(r.URL.Path, "/api/posts/")
+	idStr := chi.URLParam(r, "id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		http.Error(w, "Invalid post ID", http.StatusBadRequest)
@@ -190,7 +190,7 @@ func (h *APIHandlers) UpdatePostHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *APIHandlers) DeletePostHandler(w http.ResponseWriter, r *http.Request) {
-	idStr := strings.TrimPrefix(r.URL.Path, "/api/posts/")
+	idStr := chi.URLParam(r, "id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		http.Error(w, "Invalid post ID", http.StatusBadRequest)

@@ -1,4 +1,4 @@
-// Global variables
+/ Global variables
 let isUploading = false;
 
 document.getElementById('page-form').addEventListener('submit', async function(e) {
@@ -7,7 +7,7 @@ document.getElementById('page-form').addEventListener('submit', async function(e
     const title = document.getElementById('title').value.trim();
     const slug = document.getElementById('slug').value.trim();
 
-    // Get content from EasyMDE if editor is initialized, otherwise from textarea
+    / Get content from EasyMDE if editor is initialized, otherwise from textarea
     let content;
     if (easyMDE) {
         content = easyMDE.value().trim();
@@ -17,7 +17,7 @@ document.getElementById('page-form').addEventListener('submit', async function(e
     const showInNav = document.getElementById('showInNav').checked;
     const sortOrder = parseInt(document.getElementById('sortOrder').value) || 0;
 
-    // Basic validation
+    / Basic validation
     if (!title) {
         alert('Please enter a title.');
         return;
@@ -31,7 +31,7 @@ document.getElementById('page-form').addEventListener('submit', async function(e
         return;
     }
 
-    // Validate slug format
+    / Validate slug format
     const slugRegex = /^[a-z0-9-]+$/;
     if (!slugRegex.test(slug)) {
         alert('Slug must contain only lowercase letters, numbers, and hyphens.');
@@ -47,7 +47,7 @@ document.getElementById('page-form').addEventListener('submit', async function(e
     };
 
     const isEdit = window.location.pathname.includes('/edit');
-    const url = isEdit ? `/api/pages/${pageId}` : '/api/pages';
+    const url = isEdit ? `${window.ROOT_PREFIX || ""}/api/pages/${pageId}` : '${window.ROOT_PREFIX || ""}/api/pages';
     const method = isEdit ? 'PUT' : 'POST';
     const successMessage = isEdit ? 'Page updated successfully!' : 'Page created successfully!';
 
@@ -62,7 +62,7 @@ document.getElementById('page-form').addEventListener('submit', async function(e
 
         if (response.ok) {
             alert(successMessage);
-            window.location.href = '/admin/pages';
+            window.location.href = '${window.ROOT_PREFIX || ""}/pages';
         } else if (response.status === 409) {
             alert('Error: Slug already exists. Please choose a different slug.');
         } else {
@@ -75,7 +75,7 @@ document.getElementById('page-form').addEventListener('submit', async function(e
     }
 });
 
-// Auto-slugify title
+/ Auto-slugify title
 document.getElementById('title').addEventListener('input', function() {
     const title = this.value.trim();
     const slugField = document.getElementById('slug');
@@ -93,7 +93,7 @@ function slugify(text) {
         .replace(/^-+|-+$/g, '');
 }
 
-// Initialize EasyMDE editor
+/ Initialize EasyMDE editor
 let easyMDE;
 document.addEventListener('DOMContentLoaded', function() {
     const contentTextarea = document.getElementById('content');
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const formData = new FormData();
                 formData.append('image', file);
 
-                fetch('/api/upload/image', {
+                fetch('${window.ROOT_PREFIX || ""}/api/upload/image', {
                     method: 'POST',
                     body: formData
                 })
@@ -144,12 +144,12 @@ document.addEventListener('DOMContentLoaded', function() {
         console.warn('EasyMDE not loaded, using plain textarea');
     }
 
-    // Check if editing after editor is initialized
+    / Check if editing after editor is initialized
     const pathMatch = window.location.pathname.match(/^\/admin\/pages\/(\d+)\/edit$/);
     if (pathMatch) {
         const pageId = pathMatch[1];
-        // Fetch page data
-        fetch(`/api/pages/${pageId}`)
+        / Fetch page data
+        fetch(`${window.ROOT_PREFIX || ""}/api/pages/${pageId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Page not found');
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(page => {
                 document.getElementById('title').value = page.title || '';
                 document.getElementById('slug').value = page.slug || '';
-                // Set content in EasyMDE if available, otherwise textarea
+                / Set content in EasyMDE if available, otherwise textarea
                 if (easyMDE) {
                     easyMDE.value(page.content || '');
                 } else {
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('sortOrder').value = page.sort_order || 0;
                 document.getElementById('slug').dataset.original = page.slug || '';
 
-                // Update page title
+                / Update page title
                 document.title = `Edit Page: ${page.title}`;
                 const heading = document.querySelector('h2');
                 if (heading) {

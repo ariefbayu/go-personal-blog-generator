@@ -1,6 +1,6 @@
 document.getElementById('post-form').addEventListener('submit', async function(e) {
 
-// Check if editing
+/ Check if editing
 let postId = null;
 const pathMatch = window.location.pathname.match(/^\/admin\/posts\/(\d+)\/edit$/);
 if (pathMatch) {
@@ -13,7 +13,7 @@ if (pathMatch) {
     const slug = document.getElementById('slug').value.trim();
     const tags = document.getElementById('tags').value.trim();
 
-    // Get content from EasyMDE if editor is initialized, otherwise from textarea
+    / Get content from EasyMDE if editor is initialized, otherwise from textarea
     let content;
     if (easyMDE) {
         content = easyMDE.value().trim();
@@ -22,7 +22,7 @@ if (pathMatch) {
     }
     const published = document.getElementById('published').checked;
 
-    // Basic validation
+    / Basic validation
     if (!title || !slug || !content) {
         alert('Please fill in all required fields: Title, Slug, and Content.');
         return;
@@ -41,7 +41,7 @@ if (pathMatch) {
     console.log('JSON string:', JSON.stringify(postData));
 
     const isEdit = window.location.pathname.includes('/edit');
-    const url = isEdit ? `/api/posts/${postId}` : '/api/posts';
+    const url = isEdit ? `${window.ROOT_PREFIX || ""}/api/posts/${postId}` : '${window.ROOT_PREFIX || ""}/api/posts';
     const method = isEdit ? 'PUT' : 'POST';
     const successMessage = isEdit ? 'Post updated successfully!' : 'Post created successfully!';
 
@@ -56,7 +56,7 @@ if (pathMatch) {
 
         if (response.ok) {
             alert(successMessage);
-            window.location.href = '/admin/posts';
+            window.location.href = '${window.ROOT_PREFIX || ""}/posts';
         } else if (response.status === 409) {
             alert('Error: Slug already exists. Please choose a different slug.');
         } else {
@@ -68,7 +68,7 @@ if (pathMatch) {
     }
 });
 
-// Auto-slugify title
+/ Auto-slugify title
 document.getElementById('title').addEventListener('input', function() {
     const title = this.value.trim();
     const slugField = document.getElementById('slug');
@@ -86,7 +86,7 @@ function slugify(text) {
         .replace(/^-+|-+$/g, '');
 }
 
-// Initialize EasyMDE editor
+/ Initialize EasyMDE editor
 let easyMDE;
 document.addEventListener('DOMContentLoaded', function() {
     const contentTextarea = document.getElementById('content');
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const formData = new FormData();
                 formData.append('image', file);
 
-                fetch('/api/upload/image', {
+                fetch('${window.ROOT_PREFIX || ""}/api/upload/image', {
                     method: 'POST',
                     body: formData
                 })
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.warn('EasyMDE not loaded, using plain textarea');
     }
 
-    // Set up image upload handler
+    / Set up image upload handler
     const imageUpload = document.getElementById('featuredImageUpload');
     const imageUrlInput = document.getElementById('featuredImageURL');
     const imagePreview = document.getElementById('imagePreview');
@@ -146,26 +146,26 @@ document.addEventListener('DOMContentLoaded', function() {
     imageUpload.addEventListener('change', function (e) {
         const file = e.target.files[0];
         if (file) {
-            // Validate file type
+            / Validate file type
             if (!file.type.startsWith('image/')) {
                 alert('Please select an image file');
                 return;
             }
 
-            // Validate file size (5MB limit)
+            / Validate file size (5MB limit)
             if (file.size > 5 * 1024 * 1024) {
                 alert('File size must be less than 5MB');
                 return;
             }
 
-            // Set uploading state
+            / Set uploading state
             imageUpload.disabled = true;
 
-            // Upload the file
+            / Upload the file
             const formData = new FormData();
             formData.append('image', file);
 
-            fetch('/api/upload/image', {
+            fetch('${window.ROOT_PREFIX || ""}/api/upload/image', {
                 method: 'POST',
                 body: formData
             })
@@ -189,12 +189,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Check if editing after editor is initialized
+    / Check if editing after editor is initialized
     const pathMatch = window.location.pathname.match(/^\/admin\/posts\/(\d+)\/edit$/);
     if (pathMatch) {
         postId = pathMatch[1];
-        // Fetch post data
-        fetch(`/api/posts/${postId}`)
+        / Fetch post data
+        fetch(`${window.ROOT_PREFIX || ""}/api/posts/${postId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Post not found');
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('title').value = post.title || '';
                 document.getElementById('slug').value = post.slug || '';
                 document.getElementById('tags').value = post.tags || '';
-                // Set content in EasyMDE if available, otherwise textarea
+                / Set content in EasyMDE if available, otherwise textarea
                 if (easyMDE) {
                     easyMDE.value(post.content || '');
                 } else {
@@ -214,14 +214,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('published').checked = post.published || false;
                 document.getElementById('slug').dataset.original = post.slug || '';
 
-                // Set featured image
+                / Set featured image
                 document.getElementById('featuredImageURL').value = post.featuredImage || '';
                 if (post.featuredImage) {
                     document.getElementById('previewImg').src = post.featuredImage;
                     document.getElementById('imagePreview').classList.remove('hidden');
                 }
 
-                // Set publish date
+                / Set publish date
                 if (post.created_at) {
                     const publishDate = new Date(post.created_at).toLocaleString();
                     document.getElementById('publishDate').value = publishDate;

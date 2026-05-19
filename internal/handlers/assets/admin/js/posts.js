@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function loadPosts(page) {
-    fetch(`/api/posts?page=${page}&limit=${limit}`)
+    fetch(`${window.ROOT_PREFIX || ""}/api/posts?page=${page}&limit=${limit}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -14,11 +14,11 @@ function loadPosts(page) {
             return response.json();
         })
         .then(data => {
-            console.log('API response:', data); // Debug log
+            console.log('API response:', data); / Debug log
             const tbody = document.getElementById('post-list-body');
-            tbody.innerHTML = ''; // Clear existing rows
+            tbody.innerHTML = ''; / Clear existing rows
 
-            // Handle both old array format and new object format
+            / Handle both old array format and new object format
             let posts = [];
             let paginationData = { total: 0, page: 1, limit: 10, total_pages: 0 };
 
@@ -35,7 +35,7 @@ function loadPosts(page) {
                 paginationData = { total: posts.length, page: 1, limit: posts.length, total_pages: 1 };
             }
 
-            console.log('Posts array:', posts); // Debug log
+            console.log('Posts array:', posts); / Debug log
             posts.forEach(post => {
                 const row = document.createElement('tr');
                 row.className = 'admin-table-row';
@@ -55,7 +55,7 @@ function loadPosts(page) {
                 </td>
                 <td class="text-right">
                     <div class="table-cell-actions">
-                        <a href="/admin/posts/${post.id}/edit">
+                        <a href="${window.ROOT_PREFIX || ""}/posts/${post.id}/edit">
                             <button class="table-action-btn" title="Edit">
                                 <span class="material-symbols-outlined">edit</span>
                             </button>
@@ -69,7 +69,7 @@ function loadPosts(page) {
                 tbody.appendChild(row);
             });
 
-            // Update total count
+            / Update total count
             const countInfo = document.getElementById('posts-count');
             if (countInfo) {
                 countInfo.textContent = `Total: ${paginationData.total} posts`;
@@ -79,7 +79,7 @@ function loadPosts(page) {
         })
         .catch(error => {
             console.error('Error fetching posts:', error);
-            // Update count on error
+            / Update count on error
             const countInfo = document.getElementById('posts-count');
             if (countInfo) {
                 countInfo.textContent = 'Error loading posts';
@@ -92,7 +92,7 @@ function updatePagination(data) {
     const showingSpan = document.querySelector('.pagination-info');
     const paginationWrapper = document.querySelector('.table-footer');
 
-    // Hide pagination if only one page or no items
+    / Hide pagination if only one page or no items
     if (data.total_pages <= 1) {
         if (paginationWrapper) {
             paginationWrapper.style.display = 'none';
@@ -104,15 +104,15 @@ function updatePagination(data) {
         }
     }
 
-    // Update showing text
+    / Update showing text
     const start = (data.page - 1) * data.limit + 1;
     const end = Math.min(data.page * data.limit, data.total);
     showingSpan.innerHTML = `Showing <span class="pagination-highlight">${start}-${end}</span> of <span class="pagination-highlight">${data.total}</span>`;
 
-    // Clear existing pagination buttons
+    / Clear existing pagination buttons
     paginationContainer.innerHTML = '';
 
-    // Previous button
+    / Previous button
     const prevButton = document.createElement('button');
     prevButton.className = 'pagination-btn';
     prevButton.textContent = 'Previous';
@@ -127,7 +127,7 @@ function updatePagination(data) {
     }
     paginationContainer.appendChild(prevButton);
 
-    // Page buttons
+    / Page buttons
     const maxPages = 5;
     let startPage = Math.max(1, data.page - Math.floor(maxPages / 2));
     let endPage = Math.min(data.total_pages, startPage + maxPages - 1);
@@ -149,7 +149,7 @@ function updatePagination(data) {
         paginationContainer.appendChild(pageButton);
     }
 
-    // Next button
+    / Next button
     const nextButton = document.createElement('button');
     nextButton.className = 'pagination-btn';
     nextButton.textContent = 'Next';
@@ -167,12 +167,12 @@ function updatePagination(data) {
 
 function deletePost(id) {
     if (confirm('Are you sure you want to delete this post?')) {
-        fetch(`/api/posts/${id}`, {
+        fetch(`${window.ROOT_PREFIX || ""}/api/posts/${id}`, {
             method: 'DELETE'
         })
         .then(response => {
             if (response.ok) {
-                // Reload the current page to update pagination
+                / Reload the current page to update pagination
                 loadPosts(currentPage);
                 alert('Post deleted successfully');
             } else if (response.status === 404) {
