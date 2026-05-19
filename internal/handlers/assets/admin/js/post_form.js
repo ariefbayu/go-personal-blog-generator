@@ -41,7 +41,7 @@ if (pathMatch) {
     console.log('JSON string:', JSON.stringify(postData));
 
     const isEdit = window.location.pathname.includes('/edit');
-    const url = isEdit ? `${window.ROOT_PREFIX || ""}/api/posts/${postId}` : '${window.ROOT_PREFIX || ""}/api/posts';
+    const url = isEdit ? `${window.ROOT_PREFIX || ''}/api/posts/${postId}` : `${window.ROOT_PREFIX || ''}/api/posts`;
     const method = isEdit ? 'PUT' : 'POST';
     const successMessage = isEdit ? 'Post updated successfully!' : 'Post created successfully!';
 
@@ -56,7 +56,7 @@ if (pathMatch) {
 
         if (response.ok) {
             alert(successMessage);
-            window.location.href = '${window.ROOT_PREFIX || ""}/posts';
+            window.location.href = `${window.ROOT_PREFIX || ''}/posts`;
         } else if (response.status === 409) {
             alert('Error: Slug already exists. Please choose a different slug.');
         } else {
@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const formData = new FormData();
                 formData.append('image', file);
 
-                fetch('${window.ROOT_PREFIX || ""}/api/upload/image', {
+                fetch(`${window.ROOT_PREFIX || ''}/api/upload/image`, {
                     method: 'POST',
                     body: formData
                 })
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const formData = new FormData();
             formData.append('image', file);
 
-            fetch('${window.ROOT_PREFIX || ""}/api/upload/image', {
+            fetch(`${window.ROOT_PREFIX || ''}/api/upload/image`, {
                 method: 'POST',
                 body: formData
             })
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (pathMatch) {
         postId = pathMatch[1];
 /// Fetch post data
-        fetch(`${window.ROOT_PREFIX || ""}/api/posts/${postId}`)
+        fetch(`${window.ROOT_PREFIX || ''}/api/posts/${postId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Post not found');

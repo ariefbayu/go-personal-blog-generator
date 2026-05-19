@@ -21,7 +21,7 @@ function initEditor() {
 }
 
 function loadFileTree() {
-    fetch('${window.ROOT_PREFIX || ""}/api/settings/templates')
+    fetch(`${window.ROOT_PREFIX || ''}/api/settings/templates`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -118,7 +118,7 @@ function selectFile(path) {
     
     editor.setOption("mode", mode);
 
-    fetch(`${window.ROOT_PREFIX || ""}/api/settings/templates/content?path=${encodeURIComponent(path)}`)
+    fetch(`${window.ROOT_PREFIX || ''}/api/settings/templates/content?path=${encodeURIComponent(path)}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -161,7 +161,7 @@ document.getElementById('save-btn').addEventListener('click', function() {
     btn.disabled = true;
     btn.innerHTML = '<span class="material-symbols-outlined">sync</span><span>Saving...</span>';
 
-    fetch('${window.ROOT_PREFIX || ""}/api/settings/templates/save', {
+    fetch(`${window.ROOT_PREFIX || ''}/api/settings/templates/save`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

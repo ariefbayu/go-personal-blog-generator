@@ -47,7 +47,7 @@ document.getElementById('page-form').addEventListener('submit', async function(e
     };
 
     const isEdit = window.location.pathname.includes('/edit');
-    const url = isEdit ? `${window.ROOT_PREFIX || ""}/api/pages/${pageId}` : '${window.ROOT_PREFIX || ""}/api/pages';
+    const url = isEdit ? `${window.ROOT_PREFIX || ''}/api/pages/${pageId}` : `${window.ROOT_PREFIX || ''}/api/pages`;
     const method = isEdit ? 'PUT' : 'POST';
     const successMessage = isEdit ? 'Page updated successfully!' : 'Page created successfully!';
 
@@ -62,7 +62,7 @@ document.getElementById('page-form').addEventListener('submit', async function(e
 
         if (response.ok) {
             alert(successMessage);
-            window.location.href = '${window.ROOT_PREFIX || ""}/pages';
+            window.location.href = `${window.ROOT_PREFIX || ''}/pages`;
         } else if (response.status === 409) {
             alert('Error: Slug already exists. Please choose a different slug.');
         } else {
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const formData = new FormData();
                 formData.append('image', file);
 
-                fetch('${window.ROOT_PREFIX || ""}/api/upload/image', {
+                fetch(`${window.ROOT_PREFIX || ''}/api/upload/image`, {
                     method: 'POST',
                     body: formData
                 })
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (pathMatch) {
         const pageId = pathMatch[1];
 /// Fetch page data
-        fetch(`${window.ROOT_PREFIX || ""}/api/pages/${pageId}`)
+        fetch(`${window.ROOT_PREFIX || ''}/api/pages/${pageId}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Page not found');

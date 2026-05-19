@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const formData = new FormData();
       formData.append('image', file);
 
-      fetch('${window.ROOT_PREFIX || ""}/api/upload/image', {
+      fetch(`${window.ROOT_PREFIX || ''}/api/upload/image`, {
         method: 'POST',
         body: formData
       })
@@ -119,7 +119,7 @@ document.getElementById('portfolio-form').addEventListener('submit', async funct
   };
 
   const isEdit = window.location.pathname.includes('/edit');
-  const url = isEdit ? `${window.ROOT_PREFIX || ""}/api/portfolio/${portfolioId}` : '${window.ROOT_PREFIX || ""}/api/portfolio';
+  const url = isEdit ? `${window.ROOT_PREFIX || ''}/api/portfolio/${portfolioId}` : `${window.ROOT_PREFIX || ''}/api/portfolio`;
   const method = isEdit ? 'PUT' : 'POST';
   const successMessage = isEdit ? 'Portfolio item updated successfully!' : 'Portfolio item created successfully!';
 
@@ -134,7 +134,7 @@ document.getElementById('portfolio-form').addEventListener('submit', async funct
 
     if (response.ok) {
       alert(successMessage);
-      window.location.href = '${window.ROOT_PREFIX || ""}/portfolio';
+      window.location.href = `${window.ROOT_PREFIX || ''}/portfolio`;
     } else {
       const errorData = await response.json();
       alert(errorData.error || 'An error occurred');
@@ -146,7 +146,7 @@ document.getElementById('portfolio-form').addEventListener('submit', async funct
 });
 
 function loadPortfolioItem(id) {
-  fetch(`${window.ROOT_PREFIX || ""}/api/portfolio/${id}`)
+  fetch(`${window.ROOT_PREFIX || ''}/api/portfolio/${id}`)
     .then(response => response.json())
     .then(item => {
       document.getElementById('title').value = item.title;

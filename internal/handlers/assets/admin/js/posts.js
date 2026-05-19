@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function loadPosts(page) {
-    fetch(`${window.ROOT_PREFIX || ""}/api/posts?page=${page}&limit=${limit}`)
+    fetch(`${window.ROOT_PREFIX || ''}/api/posts?page=${page}&limit=${limit}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -55,7 +55,7 @@ function loadPosts(page) {
                 </td>
                 <td class="text-right">
                     <div class="table-cell-actions">
-                        <a href="${window.ROOT_PREFIX || ""}/posts/${post.id}/edit">
+                        <a href="${window.ROOT_PREFIX || ''}/posts/${post.id}/edit">
                             <button class="table-action-btn" title="Edit">
                                 <span class="material-symbols-outlined">edit</span>
                             </button>
@@ -167,7 +167,7 @@ function updatePagination(data) {
 
 function deletePost(id) {
     if (confirm('Are you sure you want to delete this post?')) {
-        fetch(`${window.ROOT_PREFIX || ""}/api/posts/${id}`, {
+        fetch(`${window.ROOT_PREFIX || ''}/api/posts/${id}`, {
             method: 'DELETE'
         })
         .then(response => {

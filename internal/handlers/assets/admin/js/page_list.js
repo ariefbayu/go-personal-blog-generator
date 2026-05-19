@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function loadPages(page) {
-    fetch(`${window.ROOT_PREFIX || ""}/api/pages?page=${page}&limit=${limit}`)
+    fetch(`${window.ROOT_PREFIX || ''}/api/pages?page=${page}&limit=${limit}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -51,7 +51,7 @@ function loadPages(page) {
                 <td>${page.sort_order}</td>
                 <td class="text-right">
                     <div class="table-cell-actions">
-                        <a href="${window.ROOT_PREFIX || ""}/pages/${page.id}/edit">
+                        <a href="${window.ROOT_PREFIX || ''}/pages/${page.id}/edit">
                             <button class="table-action-btn" title="Edit">
                                 <span class="material-symbols-outlined">edit</span>
                             </button>
@@ -163,7 +163,7 @@ function updatePagination(data) {
 
 function deletePage(id) {
     if (confirm('Are you sure you want to delete this page?')) {
-        fetch(`${window.ROOT_PREFIX || ""}/api/pages/${id}`, {
+        fetch(`${window.ROOT_PREFIX || ''}/api/pages/${id}`, {
             method: 'DELETE'
         })
         .then(response => {
