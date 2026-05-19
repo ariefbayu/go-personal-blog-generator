@@ -14,20 +14,16 @@ The `nginx-dev.conf` file is configured to:
 - Serve static blog files from `html-outputs/`
 - Proxy admin interface requests to the Go application
 - Proxy API requests to the Go application
-- Require basic authentication for admin access
+
+The Go application itself implements HTTP Basic Authentication for all `/admin` and `/api` routes. You can configure the credentials using the `ADMIN_USERNAME` and `ADMIN_PASSWORD` environment variables in your `.env` file. If not set, they default to `admin`/`admin`.
 
 ## Setup Instructions
 
-1. **Create .htpasswd file for basic authentication:**
+1. **Configure Admin Credentials (Optional):**
+   Add the following to your `~/.personal-blog-generator/.env` file if you want to change from the defaults:
    ```bash
-   # Install apache2-utils if not available
-   sudo apt-get install apache2-utils  # Ubuntu/Debian
-   # or
-   brew install httpd                  # macOS
-
-   # Create .htpasswd file in the project root
-   htpasswd -c .htpasswd admin
-   # Enter password when prompted
+   ADMIN_USERNAME=your_username
+   ADMIN_PASSWORD=your_password
    ```
 
 2. **Update nginx-dev.conf paths:**

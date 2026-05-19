@@ -66,54 +66,73 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	r.Get("/api/posts", apiHandlers.GetPostsHandler)
-	r.Post("/api/posts", apiHandlers.CreatePostHandler)
-	r.Get("/api/posts/{id}", apiHandlers.GetPostHandler)
-	r.Put("/api/posts/{id}", apiHandlers.UpdatePostHandler)
-	r.Delete("/api/posts/{id}", apiHandlers.DeletePostHandler)
-	r.Get("/api/portfolio", portfolioHandlers.GetPortfolioItemsHandler)
-	r.Post("/api/portfolio", portfolioHandlers.CreatePortfolioItemHandler)
-	r.Get("/api/portfolio/{id}", portfolioHandlers.GetPortfolioItemHandler)
-	r.Put("/api/portfolio/{id}", portfolioHandlers.UpdatePortfolioItemHandler)
-	r.Delete("/api/portfolio/{id}", portfolioHandlers.DeletePortfolioItemHandler)
-	r.Get("/api/pages", pageHandlers.GetPagesHandler)
-	r.Post("/api/pages", pageHandlers.CreatePageHandler)
-	r.Get("/api/pages/{id}", pageHandlers.GetPageHandler)
-	r.Put("/api/pages/{id}", pageHandlers.UpdatePageHandler)
-	r.Delete("/api/pages/{id}", pageHandlers.DeletePageHandler)
-	r.Get("/api/settings", apiHandlers.GetSettingsHandler)
-	r.Post("/api/settings", apiHandlers.UpdateSettingsHandler)
-	r.Get("/api/settings/templates", apiHandlers.GetTemplatesHandler)
-	r.Get("/api/settings/templates/content", apiHandlers.GetTemplateContentHandler)
-	r.Post("/api/settings/templates/save", apiHandlers.SaveTemplateHandler)
-	r.Post("/api/upload/image", handlers.UploadImageHandler)
-	r.Post("/api/publish", apiHandlers.PublishSiteHandler)
+	// Public routes
 	r.Handle("/images/*", http.StripPrefix("/images/", http.FileServer(http.Dir("html-outputs/images/"))))
 
-	// Admin root redirects (must come before static assets)
-	r.Get("/admin", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/admin/dashboard", http.StatusFound)
-	})
-	r.Get("/admin/", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/admin/dashboard", http.StatusFound)
-	})
+	// Protected routes (Admin & API)
+	r.Group(func(r chi.Router) {
+		adminUser := os.Getenv("ADMIN_USERNAME")
+		adminPass := os.Getenv("ADMIN_PASSWORD")
+		if adminUser == "" {
+			adminUser = "admin"
+		}
+		if adminPass == "" {
+			adminPass = "admin"
+		}
 
-	// Admin page routes
-	r.Get("/admin/dashboard", handlers.ServeDashboard)
-	r.Get("/admin/posts", handlers.ServePostsPage)
-	r.Get("/admin/posts/new", handlers.ServeNewPostPage)
-	r.Get("/admin/posts/{id}/edit", handlers.ServeEditPostPage)
-	r.Get("/admin/portfolio", handlers.ServePortfolioPage)
-	r.Get("/admin/portfolio/new", handlers.ServeNewPortfolioPage)
-	r.Get("/admin/portfolio/{id}/edit", handlers.ServeEditPortfolioPage)
-	r.Get("/admin/pages", handlers.ServePagesPage)
-	r.Get("/admin/pages/new", handlers.ServeNewPagePage)
-	r.Get("/admin/pages/{id}/edit", handlers.ServeEditPagePage)
-	r.Get("/admin/settings", handlers.ServeSettingsPage)
-	r.Get("/admin/templates", handlers.ServeTemplatesPage)
+		r.Use(middleware.BasicAuth("Blog Admin Area", map[string]string{
+			adminUser: adminPass,
+		}))
 
-	// Admin static assets (must come after specific routes to avoid catching them)
-	r.Handle("/admin/*", http.StripPrefix("/admin/", http.FileServer(http.FS(handlers.AdminFS))))
+		// API routes
+		r.Get("/api/posts", apiHandlers.GetPostsHandler)
+		r.Post("/api/posts", apiHandlers.CreatePostHandler)
+		r.Get("/api/posts/{id}", apiHandlers.GetPostHandler)
+		r.Put("/api/posts/{id}", apiHandlers.UpdatePostHandler)
+		r.Delete("/api/posts/{id}", apiHandlers.DeletePostHandler)
+		r.Get("/api/portfolio", portfolioHandlers.GetPortfolioItemsHandler)
+		r.Post("/api/portfolio", portfolioHandlers.CreatePortfolioItemHandler)
+		r.Get("/api/portfolio/{id}", portfolioHandlers.GetPortfolioItemHandler)
+		r.Put("/api/portfolio/{id}", portfolioHandlers.UpdatePortfolioItemHandler)
+		r.Delete("/api/portfolio/{id}", portfolioHandlers.DeletePortfolioItemHandler)
+		r.Get("/api/pages", pageHandlers.GetPagesHandler)
+		r.Post("/api/pages", pageHandlers.CreatePageHandler)
+		r.Get("/api/pages/{id}", pageHandlers.GetPageHandler)
+		r.Put("/api/pages/{id}", pageHandlers.UpdatePageHandler)
+		r.Delete("/api/pages/{id}", pageHandlers.DeletePageHandler)
+		r.Get("/api/settings", apiHandlers.GetSettingsHandler)
+		r.Post("/api/settings", apiHandlers.UpdateSettingsHandler)
+		r.Get("/api/settings/templates", apiHandlers.GetTemplatesHandler)
+		r.Get("/api/settings/templates/content", apiHandlers.GetTemplateContentHandler)
+		r.Post("/api/settings/templates/save", apiHandlers.SaveTemplateHandler)
+		r.Post("/api/upload/image", handlers.UploadImageHandler)
+		r.Post("/api/publish", apiHandlers.PublishSiteHandler)
+
+		// Admin root redirects (must come before static assets)
+		r.Get("/admin", func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, "/admin/dashboard", http.StatusFound)
+		})
+		r.Get("/admin/", func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, "/admin/dashboard", http.StatusFound)
+		})
+
+		// Admin page routes
+		r.Get("/admin/dashboard", handlers.ServeDashboard)
+		r.Get("/admin/posts", handlers.ServePostsPage)
+		r.Get("/admin/posts/new", handlers.ServeNewPostPage)
+		r.Get("/admin/posts/{id}/edit", handlers.ServeEditPostPage)
+		r.Get("/admin/portfolio", handlers.ServePortfolioPage)
+		r.Get("/admin/portfolio/new", handlers.ServeNewPortfolioPage)
+		r.Get("/admin/portfolio/{id}/edit", handlers.ServeEditPortfolioPage)
+		r.Get("/admin/pages", handlers.ServePagesPage)
+		r.Get("/admin/pages/new", handlers.ServeNewPagePage)
+		r.Get("/admin/pages/{id}/edit", handlers.ServeEditPagePage)
+		r.Get("/admin/settings", handlers.ServeSettingsPage)
+		r.Get("/admin/templates", handlers.ServeTemplatesPage)
+
+		// Admin static assets (must come after specific routes to avoid catching them)
+		r.Handle("/admin/*", http.StripPrefix("/admin/", http.FileServer(http.FS(handlers.AdminFS))))
+	})
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {
