@@ -17,7 +17,7 @@ import (
 	"github.com/ariefbayu/personal-blog-generator/internal/utils"
 )
 
-//go:embed admin-files/**
+//go:embed internal/handlers/assets/admin/**
 var adminFS embed.FS
 
 func main() {
@@ -54,8 +54,8 @@ func main() {
 	portfolioHandlers := handlers.NewPortfolioHandlers(portfolioRepo)
 	pageHandlers := handlers.NewPageHandlers(pageRepo)
 
-	// Create sub-filesystem to strip admin-files/ prefix
-	adminSubFS, err := fs.Sub(adminFS, "admin-files")
+	// Create sub-filesystem to strip internal/handlers/assets/admin prefix
+	adminSubFS, err := fs.Sub(adminFS, "internal/handlers/assets/admin")
 	if err != nil {
 		log.Fatal(err)
 	}
