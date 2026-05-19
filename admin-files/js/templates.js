@@ -1,5 +1,6 @@
 let currentFilePath = null;
 let editor = null;
+let lastRequestPath = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     initEditor();
@@ -14,8 +15,8 @@ function initEditor() {
         theme: "material-ocean",
         tabSize: 4,
         indentUnit: 4,
-        lineWrapping: true,
-        viewportMargin: Infinity
+        lineWrapping: true
+        // viewportMargin: Infinity removed for performance
     });
 }
 
@@ -48,11 +49,24 @@ function buildTree(nodes, container, path) {
         
         const item = document.createElement('div');
         item.className = 'file-tree-item';
-        item.innerHTML = `
-            <span class="file-tree-toggle">${node.type === 'dir' ? '▶' : ''}</span>
-            <span class="file-tree-icon material-symbols-outlined">${node.type === 'dir' ? 'folder' : 'description'}</span>
-            <span class="file-tree-name ${node.editable ? 'editable' : ''}" data-path="${fullPath}" data-type="${node.type}">${node.name}</span>
-        `;
+        
+        const toggle = document.createElement('span');
+        toggle.className = 'file-tree-toggle';
+        toggle.textContent = node.type === 'dir' ? '▶' : '';
+        item.appendChild(toggle);
+
+        const icon = document.createElement('span');
+        icon.className = 'file-tree-icon material-symbols-outlined';
+        icon.textContent = node.type === 'dir' ? 'folder' : 'description';
+        item.appendChild(icon);
+
+        const name = document.createElement('span');
+        name.className = `file-tree-name ${node.editable ? 'editable' : ''}`;
+        name.textContent = node.name; // Use textContent to prevent XSS
+        name.dataset.path = fullPath;
+        name.dataset.type = node.type;
+        item.appendChild(name);
+
         li.appendChild(item);
 
         if (node.type === 'dir') {
@@ -62,14 +76,14 @@ function buildTree(nodes, container, path) {
             buildTree(node.children, childUl, fullPath);
             li.appendChild(childUl);
             
-            item.querySelector('.file-tree-toggle').addEventListener('click', (e) => {
+            toggle.addEventListener('click', (e) => {
                 e.stopPropagation();
-                toggleDir(item.querySelector('.file-tree-toggle'), childUl);
+                toggleDir(toggle, childUl);
             });
             item.addEventListener('click', () => {
-                toggleDir(item.querySelector('.file-tree-toggle'), childUl);
+                toggleDir(toggle, childUl);
             });
-        } else {
+        } else if (node.editable) {
             item.addEventListener('click', () => {
                 selectFile(fullPath);
             });
@@ -90,9 +104,9 @@ function toggleDir(toggle, childUl) {
 }
 
 function selectFile(path) {
-    currentFilePath = path;
-    document.getElementById('editor-title').textContent = `Editing: ${path}`;
-    document.getElementById('save-btn').disabled = false;
+    lastRequestPath = path;
+    document.getElementById('editor-title').textContent = `Loading: ${path}...`;
+    document.getElementById('save-btn').disabled = true; // Disable until success
 
     // Determine mode based on extension
     const ext = path.split('.').pop().toLowerCase();
@@ -112,11 +126,21 @@ function selectFile(path) {
             return response.text();
         })
         .then(content => {
-            editor.setValue(content);
+            // Only update if this is still the latest request
+            if (lastRequestPath === path) {
+                currentFilePath = path;
+                document.getElementById('editor-title').textContent = `Editing: ${path}`;
+                editor.setValue(content);
+                document.getElementById('save-btn').disabled = false;
+            }
         })
         .catch(error => {
             console.error('Error loading file content:', error);
-            editor.setValue('Error loading file content.');
+            if (lastRequestPath === path) {
+                document.getElementById('editor-title').textContent = `Error loading: ${path}`;
+                editor.setValue('Error: Could not load file content.');
+                document.getElementById('save-btn').disabled = true; // Stay disabled on error
+            }
         });
 }
 
@@ -127,6 +151,12 @@ document.getElementById('save-btn').addEventListener('click', function() {
     const status = document.getElementById('save-status');
     const btn = this;
     const originalText = btn.innerHTML;
+
+    // Double check we're not saving an error message
+    if (content === 'Error: Could not load file content.') {
+        alert('Cannot save: content failed to load correctly.');
+        return;
+    }
 
     btn.disabled = true;
     btn.innerHTML = '<span class="material-symbols-outlined">sync</span><span>Saving...</span>';
