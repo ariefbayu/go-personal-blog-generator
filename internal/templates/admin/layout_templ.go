@@ -49,7 +49,7 @@ func Layout(data AdminPageData) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(data.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 22, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 22, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -62,7 +62,7 @@ func Layout(data AdminPageData) templ.Component {
 		var templ_7745c5c3_Var3 templ.SafeURL
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(data.RootPrefix + "/css/styles.css")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 25, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 25, Col: 68}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -75,7 +75,7 @@ func Layout(data AdminPageData) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.ResolveAttributeValue(data.RootPrefix)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 26, Col: 66}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 26, Col: 45}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
@@ -98,7 +98,7 @@ func Layout(data AdminPageData) templ.Component {
 		var templ_7745c5c3_Var5 templ.SafeURL
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/dashboard"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 43, Col: 127}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 43, Col: 64}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -133,7 +133,7 @@ func Layout(data AdminPageData) templ.Component {
 		var templ_7745c5c3_Var8 templ.SafeURL
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/dashboard"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 52, Col: 192}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 52, Col: 143}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -168,7 +168,7 @@ func Layout(data AdminPageData) templ.Component {
 		var templ_7745c5c3_Var11 templ.SafeURL
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/posts"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 56, Col: 184}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 56, Col: 135}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -203,7 +203,7 @@ func Layout(data AdminPageData) templ.Component {
 		var templ_7745c5c3_Var14 templ.SafeURL
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/portfolio"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 60, Col: 192}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 60, Col: 143}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -238,7 +238,7 @@ func Layout(data AdminPageData) templ.Component {
 		var templ_7745c5c3_Var17 templ.SafeURL
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/pages"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 64, Col: 184}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 64, Col: 135}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -273,7 +273,7 @@ func Layout(data AdminPageData) templ.Component {
 		var templ_7745c5c3_Var20 templ.SafeURL
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/settings"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 68, Col: 190}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 68, Col: 141}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
@@ -308,7 +308,7 @@ func Layout(data AdminPageData) templ.Component {
 		var templ_7745c5c3_Var23 templ.SafeURL
 		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/templates"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 72, Col: 192}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 72, Col: 143}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {
@@ -321,7 +321,7 @@ func Layout(data AdminPageData) templ.Component {
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(data.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 85, Col: 91}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 85, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
@@ -393,7 +393,7 @@ func Dashboard(data AdminPageData) templ.Component {
 			var templ_7745c5c3_Var27 templ.SafeURL
 			templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/posts/new"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 117, Col: 87}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 117, Col: 59}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 			if templ_7745c5c3_Err != nil {
@@ -406,7 +406,7 @@ func Dashboard(data AdminPageData) templ.Component {
 			var templ_7745c5c3_Var28 string
 			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(data.DBPath)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 135, Col: 88}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 135, Col: 46}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 			if templ_7745c5c3_Err != nil {
@@ -419,7 +419,7 @@ func Dashboard(data AdminPageData) templ.Component {
 			var templ_7745c5c3_Var29 string
 			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(data.TemplatePath)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 139, Col: 94}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 139, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 			if templ_7745c5c3_Err != nil {
@@ -432,7 +432,7 @@ func Dashboard(data AdminPageData) templ.Component {
 			var templ_7745c5c3_Var30 string
 			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(data.OutputPath)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 143, Col: 92}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 143, Col: 50}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 			if templ_7745c5c3_Err != nil {
@@ -492,13 +492,13 @@ func Posts(data AdminPageData) templ.Component {
 			var templ_7745c5c3_Var33 templ.SafeURL
 			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/posts/new"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 160, Col: 87}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 160, Col: 59}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "\" class=\"btn btn-primary\"><span class=\"material-symbols-outlined\">add</span> <span>Create New Blog</span></a></div></div><!-- Search and Table Container --> <div class=\"admin-card\"><!-- Search Bar --><div class=\"admin-card-header\"><div class=\"admin-search\"><span class=\"admin-search-icon material-symbols-outlined\">search</span> <input class=\"admin-search-input\" placeholder=\"Search posts by title or content\" type=\"text\"></div></div><!-- Table --><div class=\"admin-table-wrapper\"><table class=\"admin-table\"><thead><tr><th>Title</th><th>Status</th><th class=\"text-right\">Actions</th></tr></thead> <tbody id=\"post-list-body\"></tbody></table></div><!-- Total count info --><div class=\"admin-table-footer\"><span class=\"table-count-info\" id=\"posts-count\">Loading...</span></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "\" class=\"btn btn-primary\"><span class=\"material-symbols-outlined\">add</span> <span>Create New Blog</span></a></div></div><!-- Search and Table Container --> <div class=\"admin-card\"><!-- Search Bar --><div class=\"admin-card-header\"><div class=\"admin-search\"><span class=\"admin-search-icon material-symbols-outlined\">search</span> <input class=\"admin-search-input\" placeholder=\"Search posts by title or content\" type=\"text\"></div></div><!-- Table --><div class=\"admin-table-wrapper\"><table class=\"admin-table\"><thead><tr><th>Title</th><th>Status</th><th class=\"text-right\">Actions</th></tr></thead> <tbody id=\"post-list-body\"></tbody></table></div><!-- Footer with Pagination --><div class=\"table-footer admin-table-footer\"><div class=\"pagination-info\"></div><div class=\"pagination-buttons\"></div><span class=\"table-count-info\" id=\"posts-count\">Loading...</span></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -552,7 +552,7 @@ func PostForm(data AdminPageData) templ.Component {
 			var templ_7745c5c3_Var36 string
 			templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(data.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 201, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 202, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 			if templ_7745c5c3_Err != nil {
@@ -612,13 +612,13 @@ func PortfolioList(data AdminPageData) templ.Component {
 			var templ_7745c5c3_Var39 templ.SafeURL
 			templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/portfolio/new"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 218, Col: 91}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 219, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "\" class=\"btn btn-primary\"><span class=\"material-symbols-outlined\">add</span> <span>New Item</span></a></div></div><div class=\"admin-card\"><div class=\"admin-table-wrapper\"><table class=\"admin-table\"><thead><tr><th>Title</th><th>Category</th><th class=\"text-right\">Actions</th></tr></thead> <tbody id=\"portfolio-list-body\"></tbody></table></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "\" class=\"btn btn-primary\"><span class=\"material-symbols-outlined\">add</span> <span>New Item</span></a></div></div><div class=\"admin-card\"><div class=\"admin-table-wrapper\"><table class=\"admin-table\"><thead><tr><th>Title</th><th>Category</th><th class=\"text-right\">Actions</th></tr></thead> <tbody id=\"portfolio-list-body\"></tbody></table></div><!-- Footer with Pagination --><div class=\"table-footer admin-table-footer\"><div class=\"pagination-info\"></div><div class=\"pagination-buttons\"></div><span class=\"table-count-info\" id=\"portfolio-count\"></span></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -672,7 +672,7 @@ func PortfolioForm(data AdminPageData) templ.Component {
 			var templ_7745c5c3_Var42 string
 			templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs(data.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 245, Col: 73}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 252, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
 			if templ_7745c5c3_Err != nil {
@@ -732,13 +732,13 @@ func PageList(data AdminPageData) templ.Component {
 			var templ_7745c5c3_Var45 templ.SafeURL
 			templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/pages/new"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 260, Col: 87}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 267, Col: 59}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var45))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "\" class=\"btn btn-primary\"><span class=\"material-symbols-outlined\">add</span> <span>New Page</span></a></div></div><div class=\"admin-card\"><div class=\"admin-table-wrapper\"><table class=\"admin-table\"><thead><tr><th>Title</th><th>Slug</th><th class=\"text-right\">Actions</th></tr></thead> <tbody id=\"page-list-body\"></tbody></table></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "\" class=\"btn btn-primary\"><span class=\"material-symbols-outlined\">add</span> <span>New Page</span></a></div></div><div class=\"admin-card\"><div class=\"admin-table-wrapper\"><table class=\"admin-table\"><thead><tr><th>Title</th><th>Slug</th><th class=\"text-right\">Actions</th></tr></thead> <tbody id=\"page-list-body\"></tbody></table></div><!-- Footer with Pagination --><div class=\"table-footer admin-table-footer\"><div class=\"pagination-info\"></div><div class=\"pagination-buttons\"></div><span class=\"table-count-info\" id=\"pages-count\"></span></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -792,7 +792,7 @@ func PageForm(data AdminPageData) templ.Component {
 			var templ_7745c5c3_Var48 string
 			templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.JoinStringErrs(data.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 286, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 300, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var48))
 			if templ_7745c5c3_Err != nil {

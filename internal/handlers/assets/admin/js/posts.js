@@ -107,10 +107,16 @@ function updatePagination(data) {
     // Update showing text
     const start = (data.page - 1) * data.limit + 1;
     const end = Math.min(data.page * data.limit, data.total);
-    showingSpan.innerHTML = `Showing <span class="pagination-highlight">${start}-${end}</span> of <span class="pagination-highlight">${data.total}</span>`;
+    if (showingSpan) {
+        showingSpan.innerHTML = `Showing <span class="pagination-highlight">${start}-${end}</span> of <span class="pagination-highlight">${data.total}</span>`;
+    }
 
     // Clear existing pagination buttons
-    paginationContainer.innerHTML = '';
+    if (paginationContainer) {
+        paginationContainer.innerHTML = '';
+    } else {
+        return; // Cannot render buttons without container
+    }
 
     // Previous button
     const prevButton = document.createElement('button');
