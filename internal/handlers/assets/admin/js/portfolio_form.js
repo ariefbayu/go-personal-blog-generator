@@ -1,8 +1,8 @@
-/ Global variables
+// Global variables
 let isUploading = false;
 
 document.addEventListener('DOMContentLoaded', function () {
-  / Check if editing
+/// Check if editing
   let portfolioId = null;
   const pathMatch = window.location.pathname.match(/^\/admin\/portfolio\/(\d+)\/edit$/);
   if (pathMatch) {
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     loadPortfolioItem(portfolioId);
   }
 
-  / Set up image upload handler
+/// Set up image upload handler
   const imageUpload = document.getElementById('showcaseImageUpload');
   const imageUrlInput = document.getElementById('showcaseImageURL');
   const imagePreview = document.getElementById('imagePreview');
@@ -19,23 +19,23 @@ document.addEventListener('DOMContentLoaded', function () {
   imageUpload.addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (file) {
-      / Validate file type
+/// Validate file type
       if (!file.type.startsWith('image/')) {
         alert('Please select an image file');
         return;
       }
 
-      / Validate file size (5MB limit)
+/// Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         alert('File size must be less than 5MB');
         return;
       }
 
-      / Set uploading state
+/// Set uploading state
       isUploading = true;
       imageUpload.disabled = true;
 
-      / Upload the file
+/// Upload the file
       const formData = new FormData();
       formData.append('image', file);
 
@@ -69,13 +69,13 @@ document.addEventListener('DOMContentLoaded', function () {
 document.getElementById('portfolio-form').addEventListener('submit', async function (e) {
   e.preventDefault();
 
-  / Prevent submission if upload is in progress
+/// Prevent submission if upload is in progress
   if (isUploading) {
     alert('Please wait for image upload to complete before submitting.');
     return;
   }
 
-  / Check if editing
+/// Check if editing
   let portfolioId = null;
   const pathMatch = window.location.pathname.match(/^\/admin\/portfolio\/(\d+)\/edit$/);
   if (pathMatch) {
@@ -89,7 +89,7 @@ document.getElementById('portfolio-form').addEventListener('submit', async funct
   const sortOrder = parseInt(document.getElementById('sortOrder').value) || 0;
   const showcaseImage = document.getElementById('showcaseImageURL').value.trim();
 
-  / Basic validation
+/// Basic validation
   if (!title) {
     alert('Please enter a title.');
     return;
@@ -99,7 +99,7 @@ document.getElementById('portfolio-form').addEventListener('submit', async funct
     return;
   }
 
-  / URL validation
+/// URL validation
   if (projectURL && !isValidUrl(projectURL)) {
     alert('Please enter a valid project URL.');
     return;
@@ -156,7 +156,7 @@ function loadPortfolioItem(id) {
       document.getElementById('sortOrder').value = item.sort_order;
       document.getElementById('showcaseImageURL').value = item.showcase_image || '';
 
-      / Show image preview if exists
+/// Show image preview if exists
       if (item.showcase_image) {
         const imagePreview = document.getElementById('imagePreview');
         const previewImg = document.getElementById('previewImg');
@@ -164,7 +164,7 @@ function loadPortfolioItem(id) {
         imagePreview.classList.remove('hidden');
       }
 
-      / Update page title
+/// Update page title
       document.title = `Edit Portfolio Item: ${item.title}`;
       const heading = document.querySelector('h2');
       if (heading) {

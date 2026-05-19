@@ -16,7 +16,7 @@ function initEditor() {
         tabSize: 4,
         indentUnit: 4,
         lineWrapping: true
-        / viewportMargin: Infinity removed for performance
+        // viewportMargin: Infinity removed for performance
     });
 }
 
@@ -62,7 +62,7 @@ function buildTree(nodes, container, path) {
 
         const name = document.createElement('span');
         name.className = `file-tree-name ${node.editable ? 'editable' : ''}`;
-        name.textContent = node.name; / Use textContent to prevent XSS
+        name.textContent = node.name; // Use textContent to prevent XSS
         name.dataset.path = fullPath;
         name.dataset.type = node.type;
         item.appendChild(name);
@@ -106,9 +106,9 @@ function toggleDir(toggle, childUl) {
 function selectFile(path) {
     lastRequestPath = path;
     document.getElementById('editor-title').textContent = `Loading: ${path}...`;
-    document.getElementById('save-btn').disabled = true; / Disable until success
+    document.getElementById('save-btn').disabled = true; // Disable until success
 
-    / Determine mode based on extension
+    // Determine mode based on extension
     const ext = path.split('.').pop().toLowerCase();
     let mode = "htmlmixed";
     if (ext === "css") mode = "css";
@@ -126,7 +126,7 @@ function selectFile(path) {
             return response.text();
         })
         .then(content => {
-            / Only update if this is still the latest request
+            // Only update if this is still the latest request
             if (lastRequestPath === path) {
                 currentFilePath = path;
                 document.getElementById('editor-title').textContent = `Editing: ${path}`;
@@ -139,7 +139,7 @@ function selectFile(path) {
             if (lastRequestPath === path) {
                 document.getElementById('editor-title').textContent = `Error loading: ${path}`;
                 editor.setValue('Error: Could not load file content.');
-                document.getElementById('save-btn').disabled = true; / Stay disabled on error
+                document.getElementById('save-btn').disabled = true; // Stay disabled on error
             }
         });
 }
@@ -152,7 +152,7 @@ document.getElementById('save-btn').addEventListener('click', function() {
     const btn = this;
     const originalText = btn.innerHTML;
 
-    / Double check we're not saving an error message
+    // Double check we're not saving an error message
     if (content === 'Error: Could not load file content.') {
         alert('Cannot save: content failed to load correctly.');
         return;

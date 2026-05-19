@@ -18,7 +18,7 @@ function loadPages(page) {
             const tbody = document.getElementById('page-list-body');
             tbody.innerHTML = '';
 
-            / Handle both old array format and new object format
+            // Handle both old array format and new object format
             let pages = [];
             let paginationData = { total: 0, page: 1, limit: 10, total_pages: 0 };
 
@@ -65,7 +65,7 @@ function loadPages(page) {
                 tbody.appendChild(row);
             });
 
-            / Update total count
+            // Update total count
             const countInfo = document.getElementById('pages-count');
             if (countInfo) {
                 countInfo.textContent = `Total: ${paginationData.total} pages`;
@@ -75,7 +75,7 @@ function loadPages(page) {
         })
         .catch(error => {
             console.error('Error fetching pages:', error);
-            / Update count on error
+            // Update count on error
             const countInfo = document.getElementById('pages-count');
             if (countInfo) {
                 countInfo.textContent = 'Error loading pages';
@@ -88,7 +88,7 @@ function updatePagination(data) {
     const showingSpan = document.querySelector('.pagination-info');
     const paginationWrapper = document.querySelector('.table-footer');
 
-    / Hide pagination if only one page or no items
+    // Hide pagination if only one page or no items
     if (data.total_pages <= 1) {
         if (paginationWrapper) {
             paginationWrapper.style.display = 'none';
@@ -100,15 +100,15 @@ function updatePagination(data) {
         }
     }
 
-    / Update showing text
+    // Update showing text
     const start = (data.page - 1) * data.limit + 1;
     const end = Math.min(data.page * data.limit, data.total);
     showingSpan.innerHTML = `Showing <span class="pagination-highlight">${start}-${end}</span> of <span class="pagination-highlight">${data.total}</span>`;
 
-    / Clear existing pagination buttons
+    // Clear existing pagination buttons
     paginationContainer.innerHTML = '';
 
-    / Previous button
+    // Previous button
     const prevButton = document.createElement('button');
     prevButton.className = 'pagination-btn';
     prevButton.textContent = 'Previous';
@@ -123,7 +123,7 @@ function updatePagination(data) {
     }
     paginationContainer.appendChild(prevButton);
 
-    / Page buttons
+    // Page buttons
     const maxPages = 5;
     let startPage = Math.max(1, data.page - Math.floor(maxPages / 2));
     let endPage = Math.min(data.total_pages, startPage + maxPages - 1);
@@ -145,7 +145,7 @@ function updatePagination(data) {
         paginationContainer.appendChild(pageButton);
     }
 
-    / Next button
+    // Next button
     const nextButton = document.createElement('button');
     nextButton.className = 'pagination-btn';
     nextButton.textContent = 'Next';
