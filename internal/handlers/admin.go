@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/ariefbayu/personal-blog-generator/internal/templates/admin"
 	"html/template"
 	"io/fs"
 	"net/http"
@@ -19,7 +20,6 @@ type AdminPageData struct {
 	ActiveNav    string
 	ExtraHead    template.HTML
 	Scripts      template.HTML
-	Content      template.HTML
 	TemplatePath string
 	OutputPath   string
 	DBPath       string
@@ -40,50 +40,23 @@ func init() {
 	}
 }
 
-// renderAdminPage renders an admin page using header.html, content, and footer.html
-func renderAdminPage(w http.ResponseWriter, data AdminPageData) error {
-	// Read header and footer templates
-	headerBytes, err := fs.ReadFile(AdminFS, "header.html")
-	if err != nil {
-		return err
+// mapToTemplData converts local AdminPageData to the one expected by templ templates
+func mapToTemplData(data AdminPageData) admin.AdminPageData {
+	return admin.AdminPageData{
+		Title:        data.Title,
+		ActiveNav:    data.ActiveNav,
+		ExtraHead:    data.ExtraHead,
+		Scripts:      data.Scripts,
+		TemplatePath: data.TemplatePath,
+		OutputPath:   data.OutputPath,
+		DBPath:       data.DBPath,
 	}
-	footerBytes, err := fs.ReadFile(AdminFS, "footer.html")
-	if err != nil {
-		return err
-	}
-
-	// Combine templates
-	fullTemplate := string(headerBytes) + string(data.Content) + string(footerBytes)
-
-	tmpl, err := template.New("admin").Parse(fullTemplate)
-	if err != nil {
-		return err
-	}
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	return tmpl.Execute(w, data)
-}
-
-// readContentFile reads the content portion of an admin HTML file (stripping header/footer)
-func readContentFile(filename string) (template.HTML, error) {
-	content, err := fs.ReadFile(AdminFS, "content/"+filename)
-	if err != nil {
-		return "", err
-	}
-	return template.HTML(content), nil
 }
 
 func ServeDashboard(w http.ResponseWriter, r *http.Request) {
-	content, err := readContentFile("dashboard.html")
-	if err != nil {
-		http.Error(w, "Admin dashboard template not found", http.StatusInternalServerError)
-		return
-	}
-
 	data := AdminPageData{
 		Title:        "Admin Dashboard",
 		ActiveNav:    "dashboard",
-		Content:      content,
 		TemplatePath: TemplatePath,
 		OutputPath:   OutputPath,
 		DBPath:       DBPath,
@@ -120,220 +93,155 @@ func ServeDashboard(w http.ResponseWriter, r *http.Request) {
     </script>`),
 	}
 
-	if err := renderAdminPage(w, data); err != nil {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := admin.Dashboard(mapToTemplData(data)).Render(r.Context(), w); err != nil {
 		http.Error(w, "Failed to render dashboard", http.StatusInternalServerError)
 	}
 }
 
 func ServePostsPage(w http.ResponseWriter, r *http.Request) {
-	content, err := readContentFile("posts.html")
-	if err != nil {
-		http.Error(w, "Posts page template not found", http.StatusInternalServerError)
-		return
-	}
-
 	data := AdminPageData{
 		Title:     "Blog Posts",
 		ActiveNav: "posts",
-		Content:   content,
 		Scripts:   template.HTML(`<script src="/admin/js/posts.js"></script>`),
 	}
 
-	if err := renderAdminPage(w, data); err != nil {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := admin.Posts(mapToTemplData(data)).Render(r.Context(), w); err != nil {
 		http.Error(w, "Failed to render posts page", http.StatusInternalServerError)
 	}
 }
 
 func ServeNewPostPage(w http.ResponseWriter, r *http.Request) {
-	content, err := readContentFile("post_form.html")
-	if err != nil {
-		http.Error(w, "New post form template not found", http.StatusInternalServerError)
-		return
-	}
-
 	data := AdminPageData{
 		Title:     "New Post",
 		ActiveNav: "posts",
-		Content:   content,
 		ExtraHead: template.HTML(`<link rel="stylesheet" href="/admin/vendor/easymde.min.css">`),
 		Scripts:   template.HTML(`<script src="/admin/vendor/easymde.min.js"></script><script src="/admin/js/post_form.js"></script>`),
 	}
 
-	if err := renderAdminPage(w, data); err != nil {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := admin.PostForm(mapToTemplData(data)).Render(r.Context(), w); err != nil {
 		http.Error(w, "Failed to render new post page", http.StatusInternalServerError)
 	}
 }
 
 func ServeEditPostPage(w http.ResponseWriter, r *http.Request) {
-	content, err := readContentFile("post_form.html")
-	if err != nil {
-		http.Error(w, "Edit post form template not found", http.StatusInternalServerError)
-		return
-	}
-
 	data := AdminPageData{
 		Title:     "Edit Post",
 		ActiveNav: "posts",
-		Content:   content,
 		ExtraHead: template.HTML(`<link rel="stylesheet" href="/admin/vendor/easymde.min.css">`),
 		Scripts:   template.HTML(`<script src="/admin/vendor/easymde.min.js"></script><script src="/admin/js/post_form.js"></script>`),
 	}
 
-	if err := renderAdminPage(w, data); err != nil {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := admin.PostForm(mapToTemplData(data)).Render(r.Context(), w); err != nil {
 		http.Error(w, "Failed to render edit post page", http.StatusInternalServerError)
 	}
 }
 
 func ServePortfolioPage(w http.ResponseWriter, r *http.Request) {
-	content, err := readContentFile("portfolio_list.html")
-	if err != nil {
-		http.Error(w, "Portfolio page template not found", http.StatusInternalServerError)
-		return
-	}
-
 	data := AdminPageData{
 		Title:     "Portfolio",
 		ActiveNav: "portfolio",
-		Content:   content,
 		Scripts:   template.HTML(`<script src="/admin/js/portfolio_list.js"></script>`),
 	}
 
-	if err := renderAdminPage(w, data); err != nil {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := admin.PortfolioList(mapToTemplData(data)).Render(r.Context(), w); err != nil {
 		http.Error(w, "Failed to render portfolio page", http.StatusInternalServerError)
 	}
 }
 
 func ServeNewPortfolioPage(w http.ResponseWriter, r *http.Request) {
-	content, err := readContentFile("portfolio_form.html")
-	if err != nil {
-		http.Error(w, "New portfolio form template not found", http.StatusInternalServerError)
-		return
-	}
-
 	data := AdminPageData{
 		Title:     "New Portfolio Item",
 		ActiveNav: "portfolio",
-		Content:   content,
 		ExtraHead: template.HTML(`<link rel="stylesheet" href="/admin/vendor/easymde.min.css">`),
 		Scripts:   template.HTML(`<script src="/admin/vendor/easymde.min.js"></script><script src="/admin/js/portfolio_form.js"></script>`),
 	}
 
-	if err := renderAdminPage(w, data); err != nil {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := admin.PortfolioForm(mapToTemplData(data)).Render(r.Context(), w); err != nil {
 		http.Error(w, "Failed to render new portfolio page", http.StatusInternalServerError)
 	}
 }
 
 func ServeEditPortfolioPage(w http.ResponseWriter, r *http.Request) {
-	content, err := readContentFile("portfolio_form.html")
-	if err != nil {
-		http.Error(w, "Edit portfolio form template not found", http.StatusInternalServerError)
-		return
-	}
-
 	data := AdminPageData{
 		Title:     "Edit Portfolio Item",
 		ActiveNav: "portfolio",
-		Content:   content,
 		ExtraHead: template.HTML(`<link rel="stylesheet" href="/admin/vendor/easymde.min.css">`),
 		Scripts:   template.HTML(`<script src="/admin/vendor/easymde.min.js"></script><script src="/admin/js/portfolio_form.js"></script>`),
 	}
 
-	if err := renderAdminPage(w, data); err != nil {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := admin.PortfolioForm(mapToTemplData(data)).Render(r.Context(), w); err != nil {
 		http.Error(w, "Failed to render edit portfolio page", http.StatusInternalServerError)
 	}
 }
 
 func ServePagesPage(w http.ResponseWriter, r *http.Request) {
-	content, err := readContentFile("page_list.html")
-	if err != nil {
-		http.Error(w, "Pages page template not found", http.StatusInternalServerError)
-		return
-	}
-
 	data := AdminPageData{
 		Title:     "Pages",
 		ActiveNav: "pages",
-		Content:   content,
 		Scripts:   template.HTML(`<script src="/admin/js/page_list.js"></script>`),
 	}
 
-	if err := renderAdminPage(w, data); err != nil {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := admin.PageList(mapToTemplData(data)).Render(r.Context(), w); err != nil {
 		http.Error(w, "Failed to render pages page", http.StatusInternalServerError)
 	}
 }
 
 func ServeNewPagePage(w http.ResponseWriter, r *http.Request) {
-	content, err := readContentFile("page_form.html")
-	if err != nil {
-		http.Error(w, "New page form template not found", http.StatusInternalServerError)
-		return
-	}
-
 	data := AdminPageData{
 		Title:     "New Page",
 		ActiveNav: "pages",
-		Content:   content,
 		ExtraHead: template.HTML(`<link rel="stylesheet" href="/admin/vendor/easymde.min.css">`),
 		Scripts:   template.HTML(`<script src="/admin/vendor/easymde.min.js"></script><script src="/admin/js/page_form.js"></script>`),
 	}
 
-	if err := renderAdminPage(w, data); err != nil {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := admin.PageForm(mapToTemplData(data)).Render(r.Context(), w); err != nil {
 		http.Error(w, "Failed to render new page page", http.StatusInternalServerError)
 	}
 }
 
 func ServeEditPagePage(w http.ResponseWriter, r *http.Request) {
-	content, err := readContentFile("page_form.html")
-	if err != nil {
-		http.Error(w, "Page edit template not found", http.StatusInternalServerError)
-		return
-	}
-
 	data := AdminPageData{
 		Title:     "Edit Page",
 		ActiveNav: "pages",
-		Content:   content,
 		ExtraHead: template.HTML(`<link rel="stylesheet" href="/admin/vendor/easymde.min.css">`),
 		Scripts:   template.HTML(`<script src="/admin/vendor/easymde.min.js"></script><script src="/admin/js/page_form.js"></script>`),
 	}
 
-	if err := renderAdminPage(w, data); err != nil {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := admin.PageForm(mapToTemplData(data)).Render(r.Context(), w); err != nil {
 		http.Error(w, "Failed to render edit page page", http.StatusInternalServerError)
 	}
 }
 
 func ServeSettingsPage(w http.ResponseWriter, r *http.Request) {
-	content, err := readContentFile("settings.html")
-	if err != nil {
-		http.Error(w, "Settings template not found", http.StatusInternalServerError)
-		return
-	}
-
 	data := AdminPageData{
 		Title:     "Settings",
 		ActiveNav: "settings",
-		Content:   content,
 	}
 
-	if err := renderAdminPage(w, data); err != nil {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := admin.Settings(mapToTemplData(data)).Render(r.Context(), w); err != nil {
 		http.Error(w, "Failed to render settings page", http.StatusInternalServerError)
 	}
 }
 
 func ServeTemplatesPage(w http.ResponseWriter, r *http.Request) {
-	content, err := readContentFile("templates.html")
-	if err != nil {
-		http.Error(w, "Templates template not found", http.StatusInternalServerError)
-		return
-	}
-
 	data := AdminPageData{
 		Title:     "Templates",
 		ActiveNav: "templates",
-		Content:   content,
 	}
 
-	if err := renderAdminPage(w, data); err != nil {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := admin.Templates(mapToTemplData(data)).Render(r.Context(), w); err != nil {
 		http.Error(w, "Failed to render templates page", http.StatusInternalServerError)
 	}
 }
