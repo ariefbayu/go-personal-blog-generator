@@ -28,8 +28,10 @@ func TestGenerateStaticSite(t *testing.T) {
 			slug TEXT UNIQUE NOT NULL,
 			content TEXT NOT NULL,
 			tags TEXT,
+			featured_image TEXT,
 			published BOOLEAN DEFAULT FALSE,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 		)
 	`)
 	if err != nil {

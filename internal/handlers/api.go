@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi/v5"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -217,28 +216,8 @@ func (h *APIHandlers) PublishSiteHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Get paths from environment variables
-	templatePath := os.Getenv("TEMPLATE_PATH")
-	if templatePath == "" {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			templatePath = "./templates" // fallback
-		} else {
-			templatePath = filepath.Join(homeDir, ".personal-blog-generator", "templates")
-		}
-	}
-	log.Printf("DEBUG: templatePath = %s", templatePath)
-	outputPath := os.Getenv("OUTPUT_PATH")
-	if outputPath == "" {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			outputPath = "./html-outputs" // fallback
-		} else {
-			outputPath = filepath.Join(homeDir, "html-outputs")
-		}
-	}
-
 	// Generate the static site
-	err := generator.GenerateStaticSite(h.postRepo, h.portfolioRepo, h.pageRepo, h.settingsRepo, templatePath, outputPath)
+	err := generator.GenerateStaticSite(h.postRepo, h.portfolioRepo, h.pageRepo, h.settingsRepo, TemplatePath, OutputPath)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -298,11 +277,7 @@ func (h *APIHandlers) UpdateSettingsHandler(w http.ResponseWriter, r *http.Reque
 }
 
 func (h *APIHandlers) GetTemplatesHandler(w http.ResponseWriter, r *http.Request) {
-	templatePath := os.Getenv("TEMPLATE_PATH")
-	if templatePath == "" {
-		templatePath = "./templates"
-	}
-	tree, err := buildFileTree(templatePath)
+	tree, err := buildFileTree(TemplatePath)
 	if err != nil {
 		http.Error(w, "Failed to list templates", http.StatusInternalServerError)
 		return
@@ -317,12 +292,8 @@ func (h *APIHandlers) GetTemplateContentHandler(w http.ResponseWriter, r *http.R
 		http.Error(w, "Missing path parameter", http.StatusBadRequest)
 		return
 	}
-	templatePath := os.Getenv("TEMPLATE_PATH")
-	if templatePath == "" {
-		templatePath = "./templates"
-	}
-	fullPath := filepath.Join(templatePath, pathParam)
-	if !strings.HasPrefix(fullPath, templatePath+string(filepath.Separator)) && fullPath != templatePath {
+	fullPath := filepath.Join(TemplatePath, pathParam)
+	if !strings.HasPrefix(fullPath, TemplatePath+string(filepath.Separator)) && fullPath != TemplatePath {
 		http.Error(w, "Invalid path", http.StatusBadRequest)
 		return
 	}
@@ -344,12 +315,8 @@ func (h *APIHandlers) SaveTemplateHandler(w http.ResponseWriter, r *http.Request
 		http.Error(w, "Invalid JSON", http.StatusBadRequest)
 		return
 	}
-	templatePath := os.Getenv("TEMPLATE_PATH")
-	if templatePath == "" {
-		templatePath = "./templates"
-	}
-	fullPath := filepath.Join(templatePath, req.Path)
-	if !strings.HasPrefix(fullPath, templatePath+string(filepath.Separator)) && fullPath != templatePath {
+	fullPath := filepath.Join(TemplatePath, req.Path)
+	if !strings.HasPrefix(fullPath, TemplatePath+string(filepath.Separator)) && fullPath != TemplatePath {
 		http.Error(w, "Invalid path", http.StatusBadRequest)
 		return
 	}

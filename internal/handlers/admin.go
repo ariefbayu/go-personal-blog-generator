@@ -6,9 +6,6 @@ import (
 	"html/template"
 	"io/fs"
 	"net/http"
-	"os"
-	"path/filepath"
-	"strings"
 )
 var TemplatePath string
 var OutputPath string
@@ -26,34 +23,6 @@ type AdminPageData struct {
         OutputPath   string
         DBPath       string
         RootPrefix   string
-}
-
-func init() {
-        // Get TEMPLATE_PATH and OUTPUT_PATH for dashboard display
-        TemplatePath = os.Getenv("TEMPLATE_PATH")
-        if TemplatePath == "" {
-                homeDir, _ := os.UserHomeDir()
-                TemplatePath = filepath.Join(homeDir, ".personal-blog-generator", "templates")
-        }
-
-        OutputPath = os.Getenv("OUTPUT_PATH")
-        if OutputPath == "" {
-                homeDir, _ := os.UserHomeDir()
-                OutputPath = filepath.Join(homeDir, ".personal-blog-generator", "html-outputs")
-        }
-
-        RootPrefix = os.Getenv("ROOT_PREFIX")
-        if RootPrefix == "" {
-                RootPrefix = "/admin"
-        }
-        if RootPrefix == "/" {
-                RootPrefix = ""
-        } else {
-                if !strings.HasPrefix(RootPrefix, "/") {
-                        RootPrefix = "/" + RootPrefix
-                }
-                RootPrefix = strings.TrimSuffix(RootPrefix, "/")
-        }
 }
 
 // mapToTemplData converts local AdminPageData to the one expected by templ templates

@@ -62,10 +62,10 @@ func TestUploadImageHandler(t *testing.T) {
 			}
 			defer os.RemoveAll(tempDir)
 
-			// Override uploadDir for this test
-			originalUploadDir := uploadDir
-			uploadDir = tempDir
-			defer func() { uploadDir = originalUploadDir }()
+			// Override OutputPath for this test
+			oldOutputPath := OutputPath
+			OutputPath = tempDir
+			defer func() { OutputPath = oldOutputPath }()
 			body := &bytes.Buffer{}
 			writer := multipart.NewWriter(body)
 
@@ -134,10 +134,11 @@ func TestUploadImageHandler_FileTooLarge(t *testing.T) {
 	}
 	defer os.RemoveAll(tempDir)
 
-	// Override uploadDir for testing
-	originalUploadDir := uploadDir
-	uploadDir = tempDir
-	defer func() { uploadDir = originalUploadDir }()
+	// Override OutputPath for this test
+	oldOutputPath := OutputPath
+	OutputPath = tempDir
+	defer func() { OutputPath = oldOutputPath }()
+
 
 	// Create large content (6MB > 5MB limit)
 	largeContent := make([]byte, 6<<20)

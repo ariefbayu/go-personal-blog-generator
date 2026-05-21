@@ -63,6 +63,21 @@ func main() {
 	handlers.AdminFS = adminSubFS
 	handlers.DBPath = dbPath
 
+	// Set TemplatePath and OutputPath for handlers
+	templatePath := os.Getenv("TEMPLATE_PATH")
+	if templatePath == "" {
+		homeDir, _ := os.UserHomeDir()
+		templatePath = filepath.Join(homeDir, ".personal-blog-generator", "templates")
+	}
+	handlers.TemplatePath = templatePath
+
+	outputPath := os.Getenv("OUTPUT_PATH")
+	if outputPath == "" {
+		homeDir, _ := os.UserHomeDir()
+		outputPath = filepath.Join(homeDir, "html-outputs")
+	}
+	handlers.OutputPath = outputPath
+
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
@@ -70,19 +85,20 @@ func main() {
 	// ROOT_PREFIX logic
 	rootPrefix := os.Getenv("ROOT_PREFIX")
 	if rootPrefix == "" {
-	        rootPrefix = "/admin"
+		rootPrefix = "/admin"
 	}
 	if rootPrefix == "/" {
-	        rootPrefix = ""
+		rootPrefix = ""
 	} else {
-	        if !strings.HasPrefix(rootPrefix, "/") {
-	                rootPrefix = "/" + rootPrefix
-	        }
-	        rootPrefix = strings.TrimSuffix(rootPrefix, "/")
+		if !strings.HasPrefix(rootPrefix, "/") {
+			rootPrefix = "/" + rootPrefix
+		}
+		rootPrefix = strings.TrimSuffix(rootPrefix, "/")
 	}
+	handlers.RootPrefix = rootPrefix
 
 	// Public routes
-	r.Handle("/images/*", http.StripPrefix("/images/", http.FileServer(http.Dir("html-outputs/images/"))))
+	r.Handle("/images/*", http.StripPrefix("/images/", http.FileServer(http.Dir(filepath.Join(outputPath, "images")))))
 
 	// Protected routes (Admin & API) under ROOT_PREFIX
 	r.Route(rootPrefix, func(r chi.Router) {

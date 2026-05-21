@@ -41,12 +41,11 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	outputPath := os.Getenv("OUTPUT_PATH")
-	if outputPath == "" {
+	if OutputPath == "" {
 		http.Error(w, "OUTPUT_PATH not configured", http.StatusInternalServerError)
 		return
 	}
-	uploadDir = filepath.Join(outputPath, "images")
+	uploadDir = filepath.Join(OutputPath, "images")
 
 	// Parse multipart form with max memory
 	err := r.ParseMultipartForm(maxUploadSize)

@@ -196,9 +196,9 @@ func TestGetTemplatesHandler(t *testing.T) {
 	}
 
 	// Set TEMPLATE_PATH
-	oldTemplatePath := os.Getenv("TEMPLATE_PATH")
-	os.Setenv("TEMPLATE_PATH", tempDir)
-	defer os.Setenv("TEMPLATE_PATH", oldTemplatePath)
+	oldTP := TemplatePath
+	TemplatePath = tempDir
+	defer func() { TemplatePath = oldTP }()
 
 	// Setup handler (repos not needed for this handler)
 	apiHandlers := &APIHandlers{}
@@ -250,9 +250,9 @@ func TestGetTemplateContentHandler(t *testing.T) {
 	}
 
 	// Set TEMPLATE_PATH
-	oldTemplatePath := os.Getenv("TEMPLATE_PATH")
-	os.Setenv("TEMPLATE_PATH", tempDir)
-	defer os.Setenv("TEMPLATE_PATH", oldTemplatePath)
+	oldTP := TemplatePath
+	TemplatePath = tempDir
+	defer func() { TemplatePath = oldTP }()
 
 	// Setup handler
 	apiHandlers := &APIHandlers{}
@@ -287,9 +287,9 @@ func TestSaveTemplateHandler(t *testing.T) {
 	}
 
 	// Set TEMPLATE_PATH
-	oldTemplatePath := os.Getenv("TEMPLATE_PATH")
-	os.Setenv("TEMPLATE_PATH", tempDir)
-	defer os.Setenv("TEMPLATE_PATH", oldTemplatePath)
+	oldTP := TemplatePath
+	TemplatePath = tempDir
+	defer func() { TemplatePath = oldTP }()
 
 	// Setup handler
 	apiHandlers := &APIHandlers{}
