@@ -253,6 +253,7 @@ func ServeSettingsPage(w http.ResponseWriter, r *http.Request) {
                 Title:      "Settings",
                 ActiveNav:  "settings",
                 RootPrefix: RootPrefix,
+                Scripts:    template.HTML(fmt.Sprintf(`<script src="%s/js/settings.js"></script>`, RootPrefix)),
         }
 
         w.Header().Set("Content-Type", "text/html; charset=utf-8")
