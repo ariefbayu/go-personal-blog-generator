@@ -2,7 +2,7 @@ document.getElementById('post-form').addEventListener('submit', async function(e
 
 // Check if editing
 let postId = null;
-const pathMatch = window.location.pathname.match(/^\/admin\/posts\/(\d+)\/edit$/);
+const pathMatch = window.location.pathname.match(/\/posts\/(\d+)\/edit$/);
 if (pathMatch) {
     postId = pathMatch[1];
 }
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 /// Check if editing after editor is initialized
-    const pathMatch = window.location.pathname.match(/^\/admin\/posts\/(\d+)\/edit$/);
+    const pathMatch = window.location.pathname.match(/\/posts\/(\d+)\/edit$/);
     if (pathMatch) {
         postId = pathMatch[1];
 /// Fetch post data

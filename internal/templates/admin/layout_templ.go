@@ -558,7 +558,20 @@ func PostForm(data AdminPageData) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</h2></div></div><div id=\"post-form-container\"><!-- Form will be rendered here by JS --></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</h2></div></div><div class=\"admin-card\"><div class=\"admin-card-body\"><form id=\"post-form\"><div class=\"form-group\"><label for=\"title\" class=\"form-label\">Title</label> <input type=\"text\" id=\"title\" name=\"title\" required class=\"form-input\"></div><div class=\"form-group\"><label for=\"slug\" class=\"form-label\">Slug</label> <input type=\"text\" id=\"slug\" name=\"slug\" required class=\"form-input\"></div><div class=\"form-group\"><label for=\"tags\" class=\"form-label\">Tags</label> <input type=\"text\" id=\"tags\" name=\"tags\" class=\"form-input\" placeholder=\"Comma separated tags\"></div><div class=\"form-group\"><label class=\"form-label\">Featured Image</label> <input type=\"file\" id=\"featuredImageUpload\" accept=\"image/*\" class=\"form-input\"> <input type=\"hidden\" id=\"featuredImageURL\" name=\"featuredImage\"><div id=\"imagePreview\" class=\"image-preview hidden\"><img id=\"previewImg\" src=\"\" alt=\"Preview\"></div><p class=\"form-hint\">Upload an image to feature this post</p></div><div class=\"form-group\"><label for=\"publishDate\" class=\"form-label\">Publish Date</label> <input type=\"text\" id=\"publishDate\" name=\"publishDate\" readonly class=\"form-input\" placeholder=\"Not published yet\"></div><div class=\"form-group\"><label for=\"content\" class=\"form-label\">Content</label> <textarea id=\"content\" name=\"content\" rows=\"10\" class=\"form-textarea\"></textarea></div><div class=\"form-checkbox-group\"><input type=\"checkbox\" id=\"published\" name=\"published\" class=\"form-checkbox\"> <label for=\"published\" class=\"form-checkbox-label\">Published</label></div><div class=\"form-actions\"><button type=\"submit\" class=\"btn btn-primary\"><span class=\"material-symbols-outlined\">save</span> <span>Save Post</span></button> <a href=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var37 templ.SafeURL
+			templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/posts"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 246, Col: 57}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "\" class=\"btn btn-cancel\">Cancel</a></div></form></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -588,12 +601,12 @@ func PortfolioList(data AdminPageData) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var37 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var37 == nil {
-			templ_7745c5c3_Var37 = templ.NopComponent
+		templ_7745c5c3_Var38 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var38 == nil {
+			templ_7745c5c3_Var38 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Var38 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var39 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -605,26 +618,26 @@ func PortfolioList(data AdminPageData) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<div class=\"admin-page-header\"><div><h2 class=\"admin-page-title\">Portfolio</h2><p class=\"admin-page-subtitle\">Manage your portfolio items.</p></div><div class=\"admin-page-actions\"><a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<div class=\"admin-page-header\"><div><h2 class=\"admin-page-title\">Portfolio</h2><p class=\"admin-page-subtitle\">Manage your portfolio items.</p></div><div class=\"admin-page-actions\"><a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var39 templ.SafeURL
-			templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/portfolio/new"))
+			var templ_7745c5c3_Var40 templ.SafeURL
+			templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/portfolio/new"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 219, Col: 63}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 262, Col: 63}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "\" class=\"btn btn-primary\"><span class=\"material-symbols-outlined\">add</span> <span>New Item</span></a></div></div><div class=\"admin-card\"><div class=\"admin-table-wrapper\"><table class=\"admin-table\"><thead><tr><th>Title</th><th>Category</th><th class=\"text-right\">Actions</th></tr></thead> <tbody id=\"portfolio-list-body\"></tbody></table></div><!-- Footer with Pagination --><div class=\"table-footer admin-table-footer\"><div class=\"pagination-info\"></div><div class=\"pagination-buttons\"></div><span class=\"table-count-info\" id=\"portfolio-count\"></span></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "\" class=\"btn btn-primary\"><span class=\"material-symbols-outlined\">add</span> <span>New Item</span></a></div></div><div class=\"admin-card\"><div class=\"admin-table-wrapper\"><table class=\"admin-table\"><thead><tr><th>Title</th><th>Category</th><th class=\"text-right\">Actions</th></tr></thead> <tbody id=\"portfolio-list-body\"></tbody></table></div><!-- Footer with Pagination --><div class=\"table-footer admin-table-footer\"><div class=\"pagination-info\"></div><div class=\"pagination-buttons\"></div><span class=\"table-count-info\" id=\"portfolio-count\"></span></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Layout(data).Render(templ.WithChildren(ctx, templ_7745c5c3_Var38), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Layout(data).Render(templ.WithChildren(ctx, templ_7745c5c3_Var39), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -648,12 +661,12 @@ func PortfolioForm(data AdminPageData) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var40 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var40 == nil {
-			templ_7745c5c3_Var40 = templ.NopComponent
+		templ_7745c5c3_Var41 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var41 == nil {
+			templ_7745c5c3_Var41 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Var41 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var42 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -665,26 +678,39 @@ func PortfolioForm(data AdminPageData) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<div class=\"admin-page-header\"><div><h2 class=\"admin-page-title\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<div class=\"admin-page-header\"><div><h2 class=\"admin-page-title\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var42 string
-			templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs(data.Title)
+			var templ_7745c5c3_Var43 string
+			templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(data.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 252, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 295, Col: 45}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</h2></div></div><div id=\"portfolio-form-container\"></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</h2></div></div><div class=\"admin-card\"><div class=\"admin-card-body\"><form id=\"portfolio-form\"><div class=\"form-group\"><label for=\"title\" class=\"form-label\">Title *</label> <input type=\"text\" id=\"title\" name=\"title\" required class=\"form-input\"></div><div class=\"form-group\"><label for=\"shortDescription\" class=\"form-label\">Short Description *</label> <textarea id=\"shortDescription\" name=\"shortDescription\" rows=\"3\" required class=\"form-textarea\"></textarea></div><div class=\"form-group\"><label for=\"projectURL\" class=\"form-label\">Project URL</label> <input type=\"url\" id=\"projectURL\" name=\"projectURL\" class=\"form-input\" placeholder=\"https://example.com\"></div><div class=\"form-group\"><label for=\"githubURL\" class=\"form-label\">GitHub URL</label> <input type=\"url\" id=\"githubURL\" name=\"githubURL\" class=\"form-input\" placeholder=\"https://github.com/username/repo\"></div><div class=\"form-group\"><label for=\"sortOrder\" class=\"form-label\">Sort Order</label> <input type=\"number\" id=\"sortOrder\" name=\"sortOrder\" min=\"0\" value=\"0\" class=\"form-input\"></div><div class=\"form-group\"><label class=\"form-label\">Showcase Image</label> <input type=\"file\" id=\"showcaseImageUpload\" accept=\"image/*\" class=\"form-input\"> <input type=\"hidden\" id=\"showcaseImageURL\" name=\"showcaseImage\"><div id=\"imagePreview\" class=\"image-preview hidden\"><img id=\"previewImg\" src=\"\" alt=\"Preview\"></div><p class=\"form-hint\">Upload an image to showcase this portfolio item</p></div><div class=\"form-actions\"><button type=\"submit\" class=\"btn btn-primary\"><span class=\"material-symbols-outlined\">save</span> <span>Save Portfolio Item</span></button> <a href=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var44 templ.SafeURL
+			templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/portfolio"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 335, Col: 61}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "\" class=\"btn btn-cancel\">Cancel</a></div></form></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Layout(data).Render(templ.WithChildren(ctx, templ_7745c5c3_Var41), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Layout(data).Render(templ.WithChildren(ctx, templ_7745c5c3_Var42), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -708,12 +734,12 @@ func PageList(data AdminPageData) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var43 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var43 == nil {
-			templ_7745c5c3_Var43 = templ.NopComponent
+		templ_7745c5c3_Var45 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var45 == nil {
+			templ_7745c5c3_Var45 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Var44 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var46 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -725,26 +751,26 @@ func PageList(data AdminPageData) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<div class=\"admin-page-header\"><div><h2 class=\"admin-page-title\">Pages</h2><p class=\"admin-page-subtitle\">Manage static pages.</p></div><div class=\"admin-page-actions\"><a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<div class=\"admin-page-header\"><div><h2 class=\"admin-page-title\">Pages</h2><p class=\"admin-page-subtitle\">Manage static pages.</p></div><div class=\"admin-page-actions\"><a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var45 templ.SafeURL
-			templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/pages/new"))
+			var templ_7745c5c3_Var47 templ.SafeURL
+			templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/pages/new"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 267, Col: 59}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 351, Col: 59}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var45))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var47))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "\" class=\"btn btn-primary\"><span class=\"material-symbols-outlined\">add</span> <span>New Page</span></a></div></div><div class=\"admin-card\"><div class=\"admin-table-wrapper\"><table class=\"admin-table\"><thead><tr><th>Title</th><th>Slug</th><th class=\"text-right\">Actions</th></tr></thead> <tbody id=\"page-list-body\"></tbody></table></div><!-- Footer with Pagination --><div class=\"table-footer admin-table-footer\"><div class=\"pagination-info\"></div><div class=\"pagination-buttons\"></div><span class=\"table-count-info\" id=\"pages-count\"></span></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "\" class=\"btn btn-primary\"><span class=\"material-symbols-outlined\">add</span> <span>New Page</span></a></div></div><div class=\"admin-card\"><div class=\"admin-table-wrapper\"><table class=\"admin-table\"><thead><tr><th>Title</th><th>Slug</th><th class=\"text-right\">Actions</th></tr></thead> <tbody id=\"page-list-body\"></tbody></table></div><!-- Footer with Pagination --><div class=\"table-footer admin-table-footer\"><div class=\"pagination-info\"></div><div class=\"pagination-buttons\"></div><span class=\"table-count-info\" id=\"pages-count\"></span></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Layout(data).Render(templ.WithChildren(ctx, templ_7745c5c3_Var44), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Layout(data).Render(templ.WithChildren(ctx, templ_7745c5c3_Var46), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -768,12 +794,12 @@ func PageForm(data AdminPageData) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var46 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var46 == nil {
-			templ_7745c5c3_Var46 = templ.NopComponent
+		templ_7745c5c3_Var48 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var48 == nil {
+			templ_7745c5c3_Var48 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Var47 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var49 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -785,26 +811,39 @@ func PageForm(data AdminPageData) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<div class=\"admin-page-header\"><div><h2 class=\"admin-page-title\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<div class=\"admin-page-header\"><div><h2 class=\"admin-page-title\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var48 string
-			templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.JoinStringErrs(data.Title)
+			var templ_7745c5c3_Var50 string
+			templ_7745c5c3_Var50, templ_7745c5c3_Err = templ.JoinStringErrs(data.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 300, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 384, Col: 45}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var48))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var50))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</h2></div></div><div id=\"page-form-container\"></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</h2></div></div><div class=\"admin-card\"><div class=\"admin-card-body\"><form id=\"page-form\"><div class=\"form-group\"><label for=\"title\" class=\"form-label\">Title *</label> <input type=\"text\" id=\"title\" name=\"title\" required class=\"form-input\"></div><div class=\"form-group\"><label for=\"slug\" class=\"form-label\">Slug *</label> <input type=\"text\" id=\"slug\" name=\"slug\" required class=\"form-input\"><p class=\"form-hint\">URL-friendly identifier (lowercase, alphanumeric, hyphens only)</p></div><div class=\"form-group\"><label for=\"content\" class=\"form-label\">Content *</label> <textarea id=\"content\" name=\"content\" rows=\"15\" class=\"form-textarea\"></textarea></div><div class=\"form-checkbox-group\"><input type=\"checkbox\" id=\"showInNav\" name=\"showInNav\" class=\"form-checkbox\"> <label for=\"showInNav\" class=\"form-checkbox-label\">Show in Navigation</label></div><div class=\"form-group\"><label for=\"sortOrder\" class=\"form-label\">Sort Order</label> <input type=\"number\" id=\"sortOrder\" name=\"sortOrder\" min=\"0\" value=\"0\" class=\"form-input\"><p class=\"form-hint\">Lower numbers appear first in navigation</p></div><div class=\"form-actions\"><button type=\"submit\" class=\"btn btn-primary\"><span class=\"material-symbols-outlined\">save</span> <span>Save Page</span></button> <a href=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var51 templ.SafeURL
+			templ_7745c5c3_Var51, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/pages"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 417, Col: 57}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var51))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "\" class=\"btn btn-cancel\">Cancel</a></div></form></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Layout(data).Render(templ.WithChildren(ctx, templ_7745c5c3_Var47), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Layout(data).Render(templ.WithChildren(ctx, templ_7745c5c3_Var49), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -828,12 +867,12 @@ func Settings(data AdminPageData) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var49 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var49 == nil {
-			templ_7745c5c3_Var49 = templ.NopComponent
+		templ_7745c5c3_Var52 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var52 == nil {
+			templ_7745c5c3_Var52 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Var50 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var53 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -845,13 +884,13 @@ func Settings(data AdminPageData) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<div class=\"admin-page-header\"><div><h2 class=\"admin-page-title\">Settings</h2><p class=\"admin-page-subtitle\">Configure your site settings.</p></div></div><!-- Settings Form Container --> <div class=\"admin-card\"><div class=\"admin-card-body\"><form id=\"settingsForm\"><div class=\"form-group\"><label for=\"siteName\" class=\"form-label\">Site Name</label> <input type=\"text\" id=\"siteName\" name=\"siteName\" class=\"form-input\"></div><div class=\"form-group\"><label class=\"form-label\">Show Menus</label><div class=\"form-checkbox-group\"><input type=\"checkbox\" id=\"showPortfolioMenu\" name=\"showPortfolioMenu\" class=\"form-checkbox\"> <label for=\"showPortfolioMenu\" class=\"form-checkbox-label\">Show Portfolio Menu</label></div><div class=\"form-checkbox-group\"><input type=\"checkbox\" id=\"showPostsMenu\" name=\"showPostsMenu\" class=\"form-checkbox\"> <label for=\"showPostsMenu\" class=\"form-checkbox-label\">Show Posts Menu</label></div></div><div class=\"form-group\"><label class=\"form-label\">Menu Order</label><ul id=\"menuOrderList\" class=\"drag-list\"><!-- Menu items will be added here --></ul><p class=\"form-hint\">Drag and drop to reorder menu items</p></div><div class=\"form-actions\"><button type=\"submit\" class=\"btn btn-primary\">Save Settings</button></div></form></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "<div class=\"admin-page-header\"><div><h2 class=\"admin-page-title\">Settings</h2><p class=\"admin-page-subtitle\">Configure your site settings.</p></div></div><!-- Settings Form Container --> <div class=\"admin-card\"><div class=\"admin-card-body\"><form id=\"settingsForm\"><div class=\"form-group\"><label for=\"siteName\" class=\"form-label\">Site Name</label> <input type=\"text\" id=\"siteName\" name=\"siteName\" class=\"form-input\"></div><div class=\"form-group\"><label class=\"form-label\">Show Menus</label><div class=\"form-checkbox-group\"><input type=\"checkbox\" id=\"showPortfolioMenu\" name=\"showPortfolioMenu\" class=\"form-checkbox\"> <label for=\"showPortfolioMenu\" class=\"form-checkbox-label\">Show Portfolio Menu</label></div><div class=\"form-checkbox-group\"><input type=\"checkbox\" id=\"showPostsMenu\" name=\"showPostsMenu\" class=\"form-checkbox\"> <label for=\"showPostsMenu\" class=\"form-checkbox-label\">Show Posts Menu</label></div></div><div class=\"form-group\"><label class=\"form-label\">Menu Order</label><ul id=\"menuOrderList\" class=\"drag-list\"><!-- Menu items will be added here --></ul><p class=\"form-hint\">Drag and drop to reorder menu items</p></div><div class=\"form-actions\"><button type=\"submit\" class=\"btn btn-primary\">Save Settings</button></div></form></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Layout(data).Render(templ.WithChildren(ctx, templ_7745c5c3_Var50), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Layout(data).Render(templ.WithChildren(ctx, templ_7745c5c3_Var53), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -875,12 +914,12 @@ func Templates(data AdminPageData) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var51 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var51 == nil {
-			templ_7745c5c3_Var51 = templ.NopComponent
+		templ_7745c5c3_Var54 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var54 == nil {
+			templ_7745c5c3_Var54 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Var52 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var55 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -892,13 +931,13 @@ func Templates(data AdminPageData) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<div class=\"admin-page-header\"><div><h2 class=\"admin-page-title\">Templates</h2><p class=\"admin-page-subtitle\">Edit your blog templates.</p></div></div><div class=\"template-editor-layout\"><!-- File Tree Sidebar --><div class=\"file-tree-container\"><div id=\"file-tree\"><p class=\"text-muted\">Loading templates...</p></div></div><!-- Code Editor Area --><div class=\"editor-main-container\"><div class=\"editor-card\"><div class=\"editor-header\"><div class=\"editor-title\" id=\"editor-title\">Select a file to edit</div><div class=\"flex items-center gap-4\"><span id=\"save-status\" class=\"save-status-msg\"></span> <button id=\"save-btn\" class=\"btn btn-primary btn-sm\" disabled><span class=\"material-symbols-outlined\">save</span> <span>Save Changes</span></button></div></div><div class=\"editor-wrapper\"><textarea id=\"file-content\" class=\"hidden\"></textarea></div></div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<div class=\"admin-page-header\"><div><h2 class=\"admin-page-title\">Templates</h2><p class=\"admin-page-subtitle\">Edit your blog templates.</p></div></div><div class=\"template-editor-layout\"><!-- File Tree Sidebar --><div class=\"file-tree-container\"><div id=\"file-tree\"><p class=\"text-muted\">Loading templates...</p></div></div><!-- Code Editor Area --><div class=\"editor-main-container\"><div class=\"editor-card\"><div class=\"editor-header\"><div class=\"editor-title\" id=\"editor-title\">Select a file to edit</div><div class=\"flex items-center gap-4\"><span id=\"save-status\" class=\"save-status-msg\"></span> <button id=\"save-btn\" class=\"btn btn-primary btn-sm\" disabled><span class=\"material-symbols-outlined\">save</span> <span>Save Changes</span></button></div></div><div class=\"editor-wrapper\"><textarea id=\"file-content\" class=\"hidden\"></textarea></div></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Layout(data).Render(templ.WithChildren(ctx, templ_7745c5c3_Var52), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Layout(data).Render(templ.WithChildren(ctx, templ_7745c5c3_Var55), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

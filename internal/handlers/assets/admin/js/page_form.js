@@ -2,6 +2,12 @@
 let isUploading = false;
 
 document.getElementById('page-form').addEventListener('submit', async function(e) {
+    let pageId = null;
+    const pathMatch = window.location.pathname.match(/\/pages\/(\d+)\/edit$/);
+    if (pathMatch) {
+        pageId = pathMatch[1];
+    }
+
     e.preventDefault();
 
     const title = document.getElementById('title').value.trim();
@@ -145,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 /// Check if editing after editor is initialized
-    const pathMatch = window.location.pathname.match(/^\/admin\/pages\/(\d+)\/edit$/);
+    const pathMatch = window.location.pathname.match(/\/pages\/(\d+)\/edit$/);
     if (pathMatch) {
         const pageId = pathMatch[1];
 /// Fetch page data

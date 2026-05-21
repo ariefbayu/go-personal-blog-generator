@@ -4,7 +4,7 @@ let isUploading = false;
 document.addEventListener('DOMContentLoaded', function () {
 /// Check if editing
   let portfolioId = null;
-  const pathMatch = window.location.pathname.match(/^\/admin\/portfolio\/(\d+)\/edit$/);
+  const pathMatch = window.location.pathname.match(/\/portfolio\/(\d+)\/edit$/);
   if (pathMatch) {
     portfolioId = pathMatch[1];
     loadPortfolioItem(portfolioId);
@@ -77,7 +77,7 @@ document.getElementById('portfolio-form').addEventListener('submit', async funct
 
 /// Check if editing
   let portfolioId = null;
-  const pathMatch = window.location.pathname.match(/^\/admin\/portfolio\/(\d+)\/edit$/);
+  const pathMatch = window.location.pathname.match(/\/portfolio\/(\d+)\/edit$/);
   if (pathMatch) {
     portfolioId = pathMatch[1];
   }
