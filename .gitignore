@@ -102,3 +102,6 @@ node_modules/
 blog.db
 html-outputs/
 .htpasswd
+
+# Remove generated binary, should generate on the deployment server
+personal-blog-generator
