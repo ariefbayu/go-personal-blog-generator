@@ -50,11 +50,15 @@
                 {{range .PortfolioItems}}
                 <div class="card project-card card-hover">
                     {{if .ShowcaseImage}}
-                    <div class="project-image" style="background-image: url('{{.ShowcaseImage}}');"></div>
+                    <a href="/{{.Slug}}/" style="display: block;">
+                        <div class="project-image" style="background-image: url('{{.ShowcaseImage}}');"></div>
+                    </a>
                     {{end}}
                     <div class="card-content">
                         <div class="card-header">
-                            <h3 class="heading-3">{{.Title}}</h3>
+                            <h3 class="heading-3">
+                                <a href="/{{.Slug}}/" style="color: inherit; text-decoration: none;">{{.Title}}</a>
+                            </h3>
                             <div class="flex gap-2">
                                 {{if .GithubURL}}
                                 <a href="{{.GithubURL}}" target="_blank" rel="noopener noreferrer">

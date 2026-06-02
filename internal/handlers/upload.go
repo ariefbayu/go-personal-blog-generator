@@ -2,6 +2,10 @@ package handlers
 
 import (
 	"fmt"
+	"image"
+	"image/gif"
+	"image/jpeg"
+	"image/png"
 	"io"
 	"net/http"
 	"os"
@@ -45,7 +49,13 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "OUTPUT_PATH not configured", http.StatusInternalServerError)
 		return
 	}
-	uploadDir = filepath.Join(OutputPath, "images")
+
+	slug := r.URL.Query().Get("slug")
+	if slug != "" {
+		uploadDir = filepath.Join(OutputPath, "images", slug)
+	} else {
+		uploadDir = filepath.Join(OutputPath, "images")
+	}
 
 	// Parse multipart form with max memory
 	err := r.ParseMultipartForm(maxUploadSize)
@@ -109,7 +119,87 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Return JSON response with image URL
+	// Reset file pointer to generate thumbnail
+	file.Seek(0, 0)
+
+	// Decode source image
+	srcImg, format, err := image.Decode(file)
+	if err == nil {
+		// Generate thumbnail
+		thumbImg := createThumbnail(srcImg, 300)
+
+		// Create thumbnail file
+		thumbFilename := id + "_thumb" + ext
+		if ext == ".webp" {
+			thumbFilename = id + "_thumb.jpg"
+		}
+		thumbPath := filepath.Join(uploadDir, thumbFilename)
+		thumbFile, err := os.Create(thumbPath)
+		if err == nil {
+			defer thumbFile.Close()
+			// Encode based on format
+			switch format {
+			case "png":
+				png.Encode(thumbFile, thumbImg)
+			case "gif":
+				gif.Encode(thumbFile, thumbImg, nil)
+			default: // jpeg, webp, etc.
+				jpeg.Encode(thumbFile, thumbImg, &jpeg.Options{Quality: 85})
+			}
+		}
+	}
+
+	// Return JSON response with image URL and thumbnail URL
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, `{"data": {"filePath": "/images/%s"}}`, filename)
+	var filenamePath, thumbnailPath string
+	if slug != "" {
+		filenamePath = fmt.Sprintf("/images/%s/%s", slug, filename)
+		if ext == ".webp" {
+			thumbnailPath = fmt.Sprintf("/images/%s/%s_thumb.jpg", slug, id)
+		} else {
+			thumbnailPath = fmt.Sprintf("/images/%s/%s_thumb%s", slug, id, ext)
+		}
+	} else {
+		filenamePath = fmt.Sprintf("/images/%s", filename)
+		if ext == ".webp" {
+			thumbnailPath = fmt.Sprintf("/images/%s_thumb.jpg", id)
+		} else {
+			thumbnailPath = fmt.Sprintf("/images/%s_thumb%s", id, ext)
+		}
+	}
+	fmt.Fprintf(w, `{"data": {"filePath": "%s", "thumbnailPath": "%s"}}`, filenamePath, thumbnailPath)
+}
+
+func resizeImage(img image.Image, width, height int) image.Image {
+	srcBounds := img.Bounds()
+	dstBounds := image.Rect(0, 0, width, height)
+	dst := image.NewRGBA(dstBounds)
+
+	dx := float64(srcBounds.Dx()) / float64(width)
+	dy := float64(srcBounds.Dy()) / float64(height)
+
+	for y := 0; y < height; y++ {
+		for x := 0; x < width; x++ {
+			srcX := int(float64(x)*dx) + srcBounds.Min.X
+			srcY := int(float64(y)*dy) + srcBounds.Min.Y
+			dst.Set(x, y, img.At(srcX, srcY))
+		}
+	}
+	return dst
+}
+
+func createThumbnail(img image.Image, maxDim int) image.Image {
+	bounds := img.Bounds()
+	w, h := bounds.Dx(), bounds.Dy()
+
+	var newW, newH int
+	if w > h {
+		newW = maxDim
+		newH = int(float64(h) * float64(maxDim) / float64(w))
+	} else {
+		newH = maxDim
+		newW = int(float64(w) * float64(maxDim) / float64(h))
+	}
+
+	return resizeImage(img, newW, newH)
 }

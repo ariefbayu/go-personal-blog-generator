@@ -1,0 +1,87 @@
+    <main class="container">
+        <section class="section">
+            <article class="article-content">
+                <a class="link link-icon text-semibold" href="/portfolio.html">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    Back to Portfolio
+                </a>
+
+                <header class="flex flex-col gap-4" style="margin-top: var(--spacing-xl);">
+                    <h1 class="heading-1">{{.Title}}</h1>
+                    <div class="flex gap-4">
+                        {{if .ProjectURL}}
+                        <a href="{{.ProjectURL}}" target="_blank" rel="noopener noreferrer" class="link link-icon text-semibold">
+                            <span class="material-symbols-outlined">open_in_new</span>
+                            Visit Project Website
+                        </a>
+                        {{end}}
+                        {{if .GithubURL}}
+                        <a href="{{.GithubURL}}" target="_blank" rel="noopener noreferrer" class="link link-icon text-semibold">
+                            <span class="material-symbols-outlined">code</span>
+                            View on GitHub
+                        </a>
+                        {{end}}
+                    </div>
+                </header>
+
+                {{if .ShowcaseImage}}
+                <div class="post-featured-image" style="margin-top: var(--spacing-xl);">
+                    <img src="{{.ShowcaseImage}}" alt="{{.Title}}" style="width: 100%; height: auto; border-radius: var(--border-radius);">
+                </div>
+                {{end}}
+
+                <div class="prose" style="margin-top: var(--spacing-2xl);">
+                    {{.ShortDescription}}
+                </div>
+
+                {{if .Images}}
+                <div class="project-gallery" style="margin-top: var(--spacing-2xl);">
+                    <h2 class="heading-2" style="margin-bottom: var(--spacing-md);">Project Gallery</h2>
+                    <div class="grid grid-cols-2 grid-cols-md-3 grid-cols-lg-4 gap-4" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem;">
+                        {{range .Images}}
+                        <div class="gallery-card" onclick="openGalleryModal('{{.Image}}')" style="cursor: pointer; overflow: hidden; border-radius: var(--border-radius); border: 1px solid var(--border-color); transition: transform 0.2s;">
+                            <img src="{{.Thumbnail}}" alt="Gallery Image" class="gallery-thumbnail" style="width: 100%; height: 180px; object-fit: cover; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+                {{end}}
+            </article>
+        </section>
+    </main>
+
+    <!-- Modal for full size view -->
+    <div id="galleryModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.9); align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;">
+        <span onclick="closeGalleryModal()" style="position: absolute; top: 15px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; cursor: pointer; transition: 0.3s;">&times;</span>
+        <img class="modal-content" id="modalImg" style="margin: auto; display: block; max-width: 90%; max-height: 90%; border-radius: var(--border-radius); box-shadow: 0 4px 20px rgba(0,0,0,0.5); transform: scale(0.9); transition: transform 0.3s ease;">
+    </div>
+
+    <script>
+    function openGalleryModal(imgSrc) {
+        var modal = document.getElementById("galleryModal");
+        var modalImg = document.getElementById("modalImg");
+        modal.style.display = "flex";
+        setTimeout(function() {
+            modal.style.opacity = "1";
+            modalImg.style.transform = "scale(1)";
+        }, 10);
+        modalImg.src = imgSrc;
+    }
+
+    function closeGalleryModal() {
+        var modal = document.getElementById("galleryModal");
+        var modalImg = document.getElementById("modalImg");
+        modal.style.opacity = "0";
+        modalImg.style.transform = "scale(0.9)";
+        setTimeout(function() {
+            modal.style.display = "none";
+        }, 300);
+    }
+
+    // Close modal when clicking outside the image
+    document.getElementById("galleryModal").addEventListener("click", function(e) {
+        if (e.target === this) {
+            closeGalleryModal();
+        }
+    });
+    </script>

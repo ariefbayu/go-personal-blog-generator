@@ -10,6 +10,8 @@ type PortfolioItem struct {
     GithubURL        string    `db:"github_url" json:"github_url"`
     ShowcaseImage    string    `db:"showcase_image" json:"showcase_image"`
     SortOrder        int       `db:"sort_order" json:"sort_order"`
+    Slug             string    `db:"slug" json:"slug"`
+    Images           string    `db:"images" json:"images"`
     CreatedAt        time.Time `db:"created_at" json:"created_at"`
     UpdatedAt        time.Time `db:"updated_at" json:"updated_at"`
 }

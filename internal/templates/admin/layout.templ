@@ -303,6 +303,10 @@ templ PortfolioForm(data AdminPageData) {
 						<input type="text" id="title" name="title" required class="form-input"/>
 					</div>
 					<div class="form-group">
+						<label for="slug" class="form-label">Slug *</label>
+						<input type="text" id="slug" name="slug" required class="form-input"/>
+					</div>
+					<div class="form-group">
 						<label for="shortDescription" class="form-label">Short Description *</label>
 						<textarea id="shortDescription" name="shortDescription" rows="3" required class="form-textarea"></textarea>
 					</div>
@@ -326,6 +330,15 @@ templ PortfolioForm(data AdminPageData) {
 							<img id="previewImg" src="" alt="Preview"/>
 						</div>
 						<p class="form-hint">Upload an image to showcase this portfolio item</p>
+					</div>
+					<div class="form-group">
+						<label class="form-label">Project Gallery Images</label>
+						<input type="file" id="portfolioImagesUpload" accept="image/*" multiple class="form-input"/>
+						<input type="hidden" id="portfolioImagesJSON" name="images" value="[]"/>
+						<div id="galleryPreview" class="gallery-preview flex flex-wrap gap-4" style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px;">
+							<!-- Gallery items will be added here dynamically -->
+						</div>
+						<p class="form-hint">Upload one or more additional images for this project's gallery</p>
 					</div>
 					<div class="form-actions">
 						<button type="submit" class="btn btn-primary">

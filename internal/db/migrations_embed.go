@@ -57,4 +57,6 @@ CREATE TABLE IF NOT EXISTS pages (
 
 INSERT OR IGNORE INTO settings (id, site_name, show_portfolio_menu, show_posts_menu, menu_order) VALUES (1, 'My Blog', 1, 1, '["posts","portfolio"]');`,
 	"004_add_featured_image_to_posts": `ALTER TABLE posts ADD COLUMN featured_image TEXT DEFAULT '';`,
+	"005_add_slug_and_images_to_portfolio_items": `ALTER TABLE portfolio_items ADD COLUMN slug TEXT DEFAULT '';
+ALTER TABLE portfolio_items ADD COLUMN images TEXT DEFAULT '[]';`,
 }

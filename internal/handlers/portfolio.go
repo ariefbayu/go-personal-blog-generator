@@ -97,6 +97,27 @@ func (h *PortfolioHandlers) CreatePortfolioItemHandler(w http.ResponseWriter, r 
                 return
         }
 
+        if strings.TrimSpace(item.Slug) == "" {
+                item.Slug = slugify(item.Title)
+        } else {
+                item.Slug = slugify(item.Slug)
+        }
+
+        if strings.TrimSpace(item.Images) == "" {
+                item.Images = "[]"
+        }
+
+        // Validate uniqueness of slug
+        allItems, err := h.portfolioRepo.GetAllPortfolioItems()
+        if err == nil {
+                for _, existing := range allItems {
+                        if existing.Slug == item.Slug {
+                                http.Error(w, "Slug already exists", http.StatusConflict)
+                                return
+                        }
+                }
+        }
+
         // Validate URLs if provided
         if item.ProjectURL != "" {
                 if _, err := url.ParseRequestURI(item.ProjectURL); err != nil {
@@ -111,7 +132,7 @@ func (h *PortfolioHandlers) CreatePortfolioItemHandler(w http.ResponseWriter, r 
                 }
         }
 
-        err := h.portfolioRepo.CreatePortfolioItem(&item)
+        err = h.portfolioRepo.CreatePortfolioItem(&item)
         if err != nil {
                 http.Error(w, "Failed to create portfolio item", http.StatusInternalServerError)
                 return
@@ -145,6 +166,27 @@ func (h *PortfolioHandlers) UpdatePortfolioItemHandler(w http.ResponseWriter, r 
         if strings.TrimSpace(item.ShortDescription) == "" {
                 http.Error(w, "Short description is required", http.StatusBadRequest)
                 return
+        }
+
+        if strings.TrimSpace(item.Slug) == "" {
+                item.Slug = slugify(item.Title)
+        } else {
+                item.Slug = slugify(item.Slug)
+        }
+
+        if strings.TrimSpace(item.Images) == "" {
+                item.Images = "[]"
+        }
+
+        // Validate uniqueness of slug
+        allItems, err := h.portfolioRepo.GetAllPortfolioItems()
+        if err == nil {
+                for _, existing := range allItems {
+                        if existing.Slug == item.Slug && existing.ID != item.ID {
+                                http.Error(w, "Slug already exists", http.StatusConflict)
+                                return
+                        }
+                }
         }
 
         // Validate URLs if provided
@@ -191,4 +233,22 @@ func (h *PortfolioHandlers) DeletePortfolioItemHandler(w http.ResponseWriter, r 
         }
 
         w.WriteHeader(http.StatusNoContent)
+}
+
+func slugify(s string) string {
+	s = strings.ToLower(s)
+	var sb strings.Builder
+	for _, r := range s {
+		if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') {
+			sb.WriteRune(r)
+		} else if r == ' ' || r == '-' || r == '_' {
+			sb.WriteRune('-')
+		}
+	}
+	res := sb.String()
+	for strings.Contains(res, "--") {
+		res = strings.ReplaceAll(res, "--", "-")
+	}
+	res = strings.Trim(res, "-")
+	return res
 }

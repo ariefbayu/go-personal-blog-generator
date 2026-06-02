@@ -47,6 +47,8 @@ func TestGenerateStaticSite(t *testing.T) {
 			github_url TEXT,
 			showcase_image TEXT,
 			sort_order INTEGER DEFAULT 0,
+			slug TEXT DEFAULT '',
+			images TEXT DEFAULT '[]',
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 		)
@@ -133,6 +135,8 @@ func TestGenerateStaticSite(t *testing.T) {
 		GithubURL:        "https://github.com/test/repo",
 		ShowcaseImage:    "/images/test.jpg",
 		SortOrder:        1,
+		Slug:             "test-portfolio-item",
+		Images:           `[{"image":"/images/test.jpg","thumbnail":"/images/test_thumb.jpg"}]`,
 	}
 	err = portfolioRepo.CreatePortfolioItem(testPortfolioItem)
 	if err != nil {
@@ -271,6 +275,20 @@ Tags: {{range .Tags}}<span>{{.}}</span> {{end}}
 <p>No posts</p>
 {{end}}`
 	err = os.WriteFile(filepath.Join(templateDir, "posts.html"), []byte(postsTemplateContent), 0644)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	portfolioItemTemplateContent := `<h1>{{.Title}}</h1>
+<div class="portfolio-item-content">{{.ShortDescription}}</div>
+{{if .Images}}
+<div class="gallery">
+{{range .Images}}
+<img src="{{.Thumbnail}}" data-full="{{.Image}}">
+{{end}}
+</div>
+{{end}}`
+	err = os.WriteFile(filepath.Join(templateDir, "portfolio-item.html"), []byte(portfolioItemTemplateContent), 0644)
 	if err != nil {
 		t.Fatal(err)
 	}

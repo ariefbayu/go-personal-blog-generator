@@ -15,7 +15,7 @@ func NewPortfolioRepository(db *sql.DB) *PortfolioRepository {
 }
 
 func (r *PortfolioRepository) GetAllPortfolioItems() ([]models.PortfolioItem, error) {
-	rows, err := r.db.Query("SELECT id, title, short_description, project_url, github_url, showcase_image, sort_order, created_at, updated_at FROM portfolio_items ORDER BY sort_order ASC, created_at DESC")
+	rows, err := r.db.Query("SELECT id, title, short_description, project_url, github_url, showcase_image, sort_order, slug, images, created_at, updated_at FROM portfolio_items ORDER BY sort_order ASC, created_at DESC")
 	if err != nil {
 		return nil, err
 	}
@@ -24,7 +24,7 @@ func (r *PortfolioRepository) GetAllPortfolioItems() ([]models.PortfolioItem, er
 	var items []models.PortfolioItem
 	for rows.Next() {
 		var item models.PortfolioItem
-		err := rows.Scan(&item.ID, &item.Title, &item.ShortDescription, &item.ProjectURL, &item.GithubURL, &item.ShowcaseImage, &item.SortOrder, &item.CreatedAt, &item.UpdatedAt)
+		err := rows.Scan(&item.ID, &item.Title, &item.ShortDescription, &item.ProjectURL, &item.GithubURL, &item.ShowcaseImage, &item.SortOrder, &item.Slug, &item.Images, &item.CreatedAt, &item.UpdatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -42,7 +42,7 @@ func (r *PortfolioRepository) GetPortfolioItemsPaginated(limit, offset int) ([]m
 	}
 
 	// Get paginated items
-	rows, err := r.db.Query("SELECT id, title, short_description, project_url, github_url, showcase_image, sort_order, created_at, updated_at FROM portfolio_items ORDER BY sort_order ASC, created_at DESC LIMIT ? OFFSET ?", limit, offset)
+	rows, err := r.db.Query("SELECT id, title, short_description, project_url, github_url, showcase_image, sort_order, slug, images, created_at, updated_at FROM portfolio_items ORDER BY sort_order ASC, created_at DESC LIMIT ? OFFSET ?", limit, offset)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -51,7 +51,7 @@ func (r *PortfolioRepository) GetPortfolioItemsPaginated(limit, offset int) ([]m
 	var items []models.PortfolioItem
 	for rows.Next() {
 		var item models.PortfolioItem
-		err := rows.Scan(&item.ID, &item.Title, &item.ShortDescription, &item.ProjectURL, &item.GithubURL, &item.ShowcaseImage, &item.SortOrder, &item.CreatedAt, &item.UpdatedAt)
+		err := rows.Scan(&item.ID, &item.Title, &item.ShortDescription, &item.ProjectURL, &item.GithubURL, &item.ShowcaseImage, &item.SortOrder, &item.Slug, &item.Images, &item.CreatedAt, &item.UpdatedAt)
 		if err != nil {
 			return nil, 0, err
 		}
@@ -62,7 +62,7 @@ func (r *PortfolioRepository) GetPortfolioItemsPaginated(limit, offset int) ([]m
 
 func (r *PortfolioRepository) GetPortfolioItemByID(id int64) (*models.PortfolioItem, error) {
 	var item models.PortfolioItem
-	err := r.db.QueryRow("SELECT id, title, short_description, project_url, github_url, showcase_image, sort_order, created_at, updated_at FROM portfolio_items WHERE id = ?", id).Scan(&item.ID, &item.Title, &item.ShortDescription, &item.ProjectURL, &item.GithubURL, &item.ShowcaseImage, &item.SortOrder, &item.CreatedAt, &item.UpdatedAt)
+	err := r.db.QueryRow("SELECT id, title, short_description, project_url, github_url, showcase_image, sort_order, slug, images, created_at, updated_at FROM portfolio_items WHERE id = ?", id).Scan(&item.ID, &item.Title, &item.ShortDescription, &item.ProjectURL, &item.GithubURL, &item.ShowcaseImage, &item.SortOrder, &item.Slug, &item.Images, &item.CreatedAt, &item.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -70,12 +70,12 @@ func (r *PortfolioRepository) GetPortfolioItemByID(id int64) (*models.PortfolioI
 }
 
 func (r *PortfolioRepository) CreatePortfolioItem(item *models.PortfolioItem) error {
-	err := r.db.QueryRow("INSERT INTO portfolio_items (title, short_description, project_url, github_url, showcase_image, sort_order) VALUES (?, ?, ?, ?, ?, ?) RETURNING id", item.Title, item.ShortDescription, item.ProjectURL, item.GithubURL, item.ShowcaseImage, item.SortOrder).Scan(&item.ID)
+	err := r.db.QueryRow("INSERT INTO portfolio_items (title, short_description, project_url, github_url, showcase_image, sort_order, slug, images) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id", item.Title, item.ShortDescription, item.ProjectURL, item.GithubURL, item.ShowcaseImage, item.SortOrder, item.Slug, item.Images).Scan(&item.ID)
 	return err
 }
 
 func (r *PortfolioRepository) UpdatePortfolioItem(item *models.PortfolioItem) error {
-	_, err := r.db.Exec("UPDATE portfolio_items SET title = ?, short_description = ?, project_url = ?, github_url = ?, showcase_image = ?, sort_order = ? WHERE id = ?", item.Title, item.ShortDescription, item.ProjectURL, item.GithubURL, item.ShowcaseImage, item.SortOrder, item.ID)
+	_, err := r.db.Exec("UPDATE portfolio_items SET title = ?, short_description = ?, project_url = ?, github_url = ?, showcase_image = ?, sort_order = ?, slug = ?, images = ? WHERE id = ?", item.Title, item.ShortDescription, item.ProjectURL, item.GithubURL, item.ShowcaseImage, item.SortOrder, item.Slug, item.Images, item.ID)
 	return err
 }
 

@@ -691,14 +691,14 @@ func PortfolioForm(data AdminPageData) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</h2></div></div><div class=\"admin-card\"><div class=\"admin-card-body\"><form id=\"portfolio-form\"><div class=\"form-group\"><label for=\"title\" class=\"form-label\">Title *</label> <input type=\"text\" id=\"title\" name=\"title\" required class=\"form-input\"></div><div class=\"form-group\"><label for=\"shortDescription\" class=\"form-label\">Short Description *</label> <textarea id=\"shortDescription\" name=\"shortDescription\" rows=\"3\" required class=\"form-textarea\"></textarea></div><div class=\"form-group\"><label for=\"projectURL\" class=\"form-label\">Project URL</label> <input type=\"url\" id=\"projectURL\" name=\"projectURL\" class=\"form-input\" placeholder=\"https://example.com\"></div><div class=\"form-group\"><label for=\"githubURL\" class=\"form-label\">GitHub URL</label> <input type=\"url\" id=\"githubURL\" name=\"githubURL\" class=\"form-input\" placeholder=\"https://github.com/username/repo\"></div><div class=\"form-group\"><label for=\"sortOrder\" class=\"form-label\">Sort Order</label> <input type=\"number\" id=\"sortOrder\" name=\"sortOrder\" min=\"0\" value=\"0\" class=\"form-input\"></div><div class=\"form-group\"><label class=\"form-label\">Showcase Image</label> <input type=\"file\" id=\"showcaseImageUpload\" accept=\"image/*\" class=\"form-input\"> <input type=\"hidden\" id=\"showcaseImageURL\" name=\"showcaseImage\"><div id=\"imagePreview\" class=\"image-preview hidden\"><img id=\"previewImg\" src=\"\" alt=\"Preview\"></div><p class=\"form-hint\">Upload an image to showcase this portfolio item</p></div><div class=\"form-actions\"><button type=\"submit\" class=\"btn btn-primary\"><span class=\"material-symbols-outlined\">save</span> <span>Save Portfolio Item</span></button> <a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</h2></div></div><div class=\"admin-card\"><div class=\"admin-card-body\"><form id=\"portfolio-form\"><div class=\"form-group\"><label for=\"title\" class=\"form-label\">Title *</label> <input type=\"text\" id=\"title\" name=\"title\" required class=\"form-input\"></div><div class=\"form-group\"><label for=\"slug\" class=\"form-label\">Slug *</label> <input type=\"text\" id=\"slug\" name=\"slug\" required class=\"form-input\"></div><div class=\"form-group\"><label for=\"shortDescription\" class=\"form-label\">Short Description *</label> <textarea id=\"shortDescription\" name=\"shortDescription\" rows=\"3\" required class=\"form-textarea\"></textarea></div><div class=\"form-group\"><label for=\"projectURL\" class=\"form-label\">Project URL</label> <input type=\"url\" id=\"projectURL\" name=\"projectURL\" class=\"form-input\" placeholder=\"https://example.com\"></div><div class=\"form-group\"><label for=\"githubURL\" class=\"form-label\">GitHub URL</label> <input type=\"url\" id=\"githubURL\" name=\"githubURL\" class=\"form-input\" placeholder=\"https://github.com/username/repo\"></div><div class=\"form-group\"><label for=\"sortOrder\" class=\"form-label\">Sort Order</label> <input type=\"number\" id=\"sortOrder\" name=\"sortOrder\" min=\"0\" value=\"0\" class=\"form-input\"></div><div class=\"form-group\"><label class=\"form-label\">Showcase Image</label> <input type=\"file\" id=\"showcaseImageUpload\" accept=\"image/*\" class=\"form-input\"> <input type=\"hidden\" id=\"showcaseImageURL\" name=\"showcaseImage\"><div id=\"imagePreview\" class=\"image-preview hidden\"><img id=\"previewImg\" src=\"\" alt=\"Preview\"></div><p class=\"form-hint\">Upload an image to showcase this portfolio item</p></div><div class=\"form-group\"><label class=\"form-label\">Project Gallery Images</label> <input type=\"file\" id=\"portfolioImagesUpload\" accept=\"image/*\" multiple class=\"form-input\"> <input type=\"hidden\" id=\"portfolioImagesJSON\" name=\"images\" value=\"[]\"><div id=\"galleryPreview\" class=\"gallery-preview flex flex-wrap gap-4\" style=\"margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px;\"><!-- Gallery items will be added here dynamically --></div><p class=\"form-hint\">Upload one or more additional images for this project's gallery</p></div><div class=\"form-actions\"><button type=\"submit\" class=\"btn btn-primary\"><span class=\"material-symbols-outlined\">save</span> <span>Save Portfolio Item</span></button> <a href=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var44 templ.SafeURL
 			templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/portfolio"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 335, Col: 61}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 348, Col: 61}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
 			if templ_7745c5c3_Err != nil {
@@ -758,7 +758,7 @@ func PageList(data AdminPageData) templ.Component {
 			var templ_7745c5c3_Var47 templ.SafeURL
 			templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/pages/new"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 351, Col: 59}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 364, Col: 59}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var47))
 			if templ_7745c5c3_Err != nil {
@@ -818,7 +818,7 @@ func PageForm(data AdminPageData) templ.Component {
 			var templ_7745c5c3_Var50 string
 			templ_7745c5c3_Var50, templ_7745c5c3_Err = templ.JoinStringErrs(data.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 384, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 397, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var50))
 			if templ_7745c5c3_Err != nil {
@@ -831,7 +831,7 @@ func PageForm(data AdminPageData) templ.Component {
 			var templ_7745c5c3_Var51 templ.SafeURL
 			templ_7745c5c3_Var51, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(data.RootPrefix + "/pages"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 417, Col: 57}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/admin/layout.templ`, Line: 430, Col: 57}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var51))
 			if templ_7745c5c3_Err != nil {

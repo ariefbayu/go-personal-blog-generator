@@ -26,6 +26,12 @@ type Post struct {
 	NavigationData
 }
 
+// GalleryImage represents an image in a portfolio project gallery
+type GalleryImage struct {
+	Image     string `json:"image"`
+	Thumbnail string `json:"thumbnail"`
+}
+
 // PortfolioItem represents a portfolio item for template rendering
 type PortfolioItem struct {
 	Title            string
@@ -34,6 +40,13 @@ type PortfolioItem struct {
 	GithubURL        string
 	ShowcaseImage    string
 	SortOrder        int
+	Slug             string
+	Images           []GalleryImage
+	NavigationData
+	HasOG            bool
+	OGTitle          string
+	OGDescription    string
+	OGImage          string
 }
 
 // IndexData represents data for the index page template
@@ -271,6 +284,12 @@ func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repo
 		return fmt.Errorf("failed to generate portfolio page: %w", err)
 	}
 
+	// Generate individual portfolio pages
+	err = generateIndividualPortfolioPages(portfolioRepo, outputPath, templatePath, navData)
+	if err != nil {
+		return fmt.Errorf("failed to generate individual portfolio pages: %w", err)
+	}
+
 	// Generate static pages
 	err = generatePages(pageRepo, outputPath, templatePath, navData)
 	if err != nil {
@@ -334,6 +353,11 @@ func generateIndexPage(posts []models.Post, portfolioRepo *repository.PortfolioR
 		// Convert markdown in short description to HTML if needed
 		shortDescHTML := mdToHTML(item.ShortDescription)
 
+		var gallery []GalleryImage
+		if item.Images != "" {
+			json.Unmarshal([]byte(item.Images), &gallery)
+		}
+
 		templateItems[i] = PortfolioItem{
 			Title:            item.Title,
 			ShortDescription: shortDescHTML,
@@ -341,6 +365,8 @@ func generateIndexPage(posts []models.Post, portfolioRepo *repository.PortfolioR
 			GithubURL:        item.GithubURL,
 			ShowcaseImage:    item.ShowcaseImage,
 			SortOrder:        item.SortOrder,
+			Slug:             item.Slug,
+			Images:           gallery,
 		}
 	}
 
@@ -478,6 +504,11 @@ func generatePortfolioPage(portfolioRepo *repository.PortfolioRepository, output
 		// Convert markdown in short description to HTML if needed
 		shortDescHTML := mdToHTML(item.ShortDescription)
 
+		var gallery []GalleryImage
+		if item.Images != "" {
+			json.Unmarshal([]byte(item.Images), &gallery)
+		}
+
 		templateItems[i] = PortfolioItem{
 			Title:            item.Title,
 			ShortDescription: shortDescHTML,
@@ -485,6 +516,8 @@ func generatePortfolioPage(portfolioRepo *repository.PortfolioRepository, output
 			GithubURL:        item.GithubURL,
 			ShowcaseImage:    item.ShowcaseImage,
 			SortOrder:        item.SortOrder,
+			Slug:             item.Slug,
+			Images:           gallery,
 		}
 	}
 
@@ -625,4 +658,120 @@ func copyStaticAssets(templatePath, outputPath string) error {
 	}
 
 	return nil
+}
+
+// generateIndividualPortfolioPages creates the index.html file for each portfolio item under /<slug>/
+func generateIndividualPortfolioPages(portfolioRepo *repository.PortfolioRepository, outputPath, templatePath string, navData NavigationData) error {
+	// Parse the templates
+	tmpl, err := template.ParseFiles(
+		filepath.Join(templatePath, "header.html"),
+		filepath.Join(templatePath, "portfolio-item.html"),
+		filepath.Join(templatePath, "footer.html"),
+	)
+	if err != nil {
+		return fmt.Errorf("failed to parse portfolio item templates: %w", err)
+	}
+
+	items, err := portfolioRepo.GetAllPortfolioItems()
+	if err != nil {
+		return fmt.Errorf("failed to fetch portfolio items: %w", err)
+	}
+
+	for _, item := range items {
+		if item.Slug == "" {
+			continue // skip items with no slug
+		}
+
+		// Convert markdown in short description to HTML
+		contentHTML := mdToHTML(item.ShortDescription)
+
+		// Parse additional images JSON
+		var gallery []GalleryImage
+		if item.Images != "" {
+			if err := json.Unmarshal([]byte(item.Images), &gallery); err != nil {
+				// Fallback to empty list
+				gallery = []GalleryImage{}
+			}
+		}
+
+		// Get thumbnail of showcase image for OG metadata
+		ogImage := getThumbnailPath(item.ShowcaseImage)
+
+		// Create individual page struct
+		templateItem := PortfolioItem{
+			Title:            item.Title,
+			ShortDescription: contentHTML,
+			ProjectURL:       item.ProjectURL,
+			GithubURL:        item.GithubURL,
+			ShowcaseImage:    item.ShowcaseImage,
+			SortOrder:        item.SortOrder,
+			Slug:             item.Slug,
+			Images:           gallery,
+			NavigationData:   navData,
+			HasOG:            true,
+			OGTitle:          item.Title,
+			OGDescription:    stripHTML(string(contentHTML)),
+			OGImage:          ogImage,
+		}
+
+		// Create slug folder in output path
+		slugFolder := filepath.Join(outputPath, item.Slug)
+		if err := os.MkdirAll(slugFolder, 0755); err != nil {
+			return fmt.Errorf("failed to create directory for slug %s: %w", item.Slug, err)
+		}
+
+		// Create output file index.html in the slug folder
+		filename := filepath.Join(slugFolder, "index.html")
+		file, err := os.Create(filename)
+		if err != nil {
+			return fmt.Errorf("failed to create portfolio item file %s: %w", filename, err)
+		}
+
+		// Execute templates
+		if err := tmpl.ExecuteTemplate(file, "header.html", templateItem); err != nil {
+			file.Close()
+			return fmt.Errorf("failed to execute header for portfolio item %s: %w", item.Slug, err)
+		}
+		if err := tmpl.ExecuteTemplate(file, "portfolio-item.html", templateItem); err != nil {
+			file.Close()
+			return fmt.Errorf("failed to execute content for portfolio item %s: %w", item.Slug, err)
+		}
+		if err := tmpl.ExecuteTemplate(file, "footer.html", templateItem); err != nil {
+			file.Close()
+			return fmt.Errorf("failed to execute footer for portfolio item %s: %w", item.Slug, err)
+		}
+		file.Close()
+	}
+
+	return nil
+}
+
+// getThumbnailPath returns the thumbnail path for an image path
+func getThumbnailPath(imagePath string) string {
+	if imagePath == "" {
+		return ""
+	}
+	ext := filepath.Ext(imagePath)
+	base := imagePath[:len(imagePath)-len(ext)]
+	return base + "_thumb" + ext
+}
+
+// stripHTML removes basic HTML tags to create a clean description string
+func stripHTML(htmlStr string) string {
+	var sb strings.Builder
+	inTag := false
+	for _, r := range htmlStr {
+		if r == '<' {
+			inTag = true
+		} else if r == '>' {
+			inTag = false
+		} else if !inTag {
+			sb.WriteRune(r)
+		}
+	}
+	res := strings.TrimSpace(sb.String())
+	if len(res) > 160 {
+		return res[:157] + "..."
+	}
+	return res
 }

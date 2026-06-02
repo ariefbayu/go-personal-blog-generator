@@ -16,6 +16,17 @@
         rel="stylesheet" />
     <!-- New Design System CSS -->
     <link href="/css/styles.css" rel="stylesheet" />
+    <!-- Social Media Metadata -->
+    {{if .HasOG}}
+    <meta property="og:title" content="{{.OGTitle}}" />
+    <meta property="og:description" content="{{.OGDescription}}" />
+    <meta property="og:image" content="{{.OGImage}}" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{.OGTitle}}" />
+    <meta name="twitter:description" content="{{.OGDescription}}" />
+    <meta name="twitter:image" content="{{.OGImage}}" />
+    {{end}}
 </head>
 
 <body>
