@@ -14,6 +14,14 @@ import (
 	"github.com/gomarkdown/markdown"
 )
 
+// OpenGraphMeta represents social media metadata for Open Graph / Twitter Cards
+type OpenGraphMeta struct {
+	HasOG         bool
+	OGTitle       string
+	OGDescription string
+	OGImage       string
+}
+
 // Post represents a blog post for template rendering
 type Post struct {
 	Title              string
@@ -24,6 +32,7 @@ type Post struct {
 	CreatedAt          time.Time
 	CreatedAtFormatted string
 	NavigationData
+	OpenGraphMeta
 }
 
 // GalleryImage represents an image in a portfolio project gallery
@@ -43,10 +52,7 @@ type PortfolioItem struct {
 	Slug             string
 	Images           []GalleryImage
 	NavigationData
-	HasOG            bool
-	OGTitle          string
-	OGDescription    string
-	OGImage          string
+	OpenGraphMeta
 }
 
 // IndexData represents data for the index page template
@@ -55,6 +61,7 @@ type IndexData struct {
 	Posts []IndexPost
 	NavigationData
 	PortfolioItems []PortfolioItem
+	OpenGraphMeta
 }
 
 // PostsData represents data for the posts listing page template
@@ -62,6 +69,7 @@ type PostsData struct {
 	Title string
 	Posts []PostItem
 	NavigationData
+	OpenGraphMeta
 }
 
 // PostItem represents a post item for the posts listing page
@@ -89,6 +97,7 @@ type PortfolioData struct {
 	Title          string
 	PortfolioItems []PortfolioItem
 	NavigationData
+	OpenGraphMeta
 }
 
 // Page represents a static page for template rendering
@@ -104,6 +113,7 @@ type PageData struct {
 	Slug    string
 	Content template.HTML
 	NavigationData
+	OpenGraphMeta
 }
 
 // NavLink represents a navigation link
@@ -243,6 +253,12 @@ func GenerateStaticSite(postRepo *repository.PostRepository, portfolioRepo *repo
 			CreatedAt:          post.CreatedAt,
 			CreatedAtFormatted: post.CreatedAt.Format("January 2, 2006"),
 			NavigationData:     navData,
+			OpenGraphMeta: OpenGraphMeta{
+				HasOG:         post.FeaturedImage != "",
+				OGTitle:       post.Title,
+				OGDescription: stripHTML(string(contentHTML)),
+				OGImage:       post.FeaturedImage,
+			},
 		}
 
 		// Create output file
@@ -708,10 +724,12 @@ func generateIndividualPortfolioPages(portfolioRepo *repository.PortfolioReposit
 			Slug:             item.Slug,
 			Images:           gallery,
 			NavigationData:   navData,
-			HasOG:            true,
-			OGTitle:          item.Title,
-			OGDescription:    stripHTML(string(contentHTML)),
-			OGImage:          ogImage,
+			OpenGraphMeta: OpenGraphMeta{
+				HasOG:         true,
+				OGTitle:       item.Title,
+				OGDescription: stripHTML(string(contentHTML)),
+				OGImage:       ogImage,
+			},
 		}
 
 		// Create slug folder in output path
